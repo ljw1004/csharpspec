@@ -1,0 +1,12 @@
+﻿{
+  "dependencies": {
+    "DocumentFormat.OpenXml": "2.5.0",
+    "FSharp.Formatting": "2.10.3"
+  },
+  "frameworks": {
+    "net46": {}
+  },
+  "runtimes": {
+    "win": {}
+  }
+}
