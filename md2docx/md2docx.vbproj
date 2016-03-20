@@ -79,66 +79,18 @@
     <Compile Include="Module1.vb" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\vb\attributes.md">
-      <Link>attributes.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\conversions.md">
-      <Link>conversions.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\documentation-comments.md">
-      <Link>documentation-comments.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\expressions.md">
-      <Link>expressions.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\general-concepts.md">
-      <Link>general-concepts.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\introduction.md">
+    <None Include="..\csharp\introduction.md">
       <Link>introduction.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\lexical-grammar.md">
-      <Link>lexical-grammar.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\preprocessing-directives.md">
-      <Link>preprocessing-directives.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\source-files-and-namespaces.md">
-      <Link>source-files-and-namespaces.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\statements.md">
-      <Link>statements.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\type-members.md">
-      <Link>type-members.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\types.md">
-      <Link>types.md</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\readme.md">
+    </None>
+    <None Include="..\csharp\readme.md">
       <Link>readme.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\vb\vb.g4">
-      <Link>vb.g4</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="project.json" />
-    <Content Include="template.docx">
+    <None Include="template.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />

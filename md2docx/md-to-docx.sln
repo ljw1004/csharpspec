@@ -1,19 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25029.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "md2docx", "md2docx.vbproj", "{6AB98C96-5A01-408E-AB98-1E8B616FBF71}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1EEA00D2-4667-40C2-8C3A-3537BBB96B09}"
 	ProjectSection(SolutionItems) = preProject
-		..\vb\CSharp Language Specification.docx = ..\vb\CSharp Language Specification.docx
-		..\vb\csharp-grammar.html = ..\vb\csharp-grammar.html
+		..\csharp\CSharp Language Specification.docx = ..\csharp\CSharp Language Specification.docx
+		..\csharp\csharp-grammar.html = ..\csharp\csharp-grammar.html
 		..\LICENSE = ..\LICENSE
 		..\readme.md = ..\readme.md
+		..\reference.docx = ..\reference.docx
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-md-to-docx", "..\csharp-md-to-docx\csharp-md-to-docx.csproj", "{9B491823-A34A-4F09-8E38-071A9A769F5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +24,6 @@ Global
 		{6AB98C96-5A01-408E-AB98-1E8B616FBF71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AB98C96-5A01-408E-AB98-1E8B616FBF71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AB98C96-5A01-408E-AB98-1E8B616FBF71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B491823-A34A-4F09-8E38-071A9A769F5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B491823-A34A-4F09-8E38-071A9A769F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B491823-A34A-4F09-8E38-071A9A769F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B491823-A34A-4F09-8E38-071A9A769F5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

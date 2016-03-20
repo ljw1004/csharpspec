@@ -1,10 +1,9 @@
 {
   "locked": false,
-  "version": 2,
+  "version": 1,
   "targets": {
     ".NETFramework,Version=v4.6": {
       "DocumentFormat.OpenXml/2.5.0": {
-        "type": "package",
         "compile": {
           "lib/DocumentFormat.OpenXml.dll": {}
         },
@@ -13,7 +12,6 @@
         }
       },
       "FSharp.Compiler.Service/0.0.90": {
-        "type": "package",
         "compile": {
           "lib/net45/FSharp.Compiler.Service.dll": {}
         },
@@ -22,10 +20,9 @@
         }
       },
       "FSharp.Formatting/2.10.3": {
-        "type": "package",
         "dependencies": {
           "FSharp.Compiler.Service": "[0.0.90, 1.3.0]",
-          "FSharpVSPowerTools.Core": "[1.9.0]"
+          "FSharpVSPowerTools.Core": "[1.9.0, 1.9.0]"
         },
         "compile": {
           "lib/net40/CSharpFormat.dll": {},
@@ -49,9 +46,8 @@
         }
       },
       "FSharpVSPowerTools.Core/1.9.0": {
-        "type": "package",
         "dependencies": {
-          "FSharp.Compiler.Service": "0.0.90"
+          "FSharp.Compiler.Service": "[0.0.90, )"
         },
         "compile": {
           "lib/net45/FSharpVSPowerTools.Core.dll": {}
@@ -63,7 +59,6 @@
     },
     ".NETFramework,Version=v4.6/win": {
       "DocumentFormat.OpenXml/2.5.0": {
-        "type": "package",
         "compile": {
           "lib/DocumentFormat.OpenXml.dll": {}
         },
@@ -72,7 +67,6 @@
         }
       },
       "FSharp.Compiler.Service/0.0.90": {
-        "type": "package",
         "compile": {
           "lib/net45/FSharp.Compiler.Service.dll": {}
         },
@@ -81,10 +75,9 @@
         }
       },
       "FSharp.Formatting/2.10.3": {
-        "type": "package",
         "dependencies": {
           "FSharp.Compiler.Service": "[0.0.90, 1.3.0]",
-          "FSharpVSPowerTools.Core": "[1.9.0]"
+          "FSharpVSPowerTools.Core": "[1.9.0, 1.9.0]"
         },
         "compile": {
           "lib/net40/CSharpFormat.dll": {},
@@ -108,9 +101,8 @@
         }
       },
       "FSharpVSPowerTools.Core/1.9.0": {
-        "type": "package",
         "dependencies": {
-          "FSharp.Compiler.Service": "0.0.90"
+          "FSharp.Compiler.Service": "[0.0.90, )"
         },
         "compile": {
           "lib/net45/FSharpVSPowerTools.Core.dll": {}
@@ -137,12 +129,12 @@
       "files": [
         "FSharp.Compiler.Service.0.0.90.nupkg.sha512",
         "FSharp.Compiler.Service.nuspec",
-        "lib/net40/FSharp.Compiler.Service.XML",
         "lib/net40/FSharp.Compiler.Service.dll",
         "lib/net40/FSharp.Compiler.Service.pdb",
-        "lib/net45/FSharp.Compiler.Service.XML",
+        "lib/net40/FSharp.Compiler.Service.XML",
         "lib/net45/FSharp.Compiler.Service.dll",
-        "lib/net45/FSharp.Compiler.Service.pdb"
+        "lib/net45/FSharp.Compiler.Service.pdb",
+        "lib/net45/FSharp.Compiler.Service.XML"
       ]
     },
     "FSharp.Formatting/2.10.3": {
@@ -180,8 +172,8 @@
         "literate/templates/template-file.html",
         "literate/templates/template-math.tex",
         "literate/templates/template-project.html",
-        "styles/img/github-blue.png",
         "styles/img/github.png",
+        "styles/img/github-blue.png",
         "styles/style.css",
         "styles/style.css.bak",
         "styles/style_light.css",

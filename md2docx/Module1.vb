@@ -30,6 +30,7 @@
                      From link In spans.OfType(Of FSharp.Markdown.MarkdownSpan.DirectLink)
                      Let url = link.Item2.Item1
                      Where url.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase)
+                     Where IO.File.Exists(url)
                      Select url).ToList.Distinct
         If files.Count = 0 Then files = {ifn}
         Dim md = MarkdownSpec.ReadFiles(files)

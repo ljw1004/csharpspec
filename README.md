@@ -27,13 +27,20 @@ So here's my step-by-step plan...
 
 # Conventions
 
-Notes are like this:
+The markdown generates a Word document that uses
+* Paragraph styles: `TOC1, TOC2, Heading1, Heading2, Heading3, Heading4, ListParagraph, Grammar, Code, Annotation, AlertText, Comment`
+* Table styles: `TableGrid`
+* Character styles: `CodeEmbedded, Hyperlink`
+
+
+
+The `AlertText` paragraph style is generated for this:
 ```
 > __Note__
 > Here is the body of the note
 ```
 
-Annotations are like this:
+The `Annotation` paragraph style is generated for this:
 ```
 > __Annotation__
 > Here is the body of the annotation
@@ -45,7 +52,7 @@ This kind of comment is retained in the online markdown, but absent from the Wor
 > Here is the body of the comment
 ```
 
-VB code blocks are like this:
+VB code blocks (which use the `Code` paragraph style) are like this:
 ```
 ``vb
 Dim x = "Hello"
@@ -64,7 +71,7 @@ To put a code block inside an annotation, it needs a quoted but otherwise empty 
 > More annotation
 ```
 
-Grammar blocks are like this:
+Grammar blocks (which use the `Grammar` paragraph style) are like this:
 ```
 ``antlr
 Start
@@ -77,7 +84,7 @@ Left
     ;
 ```
 
-Links are like this, which will render in github as a hyperlinked word "Conventions", and will render in Word as "5.2: Conventions". The thing that comes after the # is the section/subsection title, stripping everything other than alphanumerics and hyphen and underscore, and converting to lowercase.
+Links are like this, which will render in github as a hyperlinked word "Conventions", and will render in Word as "5.2: Conventions" in the `Hyperlink` character style. The thing that comes after the # is the section/subsection title, stripping everything other than alphanumerics and hyphen and underscore, and converting to lowercase.
 ```
 For more information see Section [Conventions](README.md#conventions)
 ```
