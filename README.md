@@ -259,7 +259,7 @@ ANTLR indented code
 
 -------------------------------------------------------------
 
-Here's an experiment about pipe symbols inside tables
+Here's an experiment about pipe symbols inside tables. It shows that the first "OnePipe" approach works fine with Github markdown.
 
 | Technique | Result |
 |-------|-------|
