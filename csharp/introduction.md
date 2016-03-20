@@ -889,9 +889,9 @@ class Test
         Entity e1 = new Entity();
         Entity e2 = new Entity();
 
-        Console.WriteLine(e1.GetSerialNo());                // Outputs "1000"
-        Console.WriteLine(e2.GetSerialNo());                // Outputs "1001"
-        Console.WriteLine(Entity.GetNextSerialNo());        // Outputs "1002"
+        Console.WriteLine(e1.GetSerialNo());           // Outputs "1000"
+        Console.WriteLine(e2.GetSerialNo());           // Outputs "1001"
+        Console.WriteLine(Entity.GetNextSerialNo());   // Outputs "1002"
     }
 }
 ```
@@ -1071,23 +1071,27 @@ As shown by the example, a particular method can always be selected by explicitl
 
 Members that contain executable code are collectively known as the *__function members__* of a class. The preceding section describes methods, which are the primary kind of function members. This section describes the other kinds of function members supported by C#: constructors, properties, indexers, events, operators, and destructors.
 
-The following shows a generic class called `List<T>`, which implements a growable list of objects. The class contains several examples of the most common kinds of function members.
+The following code shows a generic class called `List<T>`, which implements a growable list of objects. The class contains several examples of the most common kinds of function members.
 
 
 ```csharp
 public class List<T> {
-    const int defaultCapacity = 4; // Constant
 
-    // Fields
+    // Constant...
+    const int defaultCapacity = 4; 
+
+
+    // Fields...
     T[] items;
     int count;
     
-    // Constructors    
+    // Constructors...
     public List(int capacity = defaultCapacity) {
         items = new T[capacity];
     }
     
-    // Properties
+
+    // Properties...
     public int Count {
         get { return count; }
     }
@@ -1105,7 +1109,8 @@ public class List<T> {
         }
     }
     
-    // Indexer
+
+    // Indexer...
     public T this[int index] {
        get {
            return items[index];
@@ -1116,7 +1121,8 @@ public class List<T> {
        }
     }
     
-    // Methods
+
+    // Methods...
     public void Add(T item) {
         if (count == Capacity) Capacity = count * 2;
         items[count] = item;
@@ -1140,9 +1146,11 @@ public class List<T> {
         return true;
     }
 
-    public event EventHandler Changed; // Event
+    // Event...
+    public event EventHandler Changed;
     
-    // Operators
+
+    // Operators...
     public static bool operator ==(List<T> a, List<T> b) {
         return Equals(a, b);
     }
@@ -1182,8 +1190,8 @@ The `List<T>` class declares two properties, `Count` and `Capacity`, which are r
 ```csharp
 List<string> names = new List<string>();
 names.Capacity = 100;            // Invokes set accessor
-int i = names.Count;                // Invokes get accessor
-int j = names.Capacity;            // Invokes get accessor
+int i = names.Count;             // Invokes get accessor
+int j = names.Capacity;          // Invokes get accessor
 ```
 
 Similar to fields and methods, C# supports both instance properties and static properties. Static properties are declared with the `static` modifier, and instance properties are declared without it.
@@ -1490,8 +1498,8 @@ using System;
 enum Color
 {
     Red,
-   Green,
-   Blue
+    Green,
+    Blue
 }
 
 class Test

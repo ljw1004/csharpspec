@@ -259,4 +259,22 @@ ANTLR indented code
 
 -------------------------------------------------------------
 
+Here's an experiment about pipe symbols inside tables
+
+| Technique | Result |
+|-------|-------|
+| OnePipe  | `x | y` |
+| OnePipeDoubleBacktick  | ``x | y`` |
+| AmpersandInBacktick  | `x &#124; y` |
+| AmpersandInCode | <code>x &#124; y</code> |
+| Plain | Nothing |
+| PlainCode | <code>stuff</code> |
+
+| Second | Table |
+|--------|-------|
+| hello  | <code>stuff</code> |
+
+
+-----------------------------------------------------------------
+
 End of experiments.

@@ -423,6 +423,8 @@ Class MarkdownSpec
                 borders.RightBorder = New RightBorder With {.Val = BorderValues.Single}
                 borders.InsideHorizontalBorder = New InsideHorizontalBorder With {.Val = BorderValues.Single}
                 borders.InsideVerticalBorder = New InsideVerticalBorder With {.Val = BorderValues.Single}
+                Dim tcellmar As New TableCellMarginDefault
+                tcellmar.append()
                 table.Append(New TableProperties(tstyle, borders))
                 Dim ncols = align.Length
                 For irow = -1 To rows.Length - 1
@@ -436,12 +438,10 @@ Class MarkdownSpec
                         For ip = 0 To pars.Count - 1
                             Dim p = TryCast(pars(ip), Paragraph)
                             If p IsNot Nothing Then
-                                Dim props As New ParagraphProperties
+                                Dim props As New ParagraphProperties(New ParagraphStyleId With {.Val = "TableCellNormal"})
                                 If align(icol).IsAlignCenter Then props.Append(New Justification With {.Val = JustificationValues.Center})
                                 If align(icol).IsAlignRight Then props.Append(New Justification With {.Val = JustificationValues.Right})
-                                Dim spacing As SpacingBetweenLines = Nothing
-                                If ip = pars.Count - 1 Then props.Append(New SpacingBetweenLines With {.After = "0"})
-                                If props.HasChildren Then p.InsertAt(props, 0)
+                                p.InsertAt(props, 0)
                             End If
                             cell.Append(pars(ip))
                         Next
@@ -450,7 +450,9 @@ Class MarkdownSpec
                     Next
                     table.Append(row)
                 Next
+                Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineBefore"})}
                 Yield table
+                Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineAfter"})}
                 Return
 
             Else
