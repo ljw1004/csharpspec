@@ -94,13 +94,35 @@ Class MarkdownSpec
     End Sub
 
     Private Iterator Function Sources() As IEnumerable(Of Tuple(Of String, String))
-        If s IsNot Nothing Then Yield Tuple.Create("", s)
+        If s IsNot Nothing Then Yield Tuple.Create("", PipeBugEncode(s))
         If files IsNot Nothing Then
             For Each fn In files
-                Yield Tuple.Create(fn, File.ReadAllText(fn))
+                Yield Tuple.Create(fn, PipeBugEncode(File.ReadAllText(fn)))
             Next
         End If
     End Function
+
+    Private Shared Function PipeBugEncode(src As String) As String
+        ' https://github.com/tpetricek/FSharp.Formatting/issues/388
+        ' The markdown parser doesn't recognize | inside inlinecode inside table
+        ' To work around that, we'll encode this |, then decode it later
+        Dim lines = src.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+        For li = 0 To lines.Length - 1
+            If Not lines(li).StartsWith("|") Then Continue For
+            Dim codes = lines(li).Split("`"c)
+            For ci = 1 To codes.Length - 1 Step 2
+                codes(ci) = codes(ci).Replace("|", "ceci_n'est_pas_une_pipe")
+            Next
+            lines(li) = String.Join("`", codes)
+        Next
+        Dim dst = String.Join(vbCrLf, lines)
+        Return dst
+    End Function
+
+    Private Shared Function PipeBugDecode(s As String) As String
+        Return s.Replace("ceci_n'est_pas_une_pipe", "|")
+    End Function
+
 
     Function FindToc(body As Body, ByRef iFirst As Integer, ByRef iLast As Integer, ByRef instr As String, ByRef secBreak As Paragraph) As Boolean
         iFirst = -1 : iLast = -1 : instr = Nothing : secBreak = Nothing
@@ -531,7 +553,7 @@ Class MarkdownSpec
             ElseIf md.IsInlineCode Then
                 Dim mdi = CType(md, MarkdownSpan.InlineCode), code = mdi.Item
 
-                Dim txt As New Text(code) With {.Space = SpaceProcessingModeValues.Preserve}
+                Dim txt As New Text(PipeBugDecode(code)) With {.Space = SpaceProcessingModeValues.Preserve}
                 Dim props As New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})
                 Dim run As New Run(txt) With {.RunProperties = props}
                 Yield run
