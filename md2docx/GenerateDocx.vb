@@ -638,7 +638,7 @@ Class MarkdownSpec
                 End If
                 Return
 
-            ElseIf md.IsHardLineBreak
+            ElseIf md.IsHardLineBreak Then
                 ' I've only ever seen this arise from dodgy markdown parsing, so I'll ignore it...
                 Return
 
