@@ -12,7 +12,7 @@ To ensure that C# programs and libraries can evolve over time in a compatible ma
 
 The rest of this chapter describes the essential features of the C# language. Although later chapters describe rules and exceptions in a detail-oriented and sometimes mathematical manner, this chapter strives for clarity and brevity at the expense of completeness. The intent is to provide the reader with an introduction to the language that will facilitate the writing of early programs and the reading of later chapters.
 
-##     Hello world
+## Hello world
 
 The "Hello, World" program is traditionally used to introduce a programming language. Here it is in C#:
 
@@ -26,26 +26,23 @@ class Hello
     }
 }
 ```
-
 C# source files typically have the file extension `.cs`. Assuming that the "Hello, World" program is stored in the file `hello.cs`, the program can be compiled with the Microsoft C# compiler using the command line
 
 ```
 csc hello.cs
 ```
-
 which produces an executable assembly named `hello.exe`. The output produced by this application when it is run is
 
 ```
 Hello, World
 ```
-
 The "Hello, World" program starts with a `using` directive that references the `System` namespace. Namespaces provide a hierarchical means of organizing C# programs and libraries. Namespaces contain types and other namespaces—for example, the `System` namespace contains a number of types, such as the `Console` class referenced in the program, and a number of other namespaces, such as `IO` and `Collections`. A `using` directive that references a given namespace enables unqualified use of the types that are members of that namespace. Because of the `using` directive, the program can use `Console.WriteLine` as shorthand for `System.Console.WriteLine`.
 
 The `Hello` class declared by the "Hello, World" program has a single member, the method named `Main`. The `Main` method is declared with the `static` modifier. While instance methods can reference a particular enclosing object instance using the keyword `this`, static methods operate without reference to a particular object. By convention, a static method named `Main` serves as the entry point of a program.
 
 The output of the program is produced by the `WriteLine` method of the `Console` class in the `System` namespace. This class is provided by the .NET Framework class libraries, which, by default, are automatically referenced by the Microsoft C# compiler. Note that C# itself does not have a separate runtime library. Instead, the .NET Framework is the runtime library of C#.
 
-##     Program structure
+## Program structure
 
 The key organizational concepts in C# are *__programs__*, *__namespaces__*, *__types__*, *__members__*, and *__assemblies__*. C# programs consist of one or more source files. Programs declare types, which contain members and can be organized into namespaces. Classes and interfaces are examples of types. Fields, methods, properties, and events are examples of members. When C# programs are compiled, they are physically packaged into assemblies. Assemblies typically have the file extension `.exe` or `.dll`, depending on whether they implement *__applications__* or *__libraries__*.
 
@@ -75,7 +72,7 @@ namespace Acme.Collections
         {
             public Entry next;
             public object data;
-
+    
             public Entry(Entry next, object data) {
                 this.next = next;
                 this.data = data;
@@ -84,13 +81,11 @@ namespace Acme.Collections
     }
 }
 ```
-
 declares a class named `Stack` in a namespace called `Acme.Collections`. The fully qualified name of this class is `Acme.Collections.Stack`. The class contains several members: a field named `top`, two methods named `Push` and `Pop`, and a nested class named `Entry`. The `Entry` class further contains three members: a field named `next`, a field named `data`, and a constructor. Assuming that the source code of the example is stored in the file `acme.cs`, the command line
 
 ```
 csc /t:library acme.cs
 ```
-
 compiles the example as a library (code without a `Main` entry point) and produces an assembly named `acme.dll`.
 
 Assemblies contain executable code in the form of *__Intermediate Language__* (IL) instructions, and symbolic information in the form of *__metadata__*. Before it is executed, the IL code in an assembly is automatically converted to processor-specific code by the Just-In-Time (JIT) compiler of .NET Common Language Runtime.
@@ -114,13 +109,11 @@ class Test
     }
 }
 ```
-
 If the program is stored in the file `test.cs`, when `test.cs` is compiled, the `acme.dll` assembly can be referenced using the compiler's `/r` option:
 
 ```
 csc /r:acme.dll test.cs
 ```
-
 This creates an executable assembly named `test.exe`, which, when run, produces the output:
 
 ```
@@ -128,10 +121,9 @@ This creates an executable assembly named `test.exe`, which, when run, produces 
 10
 1
 ```
-
 C# permits the source text of a program to be stored in several source files. When a multi-file C# program is compiled, all of the source files are processed together, and the source files can freely reference each other—conceptually, it is as if all the source files were concatenated into one large file before being processed. Forward declarations are never needed in C# because, with very few exceptions, declaration order is insignificant. C# does not limit a source file to declaring only one public type nor does it require the name of the source file to match a type declared in the source file.
 
-##     Types and variables
+## Types and variables
 
 There are two kinds of types in C#: *__value types__* and *__reference types__*. Variables of value types directly contain their data whereas variables of reference types store references to their data, the latter being known as objects. With reference types, it is possible for two variables to reference the same object and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other (except in the case of `ref` and `out` parameter variables).
 
@@ -139,23 +131,23 @@ C#'s value types are further divided into *__simple types__*, *__enum types__*, 
 
 The following table provides an overview of C#'s type system.
 
-| __Category__ |   | __Description__ |
-|--------------|-----------------|---|
-| Value types | Simple types | Signed integral: `sbyte`, `short`, `int`, `long` | 
-|  |  | Unsigned integral: `byte`, `ushort`, `uint`, `ulong` | 
-|  |  | Unicode characters: `char` | 
-|  |  | IEEE floating point: `float`, `double` | 
-|  |  | High-precision decimal: `decimal` | 
-|  |  | Boolean: `bool` | 
-|  | Enum types | User-defined types of the form `enum E {...}` | 
-|  | Struct types | User-defined types of the form `struct S {...}` | 
-|  | Nullable types | Extensions of all other value types with a `null` value | 
-| Reference types | Class types | Ultimate base class of all other types: `object` | 
-|  |  | Unicode strings: `string` | 
-|  |  | User-defined types of the form `class C {...}` | 
-|  | Interface types | User-defined types of the form `interface I {...}` | 
-|  | Array types | Single- and multi-dimensional, for example, `int[]` and `int[,]` | 
-|  | Delegate types | User-defined types of the form e.g. `delegate int  D(...)` | 
+| __Category__    |                 | __Description__ |
+|-----------------|-----------------|-----------------|
+| Value types     | Simple types    | Signed integral: `sbyte`, `short`, `int`, `long` |
+|                 |                 | Unsigned integral: `byte`, `ushort`, `uint`, `ulong` |
+|                 |                 | Unicode characters: `char` |
+|                 |                 | IEEE floating point: `float`, `double` |
+|                 |                 | High-precision decimal: `decimal` |
+|                 |                 | Boolean: `bool` |
+|                 | Enum types      | User-defined types of the form `enum E {...}` |
+|                 | Struct types    | User-defined types of the form `struct S {...}` |
+|                 | Nullable types  | Extensions of all other value types with a `null` value |
+| Reference types | Class types     | Ultimate base class of all other types: `object` |
+|                 |                 | Unicode strings: `string` |
+|                 |                 | User-defined types of the form `class C {...}` |
+|                 | Interface types | User-defined types of the form `interface I {...}` |
+|                 | Array types     | Single- and multi-dimensional, for example, `int[]` and `int[,]` |
+|                 | Delegate types  | User-defined types of the form e.g. `delegate int  D(...)` |
 
 The eight integral types provide support for 8-bit, 16-bit, 32-bit, and 64-bit values in signed or unsigned form.
 
@@ -170,19 +162,19 @@ Character and string processing in C# uses Unicode encoding. The `char` type rep
 The following table summarizes C#'s numeric types.
 
 
-| __Category__ | __Bits__ | __Type__ | __Range/Precision__ | 
-|--------------|----------|----------|---------------------|
-| Signed integral | 8 | `sbyte` | –128...127 | 
-|  | 16 | `short` | –32,768...32,767 | 
-|  | 32 | `int` | –2,147,483,648...2,147,483,647 | 
-|  | 64 | `long` | –9,223,372,036,854,775,808...9,223,372,036,854,775,807 | 
-| Unsigned integral | 8 | `byte` | 0...255 | 
-|  | 16 | `ushort` | 0...65,535 | 
-|  | 32 | `uint` | 0...4,294,967,295 | 
-|  | 64 | `ulong` | 0...18,446,744,073,709,551,615 | 
-| Floating point | 32 | `float` | 1.5 × 10^−45 to 3.4 × 10^38, 7-digit precision | 
-|  | 64 | `double` | 5.0 × 10^−324 to 1.7 × 10^308, 15-digit precision | 
-| Decimal | 128 | `decimal` | 1.0 × 10^−28 to 7.9 × 10^28, 28-digit precision | 
+| __Category__      | __Bits__ | __Type__  | __Range/Precision__ |
+|-------------------|----------|-----------|---------------------|
+| Signed integral   | 8        | `sbyte`   | –128...127 |
+|                   | 16       | `short`   | –32,768...32,767 |
+|                   | 32       | `int`     | –2,147,483,648...2,147,483,647 |
+|                   | 64       | `long`    | –9,223,372,036,854,775,808...9,223,372,036,854,775,807 |
+| Unsigned integral | 8        | `byte`    | 0...255 |
+|                   | 16       | `ushort`  | 0...65,535 |
+|                   | 32       | `uint`    | 0...4,294,967,295 |
+|                   | 64       | `ulong`   | 0...18,446,744,073,709,551,615 |
+| Floating point    | 32       | `float`   | 1.5 × 10^−45 to 3.4 × 10^38, 7-digit precision |
+|                   | 64       | `double`  | 5.0 × 10^−324 to 1.7 × 10^308, 15-digit precision |
+| Decimal           | 128      | `decimal` | 1.0 × 10^−28 to 7.9 × 10^28, 28-digit precision |
 
 C# programs use *__type declarations__* to create new types. A type declaration specifies the name and the members of the new type. Five of C#'s categories of types are user-definable: class types, struct types, interface types, enum types, and delegate types.
 
@@ -216,7 +208,6 @@ class Test
     }
 }
 ```
-
 When a value of a value type is converted to type `object`, an object instance, also called a "box," is allocated to hold the value, and the value is copied into that box. Conversely, when an `object` reference is cast to a value type, a check is made that the referenced object is a box of the correct value type, and, if the check succeeds, the value in the box is copied out.
 
 C#'s unified type system effectively means that value types can become objects "on demand." Because of the unification, general-purpose libraries that use type `object` can be used with both reference types and value types.
@@ -224,17 +215,17 @@ C#'s unified type system effectively means that value types can become objects "
 There are several kinds of *__variables__* in C#, including fields, array elements, local variables, and parameters. Variables represent storage locations, and every variable has a type that determines what values can be stored in the variable, as shown by the following table.
 
 
-| __Type of Variable__ | __Possible Contents__ | 
-|----------------------|-----------------------|
-| Non-nullable value type | A value of that exact type | 
-| Nullable value type | A null value or a value of that exact type | 
-| `object` | A null reference, a reference to an object of any reference type, or a reference to a boxed value of any value type | 
-| Class type | A null reference, a reference to an instance of that class type, or a reference to an instance of a class derived from that class type | 
-| Interface type | A null reference, a reference to an instance of a class type that implements that interface type, or a reference to a boxed value of a value type that implements that interface type | 
-| Array type | A null reference, a reference to an instance of that array type, or a reference to an instance of a compatible array type | 
-| Delegate type | A null reference or a reference to an instance of that delegate type | 
+| __Type of Variable__    | __Possible Contents__ |
+|-------------------------|-----------------------|
+| Non-nullable value type | A value of that exact type |
+| Nullable value type     | A null value or a value of that exact type |
+| `object`                | A null reference, a reference to an object of any reference type, or a reference to a boxed value of any value type |
+| Class type              | A null reference, a reference to an instance of that class type, or a reference to an instance of a class derived from that class type |
+| Interface type          | A null reference, a reference to an instance of a class type that implements that interface type, or a reference to a boxed value of a value type that implements that interface type |
+| Array type              | A null reference, a reference to an instance of that array type, or a reference to an instance of a compatible array type |
+| Delegate type           | A null reference or a reference to an instance of that delegate type |
 
-##     Expressions
+## Expressions
 
 *__Expressions__* are constructed from *__operands__* and *__operators__*. The operators of an expression indicate which operations to apply to the operands. Examples of operators include `+`, `-`, `*`, `/`, and `new`. Examples of operands include literals, fields, local variables, and expressions.
 
@@ -245,57 +236,57 @@ Most operators can be *__overloaded__*. Operator overloading permits user-define
 The following table summarizes C#'s operators, listing the operator categories in order of precedence from highest to lowest. Operators in the same category have equal precedence.
 
 
-| __Category__ | __Expression__ | __Description__ | 
-|--------------|----------------|-----------------|
-| Primary | `x.m` | Member access | 
-|  | `x(...)` | Method and delegate invocation | 
-|  | `x[...]` | Array and indexer access | 
-|  | `x++` | Post-increment | 
-|  | `x--` | Post-decrement | 
-|  | `new T(...)` | Object and delegate creation | 
-|  | `new T(...){...}` | Object creation with initializer | 
-|  | `new {...}` | Anonymous object initializer | 
-|  | `new T[...]` | Array creation | 
-|  | `typeof(T)` | Obtain `System.Type` object for `T` | 
-|  | `checked(x)` | Evaluate expression in checked context | 
-|  | `unchecked(x)` | Evaluate expression in unchecked context | 
-|  | `default(T)` | Obtain default value of type `T` | 
-|  | `delegate {...}` | Anonymous function (anonymous method) | 
-| Unary | `+x` | Identity | 
-|  | `-x` | Negation | 
-|  | `!x` | Logical negation | 
-|  | `~x` | Bitwise negation | 
-|  | `++x` | Pre-increment | 
-|  | `--x` | Pre-decrement | 
-|  | `(T)x` | Explicitly convert `x` to type `T` | 
-|  | `await x` | Asynchronously wait for `x` to complete | 
-| Multiplicative | `x * y` | Multiplication | 
-|  | `x / y` | Division | 
-|  | `x % y` | Remainder | 
-| Additive | `x + y` | Addition, string concatenation, delegate combination | 
-|  | `x – y` | Subtraction, delegate removal | 
-| Shift | `x << y` | Shift left | 
-|  | `x >> y` | Shift right | 
-| Relational and type testing | `x < y` | Less than | 
-|  | `x > y` | Greater than | 
-|  | `x <= y` | Less than or equal | 
-|  | `x >= y` | Greater than or equal | 
-|  | `x is T` | Return `true` if `x` is a `T`, `false` otherwise | 
-|  | `x as T` | Return `x` typed as `T`, or `null` if `x` is not a `T` | 
-| Equality | `x == y` | Equal | 
-|  | `x != y` | Not equal | 
-| Logical AND | `x & y` | Integer bitwise AND, boolean logical AND | 
-| Logical XOR | `x ^ y` | Integer bitwise XOR, boolean logical XOR | 
-| Logical OR | `x | y` | Integer bitwise OR, boolean logical OR | 
-| Conditional AND | `x && y` | Evaluates `y` only if `x` is `true` | 
-| Conditional OR | `x || y` | Evaluates `y` only if `x` is `false` | 
-| Null coalescing | `X ?? y` | Evaluates to `y` if `x` is `null`, to `x` otherwise | 
-| Conditional | `x ? y : z` | Evaluates `y` if `x` is `true`, `z` if `x` is `false` | 
-| Assignment or anonymous function | `x = y` | Assignment | 
-|  | `x `*op*`= y` | Compound assignment; supported operators are `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` | 
-|  | `(T x) => y` | Anonymous function (lambda expression) | 
+| __Category__                     | __Expression__    | __Description__ |
+|----------------------------------|-------------------|-----------------|
+| Primary                          | `x.m`             | Member access |
+|                                  | `x(...)`          | Method and delegate invocation |
+|                                  | `x[...]`          | Array and indexer access |
+|                                  | `x++`             | Post-increment |
+|                                  | `x--`             | Post-decrement |
+|                                  | `new T(...)`      | Object and delegate creation |
+|                                  | `new T(...){...}` | Object creation with initializer |
+|                                  | `new {...}`       | Anonymous object initializer |
+|                                  | `new T[...]`      | Array creation |
+|                                  | `typeof(T)`       | Obtain `System.Type` object for `T` |
+|                                  | `checked(x)`      | Evaluate expression in checked context |
+|                                  | `unchecked(x)`    | Evaluate expression in unchecked context |
+|                                  | `default(T)`      | Obtain default value of type `T` |
+|                                  | `delegate {...}`  | Anonymous function (anonymous method) |
+| Unary                            | `+x`              | Identity |
+|                                  | `-x`              | Negation |
+|                                  | `!x`              | Logical negation |
+|                                  | `~x`              | Bitwise negation |
+|                                  | `++x`             | Pre-increment |
+|                                  | `--x`             | Pre-decrement |
+|                                  | `(T)x`            | Explicitly convert `x` to type `T` |
+|                                  | `await x`         | Asynchronously wait for `x` to complete |
+| Multiplicative                   | `x * y`           | Multiplication |
+|                                  | `x / y`           | Division |
+|                                  | `x % y`           | Remainder |
+| Additive                         | `x + y`           | Addition, string concatenation, delegate combination |
+|                                  | `x – y`           | Subtraction, delegate removal |
+| Shift                            | `x << y`          | Shift left |
+|                                  | `x >> y`          | Shift right |
+| Relational and type testing      | `x < y`           | Less than |
+|                                  | `x > y`           | Greater than |
+|                                  | `x <= y`          | Less than or equal |
+|                                  | `x >= y`          | Greater than or equal |
+|                                  | `x is T`          | Return `true` if `x` is a `T`, `false` otherwise |
+|                                  | `x as T`          | Return `x` typed as `T`, or `null` if `x` is not a `T` |
+| Equality                         | `x == y`          | Equal      |
+|                                  | `x != y`          | Not equal |
+| Logical AND                      | `x & y`           | Integer bitwise AND, boolean logical AND |
+| Logical XOR                      | `x ^ y`           | Integer bitwise XOR, boolean logical XOR |
+| Logical OR                       | `x | y`           | Integer bitwise OR, boolean logical OR |
+| Conditional AND                  | `x && y`          | Evaluates `y` only if `x` is `true` |
+| Conditional OR                   | `x || y`          | Evaluates `y` only if `x` is `false` |
+| Null coalescing                  | `X ?? y`          | Evaluates to `y` if `x` is `null`, to `x` otherwise |
+| Conditional                      | `x ? y : z`       | Evaluates `y` if `x` is `true`, `z` if `x` is `false` |
+| Assignment or anonymous function | `x = y`           | Assignment |
+|                                  | `x op= y`         | Compound assignment; supported operators are `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` |
+|                                  | `(T x) => y`      | Anonymous function (lambda expression) |
 
-##     Statements
+## Statements
 
 The actions of a program are expressed using *__statements__*. C# supports several different kinds of statements, a number of which are defined in terms of embedded statements.
 
@@ -319,259 +310,258 @@ The `lock` statement is used to obtain the mutual-exclusion lock for a given obj
 
 The `using` statement is used to obtain a resource, execute a statement, and then dispose of that resource.
 
-The following table lists C#'s statements and provides an example for each one.
+Below are examples of each kind of statement
 
+**Local variable declarations**
 
-<table>
-<tr>
-<td><b>Statement</b></td>
-<td><b>Example</b></td>
-</tr>
-<tr>
-<td>Local variable declaration</td>
-<td>
-<pre><code>static void Main() {
+```csharp
+static void Main() {
    int a;
    int b = 2, c = 3;
    a = 1;
    Console.WriteLine(a + b + c);
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td>Local constant declaration</td>
-<td>
-<pre><code>static void Main() {
-	const float pi = 3.1415927f;
-	const int r = 25;
-	Console.WriteLine(pi * r * r);
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td>Expression statement</td>
-<td>
-<pre><code>static void Main() {
-	int i;
-	i = 123;				// Expression statement
-	Console.WriteLine(i);	// Expression statement
-	i++;					// Expression statement
-	Console.WriteLine(i);	// Expression statement
-}</code></pre>
-</td>
-</tr> 
-<tr>
-<td><code>if</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	if (args.Length == 0) {
-		Console.WriteLine("No arguments");
-	}
-	else {
-		Console.WriteLine("One or more arguments");
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>switch</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	int n = args.Length;
-	switch (n) {
-		case 0:
-			Console.WriteLine("No arguments");
-			break;
-		case 1:
-			Console.WriteLine("One argument");
-			break;
-		default:
-			Console.WriteLine("{0} arguments", n);
-			break;
-		}
-	}
-}</code></pre>
-</td>
-</tr> 
-<tr>
-<td><code>while</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	int i = 0;
-	while (i < args.Length) {
-		Console.WriteLine(args[i]);
-		i++;
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>do</code> statement</td>
-<td>
-<pre><code>static void Main() {
-	string s;
-	do {
-		s = Console.ReadLine();
-		if (s != null) Console.WriteLine(s);
-	} while (s != null);
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>for</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	for (int i = 0; i < args.Length; i++) {
-		Console.WriteLine(args[i]);
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>foreach</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	foreach (string s in args) {
-		Console.WriteLine(s);
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>break</code> statement</td>
-<td>
-<pre><code>static void Main() {
-	while (true) {
-		string s = Console.ReadLine();
-		if (s == null) break;
-		Console.WriteLine(s);
-	}
-}</code></pre>
-</td>
-</tr> 
-<tr>
-<td><code>continue</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	for (int i = 0; i < args.Length; i++) {
-		if (args[i].StartsWith("/")) continue;
-		Console.WriteLine(args[i]);
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>goto</code> statement</td>
-<td>
-<pre><code>static void Main(string[] args) {
-	int i = 0;
-	goto check;
-	loop:
-	Console.WriteLine(args[i++]);
-	check:
-	if (i < args.Length) goto loop;
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>return</code> statement</td>
-<td>
-<pre><code>static int Add(int a, int b) {
-	return a + b;
 }
-static void Main() {
-	Console.WriteLine(Add(1, 2));
-	return;
-}</code></pre>
-</td>
-</tr> 
-<tr>
-<td><code>yield</code> statement</td>
-<td>
-<pre><code>static IEnumerable<int> Range(int from, int to) {
-	for (int i = from; i < to; i++) {
-		yield return i;
-	}
-	yield break;
-}
-static void Main() {
-	foreach (int x in Range(-10,10)) {
-		Console.WriteLine(x);
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>throw</code> and <code>try</code> statements</td>
-<td>
-<pre><code>static double Divide(double x, double y) {
-	if (y == 0) throw new DivideByZeroException();
-	return x / y;
-}
-static void Main(string[] args) {
-	try {
-		if (args.Length != 2) {
-			throw new Exception("Two numbers required");
-		}
-		double x = double.Parse(args[0]);
-		double y = double.Parse(args[1]);
-		Console.WriteLine(Divide(x, y));
-	}
-	catch (Exception e) {
-		Console.WriteLine(e.Message);
-	}
-	finally {
-		Console.WriteLine(“Good bye!”);
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>checked</code> and <code>unchecked</code> statements</td>
-<td>
-<pre><code>static void Main() {
-	int i = int.MaxValue;
-	checked {
-		Console.WriteLine(i + 1);		// Exception
-	}
-	unchecked {
-		Console.WriteLine(i + 1);		// Overflow
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>lock</code> statement</td>
-<td>
-<pre><code>class Account
-{
-	decimal balance;
-	public void Withdraw(decimal amount) {
-		lock (this) {
-			if (amount > balance) {
-				throw new Exception("Insufficient funds");
-			}
-			balance -= amount;
-		}
-	}
-}</code></pre>
-</td>
-</tr>
-<tr>
-<td><code>using</code> statement</td>
-<td>
-<pre><code>static void Main() {
-	using (TextWriter w = File.CreateText("test.txt")) {
-		w.WriteLine("Line one");
-		w.WriteLine("Line two");
-		w.WriteLine("Line three");
-	}
-}</code></pre>
-</td>
-</tr> 
-</table>
+```
 
-##     Classes and objects
+
+**Local constant declaration**
+
+```csharp
+static void Main() {
+    const float pi = 3.1415927f;
+    const int r = 25;
+    Console.WriteLine(pi * r * r);
+}
+```
+
+
+**Expression statement**
+
+```csharp
+static void Main() {
+    int i;
+    i = 123;                // Expression statement
+    Console.WriteLine(i);   // Expression statement
+    i++;                    // Expression statement
+    Console.WriteLine(i);   // Expression statement
+}
+```
+
+**`if` statement**
+
+```csharp
+static void Main(string[] args) {
+    if (args.Length == 0) {
+        Console.WriteLine("No arguments");
+    }
+    else {
+        Console.WriteLine("One or more arguments");
+    }
+}
+```
+
+
+**`switch` statement**
+
+```csharp
+static void Main(string[] args) {
+    int n = args.Length;
+    switch (n) {
+        case 0:
+            Console.WriteLine("No arguments");
+            break;
+        case 1:
+            Console.WriteLine("One argument");
+            break;
+        default:
+            Console.WriteLine("{0} arguments", n);
+            break;
+        }
+    }
+}
+```
+
+**`while` statement**
+
+```csharp
+static void Main(string[] args) {
+    int i = 0;
+    while (i < args.Length) {
+        Console.WriteLine(args[i]);
+        i++;
+    }
+}
+```
+
+
+**`do` statement**
+
+```csharp
+tatic void Main() {
+    string s;
+    do {
+        s = Console.ReadLine();
+        if (s != null) Console.WriteLine(s);
+    } while (s != null);
+}
+```
+
+**`for` statement**
+
+```csharp
+static void Main(string[] args) {
+    for (int i = 0; i < args.Length; i++) {
+        Console.WriteLine(args[i]);
+    }
+}
+```
+
+**`foreach` statement**
+
+```csharp
+static void Main(string[] args) {
+    foreach (string s in args) {
+        Console.WriteLine(s);
+    }
+}
+```
+
+**`break` statement**
+
+```csharp
+static void Main() {
+    while (true) {
+        string s = Console.ReadLine();
+        if (s == null) break;
+        Console.WriteLine(s);
+    }
+}
+```
+
+**`continue` statement**
+
+```csharp
+static void Main(string[] args) {
+    for (int i = 0; i < args.Length; i++) {
+        if (args[i].StartsWith("/")) continue;
+        Console.WriteLine(args[i]);
+    }
+}
+```
+
+**`goto` statement**
+
+```csharp
+static void Main(string[] args) {
+    int i = 0;
+    goto check;
+    loop:
+    Console.WriteLine(args[i++]);
+    check:
+    if (i < args.Length) goto loop;
+}
+```
+
+**`return` statement**
+
+```csharp
+static int Add(int a, int b) {
+    return a + b;
+}
+
+static void Main() {
+    Console.WriteLine(Add(1, 2));
+    return;
+}
+```
+
+**`yield` statement**
+
+```csharp
+static IEnumerable<int> Range(int from, int to) {
+    for (int i = from; i < to; i++) {
+        yield return i;
+    }
+    yield break;
+}
+
+static void Main() {
+    foreach (int x in Range(-10,10)) {
+        Console.WriteLine(x);
+    }
+}
+```
+
+**`throw` and `try` statements**
+
+```csharp
+static double Divide(double x, double y) {
+    if (y == 0) throw new DivideByZeroException();
+    return x / y;
+}
+
+static void Main(string[] args) {
+    try {
+        if (args.Length != 2) {
+            throw new Exception("Two numbers required");
+        }
+        double x = double.Parse(args[0]);
+        double y = double.Parse(args[1]);
+        Console.WriteLine(Divide(x, y));
+    }
+    catch (Exception e) {
+        Console.WriteLine(e.Message);
+    }
+    finally {
+        Console.WriteLine(“Good bye!”);
+    }
+}
+```
+
+**`checked` and `unchecked` statements**
+
+```csharp
+static void Main() {
+    int i = int.MaxValue;
+    checked {
+        Console.WriteLine(i + 1);        // Exception
+    }
+    unchecked {
+        Console.WriteLine(i + 1);        // Overflow
+    }
+}
+```
+
+**`lock` statement**
+
+```csharp
+class Account
+{
+    decimal balance;
+    public void Withdraw(decimal amount) {
+        lock (this) {
+            if (amount > balance) {
+                throw new Exception("Insufficient funds");
+            }
+            balance -= amount;
+        }
+    }
+}
+```
+
+**`using` statement**
+
+```csharp
+static void Main() {
+    using (TextWriter w = File.CreateText("test.txt")) {
+        w.WriteLine("Line one");
+        w.WriteLine("Line two");
+        w.WriteLine("Line three");
+    }
+}
+```
+
+## Classes and objects
 
 *__Classes__* are the most fundamental of C#'s types. A class is a data structure that combines state (fields) and actions (methods and other function members) in a single unit. A class provides a definition for dynamically created *__instances__* of the class, also known as *__objects__*. Classes support *__inheritance__* and *__polymorphism__*, mechanisms whereby *__derived classes__* can extend and specialize *__base classes__*.
 
@@ -590,50 +580,48 @@ public class Point
     }
 }
 ```
-
 Instances of classes are created using the `new` operator, which allocates memory for a new instance, invokes a constructor to initialize the instance, and returns a reference to the instance. The following statements create two `Point` objects and store references to those objects in two variables:
 
 ```
 Point p1 = new Point(0, 0);
 Point p2 = new Point(10, 20);
 ```
-
 The memory occupied by an object is automatically reclaimed when the object is no longer in use. It is neither necessary nor possible to explicitly deallocate objects in C#.
 
-###     Members
+### Members
 
 The members of a class are either *__static members__* or *__instance members__*. Static members belong to classes, and instance members belong to objects (instances of classes).
 
 The following table provides an overview of the kinds of members a class can contain.
 
 
-| __Member__ | __Description__ | 
-|------------|-----------------|
-| Constants | Constant values associated with the class | 
-| Fields | Variables of the class | 
-| Methods | Computations and actions that can be performed by the class | 
-| Properties | Actions associated with reading and writing named properties of the class | 
-| Indexers | Actions associated with indexing instances of the class like an array | 
-| Events | Notifications that can be generated by the class | 
-| Operators | Conversions and expression operators supported by the class | 
-| Constructors | Actions required to initialize instances of the class or the class itself | 
-| Destructors | Actions to perform before instances of the class are permanently discarded | 
-| Types | Nested types declared by the class | 
+| __Member__   | __Description__ |
+|------------  |-----------------|
+| Constants    | Constant values associated with the class |
+| Fields       | Variables of the class |
+| Methods      | Computations and actions that can be performed by the class |
+| Properties   | Actions associated with reading and writing named properties of the class |
+| Indexers     | Actions associated with indexing instances of the class like an array |
+| Events       | Notifications that can be generated by the class |
+| Operators    | Conversions and expression operators supported by the class |
+| Constructors | Actions required to initialize instances of the class or the class itself |
+| Destructors  | Actions to perform before instances of the class are permanently discarded |
+| Types        | Nested types declared by the class |
 
-###     Accessibility
+### Accessibility
 
 Each member of a class has an associated accessibility, which controls the regions of program text that are able to access the member. There are five possible forms of accessibility. These are summarized in the following table.
 
 
-| __Accessibility__ | __Meaning__ | 
-|------------|-----------------|
-| `public` | Access not limited | 
-| `protected` | Access limited to this class or classes derived from this class | 
-| `internal` | Access limited to this program | 
-| `protected internal` | Access limited to this program or classes derived from this class | 
-| `private` | Access limited to this class | 
+| __Accessibility__    | __Meaning__ |
+|----------------------|-----------------|
+| `public`             | Access not limited |
+| `protected`          | Access limited to this class or classes derived from this class |
+| `internal`           | Access limited to this program |
+| `protected internal` | Access limited to this program or classes derived from this class |
+| `private`            | Access limited to this class |
 
-###     Type parameters
+### Type parameters
 
 A class definition may specify a set of type parameters by following the class name with angle brackets enclosing a list of type parameter names. The type parameters can the be used in the body of the class declarations to define the members of the class. In the following example, the type parameters of `Pair` are `TFirst` and `TSecond`:
 
@@ -641,11 +629,9 @@ A class definition may specify a set of type parameters by following the class n
 public class Pair<TFirst,TSecond>
 {
     public TFirst First;
-
     public TSecond Second;
 }
 ```
-
 A class type that is declared to take type parameters is called a generic class type. Struct, interface and delegate types can also be generic.
 
 When the generic class is used, type arguments must be provided for each of the type parameters:
@@ -655,10 +641,10 @@ Pair<int,string> pair = new Pair<int,string> { First = 1, Second = "two" };
 int i = pair.First;     // TFirst is int
 string s = pair.Second; // TSecond is string
 ```
+A generic type with type arguments provided, like `Pair<int,string>
+    ` above, is called a constructed type.
 
-A generic type with type arguments provided, like `Pair<int,string>` above, is called a constructed type.
-
-###     Base classes
+### Base classes
 
 A class declaration may specify a base class by following the class name and type parameters with a colon and the name of the base class. Omitting a base class specification is the same as deriving from type `object`. In the following example, the base class of `Point3D` is `Point`, and the base class of `Point` is `object`:
 
@@ -682,7 +668,6 @@ public class Point3D: Point
     }
 }
 ```
-
 A class inherits the members of its base class. Inheritance means that a class implicitly contains all members of its base class, except for the instance and static constructors, and the destructors of the base class. A derived class can add new members to those it inherits, but it cannot remove the definition of an inherited member. In the previous example, `Point3D` inherits the `x` and `y` fields from `Point`, and every `Point3D` instance contains three fields, `x`, `y`, and `z`.
 
 An implicit conversion exists from a class type to any of its base class types. Therefore, a variable of a class type can reference an instance of that class or an instance of any derived class. For example, given the previous class declarations, a variable of type `Point` can reference either a `Point` or a `Point3D`:
@@ -692,7 +677,7 @@ Point a = new Point(10, 20);
 Point b = new Point3D(10, 20, 30);
 ```
 
-###     Fields
+### Fields
 
 A field is a variable that is associated with a class or with an instance of a class.
 
@@ -710,7 +695,6 @@ public class Color
     public static readonly Color Red = new Color(255, 0, 0);
     public static readonly Color Green = new Color(0, 255, 0);
     public static readonly Color Blue = new Color(0, 0, 255);
-
     private byte r, g, b;
 
     public Color(byte r, byte g, byte b) {
@@ -720,10 +704,9 @@ public class Color
     }
 }
 ```
-
 As shown in the previous example, *__read-only fields__* may be declared with a `readonly` modifier. Assignment to a `readonly` field can only occur as part of the field's declaration or in a constructor in the same class.
 
-###     Methods
+### Methods
 
 A *__method__* is a member that implements a computation or action that can be performed by an object or class. *__Static methods__* are accessed through the class. *__Instance methods__* are accessed through instances of the class.
 
@@ -733,7 +716,7 @@ Like types, methods may also have a set of type parameters, for which type argum
 
 The *__signature__* of a method must be unique in the class in which the method is declared. The signature of a method consists of the name of the method, the number of type parameters and the number, modifiers, and types of its parameters. The signature of a method does not include the return type.
 
-####     Parameters
+#### Parameters
 
 Parameters are used to pass values or variable references to methods. The parameters of a method get their actual values from the *__arguments__* that are specified when the method is invoked. There are four kinds of parameters: value parameters, reference parameters, output parameters, and parameter arrays.
 
@@ -761,7 +744,6 @@ class Test
     }
 }
 ```
-
 An *__output parameter__* is used for output parameter passing. An output parameter is similar to a reference parameter except that the initial value of the caller-provided argument is unimportant. An output parameter is declared with the `out` modifier. The following example shows the use of `out` parameters.
 
 ```csharp
@@ -781,26 +763,21 @@ class Test
     }
 }
 ```
-
 A *__parameter array__* permits a variable number of arguments to be passed to a method. A parameter array is declared with the `params` modifier. Only the last parameter of a method can be a parameter array, and the type of a parameter array must be a single-dimensional array type. The `Write` and `WriteLine` methods of the `System.Console` class are good examples of parameter array usage. They are declared as follows.
 
 ```csharp
 public class Console
 {
     public static void Write(string fmt, params object[] args) {...}
-
     public static void WriteLine(string fmt, params object[] args) {...}
-
     ...
 }
 ```
-
 Within a method that uses a parameter array, the parameter array behaves exactly like a regular parameter of an array type. However, in an invocation of a method with a parameter array, it is possible to pass either a single argument of the parameter array type or any number of arguments of the element type of the parameter array. In the latter case, an array instance is automatically created and initialized with the given arguments. This example
 
 ```csharp
 Console.WriteLine("x={0} y={1} z={2}", x, y, z);
 ```
-
 is equivalent to writing the following.
 
 ```csharp
@@ -812,7 +789,7 @@ args[2] = z;
 Console.WriteLine(s, args);
 ```
 
-####     Method body and local variables
+#### Method body and local variables
 
 A method's body specifies the statements to execute when the method is invoked.
 
@@ -834,12 +811,11 @@ class Squares
     }
 }
 ```
-
 C# requires a local variable to be *__definitely assigned__* before its value can be obtained. For example, if the declaration of the previous `i` did not include an initial value, the compiler would report an error for the subsequent usages of `i` because `i` would not be definitely assigned at those points in the program.
 
 A method can use `return` statements to return control to its caller. In a method returning `void`, `return` statements cannot specify an expression. In a method returning non-`void`, `return` statements must include an expression that computes the return value.
 
-####     Static and instance methods
+#### Static and instance methods
 
 A method declared with a `static` modifier is a *__static method__*. A static method does not operate on a specific instance and can only directly access static members.
 
@@ -851,7 +827,6 @@ The following `Entity` class has both static and instance members.
 class Entity
 {
     static int nextSerialNo;
-
     int serialNo;
 
     public Entity() {
@@ -871,7 +846,6 @@ class Entity
     }
 }
 ```
-
 Each `Entity` instance contains a serial number (and presumably some other information that is not shown here). The `Entity` constructor (which is like an instance method) initializes the new instance with the next available serial number. Because the constructor is an instance member, it is permitted to access both the `serialNo` instance field and the `nextSerialNo` static field.
 
 The `GetNextSerialNo` and `SetNextSerialNo` static methods can access the `nextSerialNo` static field, but it would be an error for them to directly access the `serialNo` instance field.
@@ -885,20 +859,17 @@ class Test
 {
     static void Main() {
         Entity.SetNextSerialNo(1000);
-
         Entity e1 = new Entity();
         Entity e2 = new Entity();
-
         Console.WriteLine(e1.GetSerialNo());           // Outputs "1000"
         Console.WriteLine(e2.GetSerialNo());           // Outputs "1001"
         Console.WriteLine(Entity.GetNextSerialNo());   // Outputs "1002"
     }
 }
 ```
-
 Note that the `SetNextSerialNo` and `GetNextSerialNo` static methods are invoked on the class whereas the `GetSerialNo` instance method is invoked on instances of the class.
 
-####     Virtual, override, and abstract methods
+#### Virtual, override, and abstract methods
 
 When an instance method declaration includes a `virtual` modifier, the method is said to be a *__virtual method__*. When no `virtual` modifier is present, the method is said to be a *__non-virtual method__*.
 
@@ -974,7 +945,6 @@ public class Operation: Expression
     }
 }
 ```
-
 The previous four classes can be used to model arithmetic expressions. For example, using instances of these classes, the expression `x + 3` can be represented as follows.
 
 ```csharp
@@ -983,7 +953,6 @@ Expression e = new Operation(
     '+',
     new Constant(3));
 ```
-
 The `Evaluate` method of an `Expression` instance is invoked to evaluate the given expression and produce a `double` value. The method takes as an argument a `Hashtable` that contains variable names (as keys of the entries) and values (as values of the entries). The `Evaluate` method is a virtual abstract method, meaning that non-abstract derived classes must override it to provide an actual implementation.
 
 A `Constant`'s implementation of `Evaluate` simply returns the stored constant. A `VariableReference`'s implementation looks up the variable name in the hashtable and returns the resulting value. An `Operation`'s implementation first evaluates the left and right operands (by recursively invoking their `Evaluate` methods) and then performs the given arithmetic operation.
@@ -997,7 +966,6 @@ using System.Collections;
 class Test
 {
     static void Main() {
-
         Expression e = new Operation(
             new VariableReference("x"),
             '*',
@@ -1007,13 +975,10 @@ class Test
                 new Constant(2)
             )
         );
-
         Hashtable vars = new Hashtable();
-
         vars["x"] = 3;
         vars["y"] = 5;
         Console.WriteLine(e.Evaluate(vars));        // Outputs "21"
-
         vars["x"] = 1.5;
         vars["y"] = 9;
         Console.WriteLine(e.Evaluate(vars));        // Outputs "16.5"
@@ -1021,7 +986,7 @@ class Test
 }
 ```
 
-####     Method overloading
+#### Method overloading
 
 Method *__overloading__* permits multiple methods in the same class to have the same name as long as they have unique signatures. When compiling an invocation of an overloaded method, the compiler uses *__overload resolution__* to determine the specific method to invoke. Overload resolution finds the one method that best matches the arguments or reports an error if no single best match can be found. The following example shows overload resolution in effect. The comment for each invocation in the `Main` method shows which method is actually invoked.
 
@@ -1064,10 +1029,9 @@ class Test
     }
 }
 ```
-
 As shown by the example, a particular method can always be selected by explicitly casting the arguments to the exact parameter types and/or explicitly supplying type arguments.
 
-###     Other function members
+### Other function members
 
 Members that contain executable code are collectively known as the *__function members__* of a class. The preceding section describes methods, which are the primary kind of function members. This section describes the other kinds of function members supported by C#: constructors, properties, indexers, events, operators, and destructors.
 
@@ -1076,20 +1040,17 @@ The following code shows a generic class called `List<T>`, which implements a gr
 
 ```csharp
 public class List<T> {
-
     // Constant...
-    const int defaultCapacity = 4; 
-
+    const int defaultCapacity = 4;
 
     // Fields...
     T[] items;
     int count;
-    
+
     // Constructors...
     public List(int capacity = defaultCapacity) {
         items = new T[capacity];
     }
-    
 
     // Properties...
     public int Count {
@@ -1108,19 +1069,17 @@ public class List<T> {
             }
         }
     }
-    
 
     // Indexer...
     public T this[int index] {
-       get {
-           return items[index];
-       }
-       set {
-           items[index] = value;
-           OnChanged();
-       }
+        get {
+            return items[index];
+        }
+        set {
+            items[index] = value;
+            OnChanged();
+        }
     }
-    
 
     // Methods...
     public void Add(T item) {
@@ -1130,7 +1089,7 @@ public class List<T> {
         OnChanged();
     }
     protected virtual void OnChanged() {
-       if (Changed != null) Changed(this, EventArgs.Empty);
+        if (Changed != null) Changed(this, EventArgs.Empty);
     }
     public override bool Equals(object other) {
         return Equals(this, other as List<T>);
@@ -1148,7 +1107,6 @@ public class List<T> {
 
     // Event...
     public event EventHandler Changed;
-    
 
     // Operators...
     public static bool operator ==(List<T> a, List<T> b) {
@@ -1160,22 +1118,23 @@ public class List<T> {
 }
 ```
 
-####     Constructors
+#### Constructors
 
 C# supports both instance and static constructors. An *__instance constructor__* is a member that implements the actions required to initialize an instance of a class. A *__static constructor__* is a member that implements the actions required to initialize a class itself when it is first loaded.
 
 A constructor is declared like a method with no return type and the same name as the containing class. If a constructor declaration includes a `static` modifier, it declares a static constructor. Otherwise, it declares an instance constructor.
 
-Instance constructors can be overloaded. For example, the `List<T>` class declares two instance constructors, one with no parameters and one that takes an `int` parameter. Instance constructors are invoked using the `new` operator. The following statements allocate two `List<string>` instances using each of the constructors of the `List` class.
+Instance constructors can be overloaded. For example, the `List<T>
+` class declares two instance constructors, one with no parameters and one that takes an `int` parameter. Instance constructors are invoked using the `new` operator. The following statements allocate two `List<string>
+` instances using each of the constructors of the `List` class.
 
 ```csharp
 List<string> list1 = new List<string>();
 List<string> list2 = new List<string>(10);
 ```
-
 Unlike other members, instance constructors are not inherited, and a class has no instance constructors other than those actually declared in the class. If no instance constructor is supplied for a class, then an empty one with no parameters is automatically provided.
 
-####     Properties
+#### Properties
 
 *__Properties__* are a natural extension of fields. Both are named members with associated types, and the syntax for accessing fields and properties is the same. However, unlike fields, properties do not denote storage locations. Instead, properties have *__accessors__* that specify the statements to be executed when their values are read or written.
 
@@ -1185,7 +1144,8 @@ A `get` accessor corresponds to a parameterless method with a return value of th
 
 A `set` accessor corresponds to a method with a single parameter named `value` and no return type. When a property is referenced as the target of an assignment or as the operand of `++` or `--`, the `set` accessor is invoked with an argument that provides the new value.
 
-The `List<T>` class declares two properties, `Count` and `Capacity`, which are read-only and read-write, respectively. The following is an example of use of these properties.
+The `List<T>
+` class declares two properties, `Count` and `Capacity`, which are read-only and read-write, respectively. The following is an example of use of these properties.
 
 ```csharp
 List<string> names = new List<string>();
@@ -1193,12 +1153,11 @@ names.Capacity = 100;            // Invokes set accessor
 int i = names.Count;             // Invokes get accessor
 int j = names.Capacity;          // Invokes get accessor
 ```
-
 Similar to fields and methods, C# supports both instance properties and static properties. Static properties are declared with the `static` modifier, and instance properties are declared without it.
 
 The accessor(s) of a property can be virtual. When a property declaration includes a `virtual`, `abstract`, or `override` modifier, it applies to the accessor(s) of the property.
 
-####     Indexers
+#### Indexers
 
 An *__indexer__* is a member that enables objects to be indexed in the same way as an array. An indexer is declared like a property except that the name of the member is `this` followed by a parameter list written between the delimiters `[` and `]`. The parameters are available in the accessor(s) of the indexer. Similar to properties, indexers can be read-write, read-only, and write-only, and the accessor(s) of an indexer can be virtual.
 
@@ -1210,22 +1169,23 @@ names.Add("Liz");
 names.Add("Martha");
 names.Add("Beth");
 for (int i = 0; i < names.Count; i++) {
-    string s = names[i];
-    names[i] = s.ToUpper();
+string s = names[i];
+names[i] = s.ToUpper();
 }
 ```
-
 Indexers can be overloaded, meaning that a class can declare multiple indexers as long as the number or types of their parameters differ.
 
-####     Events
+#### Events
 
 An *__event__* is a member that enables a class or object to provide notifications. An event is declared like a field except that the declaration includes an `event` keyword and the type must be a delegate type.
 
 Within a class that declares an event member, the event behaves just like a field of a delegate type (provided the event is not abstract and does not declare accessors). The field stores a reference to a delegate that represents the event handlers that have been added to the event. If no event handles are present, the field is `null`.
 
-The `List<T>` class declares a single event member called `Changed`, which indicates that a new item has been added to the list. The `Changed` event is raised by the `OnChanged` virtual method, which first checks whether the event is `null` (meaning that no handlers are present). The notion of raising an event is precisely equivalent to invoking the delegate represented by the event—thus, there are no special language constructs for raising events.
+The `List<T>
+` class declares a single event member called `Changed`, which indicates that a new item has been added to the list. The `Changed` event is raised by the `OnChanged` virtual method, which first checks whether the event is `null` (meaning that no handlers are present). The notion of raising an event is precisely equivalent to invoking the delegate represented by the event—thus, there are no special language constructs for raising events.
 
-Clients react to events through *__event handlers__*. Event handlers are attached using the `+=` operator and removed using the `-=` operator. The following example attaches an event handler to the `Changed` event of a `List<string>`.
+Clients react to events through *__event handlers__*. Event handlers are attached using the `+=` operator and removed using the `-=` operator. The following example attaches an event handler to the `Changed` event of a `List<string>
+`.
 
 ```csharp
 using System;
@@ -1248,14 +1208,16 @@ class Test
     }
 }
 ```
-
 For advanced scenarios where control of the underlying storage of an event is desired, an event declaration can explicitly provide `add` and `remove` accessors, which are somewhat similar to the `set` accessor of a property.
 
-####     Operators
+#### Operators
 
 An *__operator__* is a member that defines the meaning of applying a particular expression operator to instances of a class. Three kinds of operators can be defined: unary operators, binary operators, and conversion operators. All operators must be declared as `public` and `static`.
 
-The `List<T>` class declares two operators, `operator==` and `operator!=`, and thus gives new meaning to expressions that apply those operators to `List` instances. Specifically, the operators define equality of two `List<T>` instances as comparing each of the contained objects using their `Equals` methods. The following example uses the `==` operator to compare two `List<int>` instances.
+The `List<T>
+` class declares two operators, `operator==` and `operator!=`, and thus gives new meaning to expressions that apply those operators to `List` instances. Specifically, the operators define equality of two `List<T>
+` instances as comparing each of the contained objects using their `Equals` methods. The following example uses the `==` operator to compare two `List<int>
+` instances.
 
 ```csharp
 using System;
@@ -1269,16 +1231,18 @@ class Test
         List<int> b = new List<int>();
         b.Add(1);
         b.Add(2);
-        Console.WriteLine(a == b);        // Outputs "True" 
+        Console.WriteLine(a == b);        // Outputs "True"
         b.Add(3);
         Console.WriteLine(a == b);        // Outputs "False"
     }
 }
 ```
 
-The first `Console.WriteLine` outputs `True` because the two lists contain the same number of objects with the same values in the same order. Had `List<T>` not defined `operator==`, the first `Console.WriteLine` would have output `False` because `a` and `b` reference different `List<int>` instances.
+The first `Console.WriteLine` outputs `True` because the two lists contain the same number of objects with the same values in the same order. Had `List<T>
+` not defined `operator==`, the first `Console.WriteLine` would have output `False` because `a` and `b` reference different `List<int>
+` instances.
 
-####     Destructors
+#### Destructors
 
 A *__destructor__* is a member that implements the actions required to destruct an instance of a class. Destructors cannot have parameters, they cannot have accessibility modifiers, and they cannot be invoked explicitly. The destructor for an instance is invoked automatically during garbage collection.
 
@@ -1286,7 +1250,7 @@ The garbage collector is allowed wide latitude in deciding when to collect objec
 
 The `using` statement provides a better approach to object destruction.
 
-##     Structs
+## Structs
 
 Like classes, *__structs__* are data structures that can contain data members and function members, but unlike classes, structs are value types and do not require heap allocation. A variable of a struct type directly stores the data of the struct, whereas a variable of a class type stores a reference to a dynamically allocated object. Struct types do not support user-specified inheritance, and all struct types implicitly inherit from type `object`.
 
@@ -1311,7 +1275,6 @@ class Test
     }
 }
 ```
-
 An alternative is to make `Point` a struct.
 
 ```csharp
@@ -1325,7 +1288,6 @@ struct Point
     }
 }
 ```
-
 Now, only one object is instantiated—the one for the array—and the `Point` instances are stored in-line in the array.
 
 Struct constructors are invoked with the `new` operator, but that does not imply that memory is being allocated. Instead of dynamically allocating an object and returning a reference to it, a struct constructor simply returns the struct value itself (typically in a temporary location on the stack), and this value is then copied as necessary.
@@ -1338,12 +1300,11 @@ Point b = a;
 a.x = 20;
 Console.WriteLine(b.x);
 ```
-
 If `Point` is a class, the output is `20` because `a` and `b` reference the same object. If `Point` is a struct, the output is `10` because the assignment of `a` to `b` creates a copy of the value, and this copy is unaffected by the subsequent assignment to `a.x`.
 
 The previous example highlights two of the limitations of structs. First, copying an entire struct is typically less efficient than copying an object reference, so assignment and value parameter passing can be more expensive with structs than with reference types. Second, except for `ref` and `out` parameters, it is not possible to create references to structs, which rules out their usage in a number of situations.
 
-##     Arrays
+## Arrays
 
 An *__array__* is a data structure that contains a number of variables that are accessed through computed indices. The variables contained in an array, also called the *__elements__* of the array, are all of the same type, and this type is called the *__element type__* of the array.
 
@@ -1367,7 +1328,6 @@ class Test
     }
 }
 ```
-
 This example creates and operates on a *__single-dimensional array__*. C# also supports *__multi-dimensional arrays__*. The number of dimensions of an array type, also known as the *__rank__* of the array type, is one plus the number of commas written between the square brackets of the array type. The following example allocates a one-dimensional, a two-dimensional, and a three-dimensional array.
 
 ```csharp
@@ -1375,7 +1335,6 @@ int[] a1 = new int[10];
 int[,] a2 = new int[10, 5];
 int[,,] a3 = new int[10, 5, 2];
 ```
-
 The `a1` array contains 10 elements, the `a2` array contains 50 (10 × 5) elements, and the `a3` array contains 100 (10 × 5 × 2) elements.
 
 The element type of an array can be any type, including an array type. An array with elements of an array type is sometimes called a *__jagged array__* because the lengths of the element arrays do not all have to be the same. The following example allocates an array of arrays of `int`:
@@ -1386,7 +1345,6 @@ a[0] = new int[10];
 a[1] = new int[5];
 a[2] = new int[20];
 ```
-
 The first line creates an array with three elements, each of type `int[]` and each with an initial value of `null`. The subsequent lines then initialize the three elements with references to individual array instances of varying lengths.
 
 The `new` operator permits the initial values of the array elements to be specified using an *__array initializer__*, which is a list of expressions written between the delimiters `{` and `}`. The following example allocates and initializes an `int[]` with three elements.
@@ -1394,13 +1352,11 @@ The `new` operator permits the initial values of the array elements to be specif
 ```csharp
 int[] a = new int[] {1, 2, 3};
 ```
-
 Note that the length of the array is inferred from the number of expressions between `{` and `}`. Local variable and field declarations can be shortened further such that the array type does not have to be restated.
 
 ```csharp
 int[] a = {1, 2, 3};
 ```
-
 Both of the previous examples are equivalent to the following:
 
 ```csharp
@@ -1410,8 +1366,7 @@ t[1] = 2;
 t[2] = 3;
 int[] a = t;
 ```
-
-##     Interfaces
+## Interfaces
 
 An *__interface__* defines a contract that can be implemented by classes and structs. An interface can contain methods, properties, events, and indexers. An interface does not provide implementations of the members it defines—it merely specifies the members that must be supplied by classes or structs that implement the interface.
 
@@ -1435,7 +1390,6 @@ interface IListBox: IControl
 
 interface IComboBox: ITextBox, IListBox {}
 ```
-
 Classes and structs can implement multiple interfaces. In the following example, the class `EditBox` implements both `IControl` and `IDataBound`.
 
 ```csharp
@@ -1447,11 +1401,9 @@ interface IDataBound
 public class EditBox: IControl, IDataBound
 {
     public void Paint() {...}
-
     public void Bind(Binder b) {...}
 }
 ```
-
 When a class or struct implements a particular interface, instances of that class or struct can be implicitly converted to that interface type. For example
 
 ```csharp
@@ -1459,7 +1411,6 @@ EditBox editBox = new EditBox();
 IControl control = editBox;
 IDataBound dataBound = editBox;
 ```
-
 In cases where an instance is not statically known to implement a particular interface, dynamic type casts can be used. For example, the following statements use dynamic type casts to obtain an object's `IControl` and `IDataBound` interface implementations. Because the actual type of the object is `EditBox`, the casts succeed.
 
 ```csharp
@@ -1467,18 +1418,15 @@ object obj = new EditBox();
 IControl control = (IControl)obj;
 IDataBound dataBound = (IDataBound)obj;
 ```
-
 In the previous `EditBox` class, the `Paint` method from the `IControl` interface and the `Bind` method from the `IDataBound` interface are implemented using `public` members. C# also supports *__explicit interface member implementations__*, using which the class or struct can avoid making the members `public`. An explicit interface member implementation is written using the fully qualified interface member name. For example, the `EditBox` class could implement the `IControl.Paint` and `IDataBound.Bind` methods using explicit interface member implementations as follows.
 
 ```csharp
 public class EditBox: IControl, IDataBound
 {
     void IControl.Paint() {...}
-
     void IDataBound.Bind(Binder b) {...}
 }
 ```
-
 Explicit interface members can only be accessed via the interface type. For example, the implementation of `IControl.Paint` provided by the previous `EditBox` class can only be invoked by first converting the `EditBox` reference to the `IControl` interface type.
 
 ```csharp
@@ -1488,7 +1436,7 @@ IControl control = editBox;
 control.Paint();                        // Ok
 ```
 
-##     Enums
+## Enums
 
 An *__enum type__* is a distinct value type with a set of named constants. The following example declares and uses an enum type named `Color` with three constant values, `Red`, `Green`, and `Blue`.
 
@@ -1528,7 +1476,6 @@ class Test
     }
 }
 ```
-
 Each enum type has a corresponding integral type called the *__underlying type__* of the enum type. An enum type that does not explicitly declare an underlying type has an underlying type of `int`. An enum type's storage format and range of possible values are determined by its underlying type. The set of values that an enum type can take on is not limited by its enum members. In particular, any value of the underlying type of an enum can be cast to the enum type and is a distinct valid value of that enum type.
 
 The following example declares an enum type named `Alignment` with an underlying type of `sbyte`.
@@ -1541,7 +1488,6 @@ enum Alignment: sbyte
     Right = 1
 }
 ```
-
 As shown by the previous example, an enum member declaration can include a constant expression that specifies the value of the member. The constant value for each enum member must be in the range of the underlying type of the enum. When an enum member declaration does not explicitly specify a value, the member is given the value zero (if it is the first member in the enum type) or the value of the textually preceding enum member plus one.
 
 Enum values can be converted to integral values and vice versa using type casts. For example
@@ -1550,14 +1496,13 @@ Enum values can be converted to integral values and vice versa using type casts.
 int i = (int)Color.Blue;        // int i = 2;
 Color c = (Color)2;             // Color c = Color.Blue;
 ```
-
 The default value of any enum type is the integral value zero converted to the enum type. In cases where variables are automatically initialized to a default value, this is the value given to variables of enum types. In order for the default value of an enum type to be easily available, the literal `0` implicitly converts to any enum type. Thus, the following is permitted.
 
 ```csharp
 Color c = 0;
 ```
 
-##     Delegates
+## Delegates
 
 A *__delegate type__* represents references to methods with a particular parameter list and return type. Delegates make it possible to treat methods as entities that can be assigned to variables and passed as parameters. Delegates are similar to the concept of function pointers found in some other languages, but unlike function pointers, delegates are object-oriented and type-safe.
 
@@ -1595,17 +1540,13 @@ class Test
 
     static void Main() {
         double[] a = {0.0, 0.5, 1.0};
-
         double[] squares = Apply(a, Square);
-
         double[] sines = Apply(a, Math.Sin);
-
         Multiplier m = new Multiplier(2.0);
         double[] doubles =  Apply(a, m.Multiply);
     }
 }
 ```
-
 An instance of the `Function` delegate type can reference any method that takes a `double` argument and returns a `double` value. The `Apply` method applies a given `Function` to the elements of a `double[]`, returning a `double[]` with the results. In the `Main` method, `Apply` is used to apply three different functions to a `double[]`.
 
 A delegate can reference either a static method (such as `Square` or `Math.Sin` in the previous example) or an instance method (such as `m.Multiply` in the previous example). A delegate that references an instance method also references a particular object, and when the instance method is invoked through the delegate, that object becomes `this` in the invocation.
@@ -1615,10 +1556,9 @@ Delegates can also be created using anonymous functions, which are "inline metho
 ```csharp
 double[] doubles =  Apply(a, (double x) => x * 2.0);
 ```
-
 An interesting and useful property of a delegate is that it does not know or care about the class of the method it references; all that matters is that the referenced method has the same parameters and return type as the delegate.
 
-##     Attributes
+## Attributes
 
 Types, members, and other entities in a C# program support modifiers that control certain aspects of their behavior. For example, the accessibility of a method is controlled using the `public`, `protected`, `internal`, and `private` modifiers. C# generalizes this capability such that user-defined types of declarative information can be attached to program entities and retrieved at run-time. Programs specify this additional declarative information by defining and using *__attributes__*.
 
@@ -1636,7 +1576,7 @@ public class HelpAttribute: Attribute
         this.url = url;
     }
 
-    public string Url { 
+    public string Url {
         get { return url; }
     }
 
@@ -1646,7 +1586,6 @@ public class HelpAttribute: Attribute
     }
 }
 ```
-
 All attribute classes derive from the `System.Attribute` base class provided by the .NET Framework. Attributes can be applied by giving their name, along with any arguments, inside square brackets just before the associated declaration. If an attribute's name ends in `Attribute`, that part of the name can be omitted when the attribute is referenced. For example, the `HelpAttribute` attribute can be used as follows.
 
 ```csharp
@@ -1657,7 +1596,6 @@ public class Widget
     public void Display(string text) {}
 }
 ```
-
 This example attaches a `HelpAttribute` to the `Widget` class and another `HelpAttribute` to the `Display` method in the class. The public constructors of an attribute class control the information that must be provided when the attribute is attached to a program entity. Additional information can be provided by referencing public read-write properties of the attribute class (such as the reference to the `Topic` property previously).
 
 The following example shows how attribute information for a given program entity can be retrieved at run-time using reflection.
@@ -1686,5 +1624,4 @@ class Test
     }
 }
 ```
-
 When a particular attribute is requested through reflection, the constructor for the attribute class is invoked with the information provided in the program source, and the resulting attribute instance is returned. If additional information was provided through properties, those properties are set to the given values before the attribute instance is returned.

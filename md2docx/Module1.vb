@@ -30,11 +30,10 @@
                      From link In spans.OfType(Of FSharp.Markdown.MarkdownSpan.DirectLink)
                      Let url = link.Item2.Item1
                      Where url.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase)
-                     Where IO.File.Exists(url)
+                     Where IO.File.Exists(url) ' TODO: remove this
                      Select url).ToList.Distinct
         If files.Count = 0 Then files = {ifn}
-        'Dim md = MarkdownSpec.ReadFiles(files)
-        Dim md = MarkdownSpec.ReadString("`x `*op*`= y`")
+        Dim md = MarkdownSpec.ReadFiles(files)
 
 
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has

@@ -27,7 +27,6 @@ Class MarkdownSpec
             Dim spans = mdh.Item2
             If spans.Length = 1 AndAlso spans.First.IsLiteral Then
                 Title = mdunescape(CType(spans.First, MarkdownSpan.Literal)).Trim()
-                If Title.Contains("&amp;") Then Stop
             ElseIf spans.Length = 1 AndAlso spans.First.IsInlineCode Then
                 Title = CType(spans.First, MarkdownSpan.InlineCode).Item.Trim()
             Else

@@ -273,9 +273,13 @@ Here's an experiment about pipe symbols inside tables. It shows that the first "
 
 -----------------------------------------------------------------
 
-Here's an experiment about spacing and inline-code blocks.
+Here's an experiment about spacing and inline-code blocks. It shows that the first one isn't worth pursuing, because it has goofy colorization and spacing on Github.
 
 `x `*op*`= y`
+
+`x op= y`
+
+`x OP= y`
 
 
 -------------------------------------------------------------
