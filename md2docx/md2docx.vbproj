@@ -87,6 +87,10 @@
       <Link>readme.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\csharp\types.md">
+      <Link>types.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="project.json" />
     <None Include="template.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

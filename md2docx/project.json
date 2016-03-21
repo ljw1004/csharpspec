@@ -1,7 +1,8 @@
 ﻿{
   "dependencies": {
     "DocumentFormat.OpenXml": "2.5.0",
-    "FSharp.Formatting": "2.10.3"
+    "FSharp.Formatting": "2.14.0",
+    "Microsoft.CodeAnalysis": "1.2.0-rc"
   },
   "frameworks": {
     "net46": {}

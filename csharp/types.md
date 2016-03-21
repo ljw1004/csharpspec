@@ -320,7 +320,20 @@ The keyword `object` is simply an alias for the predefined class `System.Object`
 
 The `dynamic` type, like `object`, can reference any object. When operators are applied to expressions of type `dynamic`, their resolution is deferred until the program is run. Thus, if the operator cannot legally be applied to the referenced object, no error is given during compilation. Instead an exception will be thrown when resolution of the operator fails at run-time.
 
-The dynamic type is further described in §4.7, and dynamic binding in §7.2.2.
+Its purpose is to allow dynamic binding, which is described in detail in §7.2.2.
+
+`dynamic` is considered identical to `object` except in the following respects:
+
+-  Operations on expressions of type `dynamic` can be dynamically bound (§7.2.2).
+-  Type inference (§7.5.2) will prefer `dynamic` over `object` if both are candidates.
+
+Because of this equivalence, the following holds:
+
+-  There is an implicit identity conversion between `object` and `dynamic`, and between constructed types that are the same when replacing `dynamic` with `object`
+-  Implicit and explicit conversions to and from `object` also apply to and from `dynamic`.
+-  Method signatures that are the same when replacing `dynamic` with `object` are considered the same signature
+-  The type `dynamic` is indistinguishable from `object` at run-time.
+-  An expression of the type `dynamic` is referred to as a *__dynamic expression__*.
 
 ### The string type
 
@@ -655,19 +668,3 @@ int i2 = del2(1);
 
         After executing this code,  `i1` and `i2` will both have the value `2`.
 
-## The dynamic type
-
-The type `dynamic` has special meaning in C#. Its purpose is to allow dynamic binding, which is described in detail in §7.2.2.
-
-`dynamic` is considered identical to `object` except in the following respects:
-
--  Operations on expressions of type `dynamic` can be dynamically bound (§7.2.2).
--  Type inference (§7.5.2) will prefer `dynamic` over `object` if both are candidates.
-
-Because of this equivalence, the following holds:
-
--  There is an implicit identity conversion between `object` and `dynamic`, and between constructed types that are the same when replacing `dynamic` with `object`
--  Implicit and explicit conversions to and from `object` also apply to and from `dynamic`.
--  Method signatures that are the same when replacing `dynamic` with `object` are considered the same signature
--  The type `dynamic` is indistinguishable from `object` at run-time.
--  An expression of the type `dynamic` is referred to as a *__dynamic expression__*.

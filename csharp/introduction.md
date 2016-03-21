@@ -1169,8 +1169,8 @@ names.Add("Liz");
 names.Add("Martha");
 names.Add("Beth");
 for (int i = 0; i < names.Count; i++) {
-string s = names[i];
-names[i] = s.ToUpper();
+    string s = names[i];
+    names[i] = s.ToUpper();
 }
 ```
 Indexers can be overloaded, meaning that a class can declare multiple indexers as long as the number or types of their parameters differ.
