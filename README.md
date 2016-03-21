@@ -270,11 +270,14 @@ Here's an experiment about pipe symbols inside tables. It shows that the first "
 | Plain | Nothing |
 | PlainCode | <code>stuff</code> |
 
-| Second | Table |
-|--------|-------|
-| hello  | <code>stuff</code> |
-
 
 -----------------------------------------------------------------
+
+Here's an experiment about spacing and inline-code blocks.
+
+`x `*op*`= y`
+
+
+-------------------------------------------------------------
 
 End of experiments.

@@ -33,7 +33,8 @@
                      Where IO.File.Exists(url)
                      Select url).ToList.Distinct
         If files.Count = 0 Then files = {ifn}
-        Dim md = MarkdownSpec.ReadFiles(files)
+        'Dim md = MarkdownSpec.ReadFiles(files)
+        Dim md = MarkdownSpec.ReadString("`x `*op*`= y`")
 
 
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has

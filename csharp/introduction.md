@@ -180,9 +180,9 @@ The following table summarizes C#'s numeric types.
 |  | 16 | `ushort` | 0...65,535 | 
 |  | 32 | `uint` | 0...4,294,967,295 | 
 |  | 64 | `ulong` | 0...18,446,744,073,709,551,615 | 
-| Floating point | 32 | `float` | 1.5 × 10<sup>−45</sup> to 3.4 × 10<sup>38</sup>, 7-digit precision | 
-|  | 64 | `double` | 5.0 × 10<sup>−324</sup> to 1.7 × 10<sup>308</sup>, 15-digit precision | 
-| Decimal | 128 | `decimal` | 1.0 × 10<sup>−28</sup> to 7.9 × 10<sup>28</sup>, 28-digit precision | 
+| Floating point | 32 | `float` | 1.5 × 10^−45 to 3.4 × 10^38, 7-digit precision | 
+|  | 64 | `double` | 5.0 × 10^−324 to 1.7 × 10^308, 15-digit precision | 
+| Decimal | 128 | `decimal` | 1.0 × 10^−28 to 7.9 × 10^28, 28-digit precision | 
 
 C# programs use *__type declarations__* to create new types. A type declaration specifies the name and the members of the new type. Five of C#'s categories of types are user-definable: class types, struct types, interface types, enum types, and delegate types.
 
