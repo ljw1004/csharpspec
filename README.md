@@ -105,6 +105,31 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
+The following experiment is about underscore terms inside italics.
+
+A *asterisk* B
+
+A *asterisk_one* B
+
+A *asterisk_one_two* B
+
+A *asterisk_one_two_three* B
+
+A *asterisk_one_two_three_four* B
+
+A _underscore_ B
+
+A _underscore_one_ B
+
+A _underscore_one_two_ B
+
+A _underscore_one_two_three_ B
+
+A _underscore_one_two_three_four_ B
+
+
+-------------------------------------------------------------
+
 The following experiment is about code inside lists. Github doesn't render the "Bullet1/Bullet2" as desired. It does render the "Bullet3/Bullet4" as desired.
 
 First without any newlines:
