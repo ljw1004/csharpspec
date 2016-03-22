@@ -179,15 +179,36 @@ Module Colorizer
         Inherits SyntaxWalker
         ' This code is based on that of Shiv Kumar at http://www.matlus.com/c-to-html-syntax-highlighter-using-roslyn/
 
+
         Public Shared Function Colorize(code As String) As IEnumerable(Of ColorizedWord)
-            Dim compilationUnit = CSharp.SyntaxFactory.ParseCompilationUnit(code)
-            Dim syntaxTree = compilationUnit.SyntaxTree
-            Dim mscorlib = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
-            Dim compilation = CSharp.CSharpCompilation.Create("dummyAssemblyName", {syntaxTree}, {mscorlib})
-            Dim semanticModel = compilation.GetSemanticModel(syntaxTree, True)
-            Dim w As New CSharpColorizer With {.sm = semanticModel}
-            w.Visit(syntaxTree.GetRoot)
-            Return w.words
+            Dim ref_mscorlib = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
+            Dim ref_system = MetadataReference.CreateFromFile(GetType(Uri).Assembly.Location)
+            Dim ref_systemcore = MetadataReference.CreateFromFile(GetType(Enumerable).Assembly.Location)
+            Dim ref_systemcollectionsimmutable = MetadataReference.CreateFromFile(GetType(Immutable.ImmutableArray).Assembly.Location)
+            Dim ienumerable = MetadataReference.CreateFromFile(GetType(IEnumerable(Of Integer)).Assembly.Location)
+
+            For i = 0 To 1
+                Dim isScript = (i = 0)
+                Dim code1 = If(isScript, code, "using System; using System.Collections; using System.Collections.Generic;" & vbCrLf & code)
+                Dim parse_options = If(isScript, New CSharp.CSharpParseOptions(kind:=SourceCodeKind.Script), Nothing)
+                Dim compile_options = If(isScript, New CSharp.CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings:={"System", "System.Collections", "System.Collections.Generic"}), Nothing)
+                Dim compilationUnit = CSharp.SyntaxFactory.ParseCompilationUnit(code1, options:=parse_options)
+                Dim syntaxTree = compilationUnit.SyntaxTree
+                Dim compilation As CSharp.CSharpCompilation
+                Try
+                    compilation = CSharp.CSharpCompilation.Create("dummyAssemblyName", {syntaxTree}, {ref_mscorlib, ref_system, ref_systemcore, ref_systemcollectionsimmutable}, compile_options)
+                Catch ex As Exception
+                    ' I believe that Script will parse all complete programs fine, so the convoluted "if" code here isn't needed.
+                    ' But let's see.
+                    Throw New Exception("Oops! It looks like non-script compilation is needed after all")
+                    Continue For
+                End Try
+                Dim semanticModel = compilation.GetSemanticModel(syntaxTree, True)
+                Dim w As New CSharpColorizer With {.sm = semanticModel}
+                w.Visit(syntaxTree.GetRoot)
+                Return If(isScript, w.words, w.words.SkipWhile(Function(c) c IsNot Nothing).Skip(1)) ' skip the dummy "usings" line
+            Next
+            Throw New Exception("unable to parse code")
         End Function
 
         Private words As New LinkedList(Of ColorizedWord)
@@ -209,10 +230,18 @@ Module Colorizer
                 r = Col(token.Text, "StringLiteral")
             ElseIf token.KindCS = CSharp.SyntaxKind.CharacterLiteralToken Then
                 r = Col(token.Text, "StringLiteral")
+            ElseIf token.KindCS = CSharp.SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is CSharp.Syntax.TypeParameterSyntax Then
+                r = Col(token.Text, "UserType")
             ElseIf token.KindCS = CSharp.SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is CSharp.Syntax.SimpleNameSyntax Then
                 Dim name = CType(token.Parent, CSharp.Syntax.SimpleNameSyntax)
-                Dim symbol = sm.GetSymbolInfo(name).Symbol
-                If symbol?.Kind = SymbolKind.NamedType Then
+                Dim symbol As ISymbol = Nothing
+                Try
+                    symbol = sm.GetSymbolInfo(name).Symbol ' How come this throws a NullRefException even when sm and name are non-null?
+                    ' I don't know. So I'll brute-force hack around it.
+                Catch ex As Exception
+                End Try
+                If symbol?.Kind = SymbolKind.NamedType OrElse
+                    symbol?.Kind = SymbolKind.TypeParameter Then
                     r = Col(token.Text, "UserType")
                 ElseIf symbol?.Kind = SymbolKind.Namespace OrElse
                         symbol?.Kind = SymbolKind.Parameter OrElse
@@ -230,29 +259,37 @@ Module Colorizer
             End If
 
             If r Is Nothing Then
-                If (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.Parameter) OrElse
-                    token.Parent.KindCS = CSharp.SyntaxKind.EnumDeclaration OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.Attribute) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.CatchDeclaration) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> CSharp.SyntaxKind.CloseParenToken) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.MethodDeclaration) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.CastExpression) OrElse
-                    (token.Parent.KindCS = CSharp.SyntaxKind.GenericName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration) OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.GenericName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression) OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.BaseList) OrElse ' e.g. "public sealed class BuilderRouteHandler  IRouteHandler" IRouteHandler in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeOfExpression) OrElse ' e.g. "Type baseBuilderType = TypeOf(BaseBuilder);" BaseBuilder in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration) OrElse ' e.g. "private DbProviderFactory dbProviderFactory;" Or "DbConnection connection = dbProviderFactory.CreateConnection();"
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeArgumentList) OrElse ' e.g. "DbTypes = New Dictionary();" DbType in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = CSharp.SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
-                    (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) Then
+                If token.Parent.KindCS = CSharp.SyntaxKind.EnumDeclaration Then
                     r = Col(token.Text, "UserType")
-                ElseIf String.IsNullOrEmpty(token.Text) Then ' EndOfFile, OmmittedToken, ...
-                    r = Nothing
-                Else
-                    r = Col(token.Text, "PlainText")
+                ElseIf token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName Then
+                    If token.Parent.Parent.KindCS = CSharp.SyntaxKind.Parameter OrElse
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.Attribute OrElse
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.CatchDeclaration OrElse
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse
+                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> CSharp.SyntaxKind.CloseParenToken) OrElse
+                        (token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken) OrElse
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.MethodDeclaration OrElse
+                        TryCast(token.Parent.Parent, CSharp.Syntax.CastExpressionSyntax)?.Type Is token.Parent OrElse ' e.g. "(Foo)x" the Foo
+                        TryCast(token.Parent.Parent, CSharp.Syntax.TypeConstraintSyntax)?.Type Is token.Parent OrElse ' e.g. "where T:Foo" the Foo
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.BaseList OrElse ' e.g. "public sealed class BuilderRouteHandler  IRouteHandler" IRouteHandler in this case
+                        token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeOfExpression OrElse ' e.g. "Type baseBuilderType = TypeOf(BaseBuilder);" BaseBuilder in this case
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private DbProviderFactory dbProviderFactory;" Or "DbConnection connection = dbProviderFactory.CreateConnection();"
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeArgumentList OrElse ' e.g. "DbTypes = New Dictionary();" DbType in this case
+                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = CSharp.SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
+                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) Then
+                        r = Col(token.Text, "UserType")
+                    End If
+                ElseIf token.Parent.KindCS = CSharp.SyntaxKind.GenericName Then
+                    If token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
+                        TryCast(token.Parent, CSharp.Syntax.GenericNameSyntax)?.Identifier = token Then ' e.g. "Box<int>" the word Box
+                        r = Col(token.Text, "UserType")
+                    End If
                 End If
+            End If
+
+            If r Is Nothing And Not String.IsNullOrEmpty(token.Text) Then ' Empty comes from EndOfFile, OmmittedToken, ...
+                r = Col(token.Text, "PlainText")
             End If
 
             If r IsNot Nothing Then words.AddLast(r)
@@ -283,7 +320,6 @@ Module Colorizer
         End Sub
 
         Private Function Col(token As String, color As String) As ColorizedWord
-            If String.IsNullOrEmpty(token) Then Stop
             Select Case color
                 Case "PlainText" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 0}
                 Case "Keyword" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 255}
