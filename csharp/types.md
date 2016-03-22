@@ -646,14 +646,18 @@ Two things are important to make explicit:
 
 *  Not all lambda expressions can be converted to expression trees. For instance, lambda expressions with statement bodies, and lambda expressions containing assignment expressions cannot be represented. In these cases, a conversion still exists, but will fail at compile-time. These exceptions are detailed in §6.5.
 *   `Expression<D>` offers an instance method `Compile` which produces a delegate of type `D`:
+
     ```csharp
     Func<int,int> del2 = exp.Compile();
     ```
+
     Invoking this delegate causes the code represented by the expression tree to be executed. Thus, given the definitions above, del and del2 are equivalent, and the following two statements will have the same effect:
+
     ```csharp
     int i1 = del(1);
     
     int i2 = del2(1);
     ```
+
     After executing this code,  `i1` and `i2` will both have the value `2`.
 

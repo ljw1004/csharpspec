@@ -436,16 +436,17 @@ Class MarkdownSpec
                 Dim mdt = CType(md, MarkdownParagraph.TableBlock), header = mdt.Item1.Option, align = mdt.Item2, rows = mdt.Item3
                 Dim table As New Table()
                 Dim tstyle As New TableStyle With {.Val = "TableGrid"}
-                Dim borders As New TableBorders()
-                borders.TopBorder = New TopBorder With {.Val = BorderValues.Single}
-                borders.BottomBorder = New BottomBorder With {.Val = BorderValues.Single}
-                borders.LeftBorder = New LeftBorder With {.Val = BorderValues.Single}
-                borders.RightBorder = New RightBorder With {.Val = BorderValues.Single}
-                borders.InsideHorizontalBorder = New InsideHorizontalBorder With {.Val = BorderValues.Single}
-                borders.InsideVerticalBorder = New InsideVerticalBorder With {.Val = BorderValues.Single}
+                Dim tindent = New TableIndentation With {.Width = 360, .Type = TableWidthUnitValues.Dxa}
+                Dim tborders As New TableBorders()
+                tborders.TopBorder = New TopBorder With {.Val = BorderValues.Single}
+                tborders.BottomBorder = New BottomBorder With {.Val = BorderValues.Single}
+                tborders.LeftBorder = New LeftBorder With {.Val = BorderValues.Single}
+                tborders.RightBorder = New RightBorder With {.Val = BorderValues.Single}
+                tborders.InsideHorizontalBorder = New InsideHorizontalBorder With {.Val = BorderValues.Single}
+                tborders.InsideVerticalBorder = New InsideVerticalBorder With {.Val = BorderValues.Single}
                 Dim tcellmar As New TableCellMarginDefault
                 tcellmar.Append()
-                table.Append(New TableProperties(tstyle, borders))
+                table.Append(New TableProperties(tstyle, tindent, tborders))
                 Dim ncols = align.Length
                 For irow = -1 To rows.Length - 1
                     If irow = -1 And header Is Nothing Then Continue For

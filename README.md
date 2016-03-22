@@ -105,7 +105,9 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
-The following experiment is about code inside lists.
+The following experiment is about code inside lists. Github doesn't render the "Bullet1/Bullet2" as desired. It does render the "Bullet3/Bullet4" as desired.
+
+First without any newlines:
 
 *   Bullet1
 *   Without any newlines between code and text
@@ -114,6 +116,8 @@ The following experiment is about code inside lists.
     ```
     More discussion
 *   Bullet2
+
+Now with some newlines:
 
 *   Bullet3
 *   With newlines between code and text
@@ -124,7 +128,7 @@ The following experiment is about code inside lists.
 
     More discussion
 
-*   Bullet2
+*   Bullet4
 
 
 -------------------------------------------------------------

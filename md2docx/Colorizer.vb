@@ -9,10 +9,18 @@ Module Colorizer
         Public Green As Integer
         Public Blue As Integer
         Public IsItalic As Boolean
+
+        Public Overrides Function ToString() As String
+            Return Text
+        End Function
     End Class
 
     Public Class ColorizedLine
         Public Words As New List(Of ColorizedWord)
+
+        Public Overrides Function ToString() As String
+            Return String.Join("", Words.Select(Function(w) w.Text))
+        End Function
     End Class
 
     Public Iterator Function Colorize(code As String, language As String) As IEnumerable(Of ColorizedLine)
@@ -57,9 +65,10 @@ Module Colorizer
 
 
     Private Iterator Function ColorizePlainText(code As String) As IEnumerable(Of ColorizedWord)
-        Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+        Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None).ToList()
+        If lines.Last = "" Then lines.RemoveAt(lines.Count - 1)
         For Each line In lines
-            Yield New ColorizedWord With {.Text = line, .Red = 0, .Green = 0, .Blue = 0}
+            If line <> "" Then Yield New ColorizedWord With {.Text = line, .Red = 0, .Green = 0, .Blue = 0}
             Yield Nothing
         Next
     End Function
@@ -239,12 +248,14 @@ Module Colorizer
                     (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = CSharp.SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
                     (token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName AndAlso token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) Then
                     r = Col(token.Text, "UserType")
+                ElseIf String.IsNullOrEmpty(token.Text) Then ' EndOfFile, OmmittedToken, ...
+                    r = Nothing
                 Else
                     r = Col(token.Text, "PlainText")
                 End If
             End If
 
-            words.AddLast(r)
+            If r IsNot Nothing Then words.AddLast(r)
 
             VisitTrivia(token.TrailingTrivia)
 
@@ -272,6 +283,7 @@ Module Colorizer
         End Sub
 
         Private Function Col(token As String, color As String) As ColorizedWord
+            If String.IsNullOrEmpty(token) Then Stop
             Select Case color
                 Case "PlainText" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 0}
                 Case "Keyword" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 255}
