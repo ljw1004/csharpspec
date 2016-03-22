@@ -113,19 +113,15 @@ This first example renders fine in GitHub:
 int x = (y is bool);
 ```
 
-As for this one
+But when you put anything on the same line after the language, GitHub no longer recognizes the backticks as starting a codeblock. For instance, here it puts the `class/isbool` into normal paragraph, then uses what should be closing backticks to start a new codeblock. As for how it manages to recover, I'm not entirely sure.
 
 ```csharp class C { void f() {
 int x = (y is bool);
 ```
 
-
-This next one isnt' even recognized as a codeblock! Github just turns it into a paragraph, and it thinks the trailing backticks are the start of a new codeblock!
-
-```csharp additional information
-int x = (y is bool);
+```csharp
+(recovery)
 ```
-
 
 
 -------------------------------------------------------------
