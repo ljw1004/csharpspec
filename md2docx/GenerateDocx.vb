@@ -540,75 +540,86 @@ Class MarkdownSpec
                 Yield New Run(New Text(s) With {.Space = SpaceProcessingModeValues.Preserve})
 
             ElseIf md.IsStrong OrElse md.IsEmphasis Then
-                Dim spans = If(md.IsStrong, CType(md, MarkdownSpan.Strong).Item, CType(md, MarkdownSpan.Emphasis).Item)
+                Dim spans As IEnumerable(Of MarkdownSpan) = If(md.IsStrong, CType(md, MarkdownSpan.Strong).Item, CType(md, MarkdownSpan.Emphasis).Item)
+
+                ' Workaround for https://github.com/tpetricek/FSharp.Formatting/issues/389 - the markdown parser
+                ' turns *this_is_it* into a nested Emphasis["this", Emphasis["is"], "it"] instead of Emphasis["this_is_it"]
+                ' What we'll do is preprocess it into Emphasis["this", "_", "is" "_", "it"]
+                If md.IsEmphasis Then spans = spans.SelectMany(Iterator Function(s)
+                                                                   If Not s.IsEmphasis Then Yield s : Return
+                                                                   Yield MarkdownSpan.NewLiteral("_")
+                                                                   For Each ss In CType(s, MarkdownSpan.Emphasis).Item : Yield ss : Next
+                                                                   Yield MarkdownSpan.NewLiteral("_")
+                                                               End Function)
+
                 For Each e In Spans2Elements(spans)
-                    Dim style = If(md.IsStrong, CType(New Bold, OpenXmlElement), New Italic)
-                    Dim run = CType(e, Run)
-                    If run IsNot Nothing Then run.InsertAt(New RunProperties(style), 0)
-                    Yield e
-                Next
-                Return
-
-            ElseIf md.IsInlineCode Then
-                Dim mdi = CType(md, MarkdownSpan.InlineCode), code = mdi.Item
-
-                Dim txt As New Text(PipeBugDecode(code)) With {.Space = SpaceProcessingModeValues.Preserve}
-                Dim props As New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})
-                Dim run As New Run(txt) With {.RunProperties = props}
-                Yield run
-                Return
-
-            ElseIf md.IsDirectLink Or md.IsIndirectLink Then
-                Dim spans As IEnumerable(Of MarkdownSpan), url = "", alt = ""
-                If md.IsDirectLink Then
-                    Dim mddl = CType(md, MarkdownSpan.DirectLink)
-                    spans = mddl.Item1
-                    url = mddl.Item2.Item1
-                    alt = mddl.Item2.Item2.Option()
-                Else
-                    Dim mdil = CType(md, MarkdownSpan.IndirectLink), original = mdil.Item2, id = mdil.Item3
-                    spans = mdil.Item1
-                    If mddoc.DefinedLinks.ContainsKey(id) Then
-                        url = mddoc.DefinedLinks(id).Item1
-                        alt = mddoc.DefinedLinks(id).Item2.Option()
-                    End If
-                End If
-
-                Dim anchor = ""
-                If spans.Count = 1 AndAlso spans.First.IsLiteral Then
-                    anchor = mdunescape(CType(spans.First, MarkdownSpan.Literal))
-                ElseIf spans.Count = 1 AndAlso spans.First.IsInlineCode Then
-                    anchor = CType(spans.First, MarkdownSpan.InlineCode).Item
-                Else
-                    Throw New NotImplementedException("Link anchor must be Literal or InlineCode, not " & md.ToString())
-                End If
-
-                If sections.ContainsKey(url) Then
-                    Dim section = sections(url)
-                    If anchor <> section.Title Then Throw New Exception($"Mismatch: link anchor is '{anchor}', should be '{section.Title}'")
-                    Dim txt As New Text(section.Number) With {.Space = SpaceProcessingModeValues.Preserve}
-                    Dim run As New Hyperlink(New Run(txt)) With {.Anchor = section.BookmarkName}
-                    Yield run
-
-                Else
-                    If Not url.StartsWith("http:") AndAlso Not url.StartsWith("https:") Then Throw New Exception("Absent hyperlink in " & md.ToString())
-                    Dim style = New RunStyle With {.Val = "Hyperlink"}
-                    Dim hyperlink As New Hyperlink With {.DocLocation = url, .Tooltip = alt}
-                    For Each element In Spans2Elements(spans)
-                        Dim run = TryCast(element, Run)
+                        Dim style = If(md.IsStrong, CType(New Bold, OpenXmlElement), New Italic)
+                        Dim run = CType(e, Run)
                         If run IsNot Nothing Then run.InsertAt(New RunProperties(style), 0)
-                        hyperlink.AppendChild(run)
+                        Yield e
                     Next
-                    Yield hyperlink
-                End If
-                Return
+                    Return
 
-            ElseIf md.IsHardLineBreak Then
-                ' I've only ever seen this arise from dodgy markdown parsing, so I'll ignore it...
-                Return
+                ElseIf md.IsInlineCode Then
+                    Dim mdi = CType(md, MarkdownSpan.InlineCode), code = mdi.Item
 
-            Else
-                Yield New Run(New Text($"[{md.GetType.Name}]"))
+                    Dim txt As New Text(PipeBugDecode(code)) With {.Space = SpaceProcessingModeValues.Preserve}
+                    Dim props As New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})
+                    Dim run As New Run(txt) With {.RunProperties = props}
+                    Yield run
+                    Return
+
+                ElseIf md.IsDirectLink Or md.IsIndirectLink Then
+                    Dim spans As IEnumerable(Of MarkdownSpan), url = "", alt = ""
+                    If md.IsDirectLink Then
+                        Dim mddl = CType(md, MarkdownSpan.DirectLink)
+                        spans = mddl.Item1
+                        url = mddl.Item2.Item1
+                        alt = mddl.Item2.Item2.Option()
+                    Else
+                        Dim mdil = CType(md, MarkdownSpan.IndirectLink), original = mdil.Item2, id = mdil.Item3
+                        spans = mdil.Item1
+                        If mddoc.DefinedLinks.ContainsKey(id) Then
+                            url = mddoc.DefinedLinks(id).Item1
+                            alt = mddoc.DefinedLinks(id).Item2.Option()
+                        End If
+                    End If
+
+                    Dim anchor = ""
+                    If spans.Count = 1 AndAlso spans.First.IsLiteral Then
+                        anchor = mdunescape(CType(spans.First, MarkdownSpan.Literal))
+                    ElseIf spans.Count = 1 AndAlso spans.First.IsInlineCode Then
+                        anchor = CType(spans.First, MarkdownSpan.InlineCode).Item
+                    Else
+                        Throw New NotImplementedException("Link anchor must be Literal or InlineCode, not " & md.ToString())
+                    End If
+
+                    If sections.ContainsKey(url) Then
+                        Dim section = sections(url)
+                        If anchor <> section.Title Then Throw New Exception($"Mismatch: link anchor is '{anchor}', should be '{section.Title}'")
+                        Dim txt As New Text(section.Number) With {.Space = SpaceProcessingModeValues.Preserve}
+                        Dim run As New Hyperlink(New Run(txt)) With {.Anchor = section.BookmarkName}
+                        Yield run
+
+                    Else
+                        If Not url.StartsWith("http:") AndAlso Not url.StartsWith("https:") Then Throw New Exception("Absent hyperlink in " & md.ToString())
+                        Dim style = New RunStyle With {.Val = "Hyperlink"}
+                        Dim hyperlink As New Hyperlink With {.DocLocation = url, .Tooltip = alt}
+                        For Each element In Spans2Elements(spans)
+                            Dim run = TryCast(element, Run)
+                            If run IsNot Nothing Then run.InsertAt(New RunProperties(style), 0)
+                            hyperlink.AppendChild(run)
+                        Next
+                        Yield hyperlink
+                    End If
+                    Return
+
+                ElseIf md.IsHardLineBreak Then
+                    ' I've only ever seen this arise from dodgy markdown parsing, so I'll ignore it...
+                    Return
+
+                Else
+                    Yield New Run(New Text($"[{md.GetType.Name}]"))
                 Return
             End If
         End Function
