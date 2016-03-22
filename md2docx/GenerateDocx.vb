@@ -346,14 +346,9 @@ Class MarkdownSpec
                     If String.IsNullOrWhiteSpace(lines.First) Then lines.RemoveAt(0)
                     Dim run As Run = Nothing
                     For Each line In lines
-                        If re_grammar.IsMatch(line) Then
-                            If run IsNot Nothing Then Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "Grammar"})}
-                            run = New Run(New Text(line) With {.Space = SpaceProcessingModeValues.Preserve})
-                        Else
-                            If run Is Nothing Then run = New Run()
-                            run.Append(New Break)
-                            run.Append(New Text(line) With {.Space = SpaceProcessingModeValues.Preserve})
-                        End If
+                        If run Is Nothing Then run = New Run()
+                        run.Append(New Break)
+                        run.Append(New Text(line) With {.Space = SpaceProcessingModeValues.Preserve})
                     Next
                     If run IsNot Nothing Then Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "Grammar"})}
                     Return
