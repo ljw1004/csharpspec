@@ -105,6 +105,23 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
+The following experiment is about languages for codeblocks.
+
+```csharp
+int x = (y is bool);
+```
+
+```csharp additional information
+int x = (y is bool);
+```
+
+```csharp class C { void f() {
+int x = (y is bool);
+```
+
+
+-------------------------------------------------------------
+
 The following experiment is about underscore terms inside italics. They all render correctly in Github and in WebEssentials previewer and in CommonMark. The underscore ones all render incorrectly in WebEssentials editor.
 
 A *asterisk* B

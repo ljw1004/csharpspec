@@ -35,6 +35,17 @@
         If files.Count = 0 Then files = {ifn}
         Dim md = MarkdownSpec.ReadFiles(files)
 
+        md = MarkdownSpec.ReadString("
+```csharp
+class C { void f() {
+int i = 123;
+object box = i;
+if (box is int) {
+    Console.Write(""Box contains an int"");
+}
+```
+")
+
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has
         ' correct references to within the spec. We'll check that it has the same productions as
         ' in the corresponding ANTLR file
