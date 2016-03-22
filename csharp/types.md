@@ -1,6 +1,6 @@
 # Types
 
-The types of the C# language are divided into two main categories: *__value types__* and *__reference types__*. Both value types and reference types may be *__generic types__*, which take one or more *__type parameters__*. Type parameters can designate both value types and reference types.
+The types of the C# language are divided into two main categories: ***value types*** and ***reference types***. Both value types and reference types may be ***generic types***, which take one or more ***type parameters***. Type parameters can designate both value types and reference types.
 
 ```antlr
 type
@@ -11,15 +11,15 @@ type
     ;
 ```
 
-The fourth category of types, pointers, is available only in unsafe code. This is discussed further in §18.2.
+The final category of types, pointers, is available only in unsafe code. This is discussed further in §18.2.
 
-Value types differ from reference types in that variables of the value types directly contain their data, whereas variables of the reference types store *__references__* to their data, the latter being known as *__objects__*. With reference types, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other.
+Value types differ from reference types in that variables of the value types directly contain their data, whereas variables of the reference types store ***references*** to their data, the latter being known as ***objects***. With reference types, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other.
 
 C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the `object` class type, and `object` is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type `object`. Values of value types are treated as objects by performing boxing and unboxing operations (§4.3).
 
 ## Value types
 
-A value type is either a struct type or an enumeration type. C# provides a set of predefined struct types called the *__simple types__*. The simple types are identified through reserved words.
+A value type is either a struct type or an enumeration type. C# provides a set of predefined struct types called the ***simple types***. The simple types are identified through reserved words.
 
 ```antlr
 value_type
@@ -86,7 +86,7 @@ Note that `System.ValueType` is not itself a *value_type*. Rather, it is a *clas
 
 ### Default constructors
 
-All value types implicitly declare a public parameterless instance constructor called the *__default constructor__*. The default constructor returns a zero-initialized instance known as the *__default value__* for the value type:
+All value types implicitly declare a public parameterless instance constructor called the ***default constructor***. The default constructor returns a zero-initialized instance known as the ***default value*** for the value type:
 
 *  For all *simple_type*s, the default value is the value produced by a bit pattern of all zeros:
     * For `sbyte`, `byte`, `short`, `ushort`, `int`, `uint`, `long`, and `ulong`, the default value is `0`.
@@ -97,7 +97,7 @@ All value types implicitly declare a public parameterless instance constructor c
     * For `bool`, the default value is `false`.
 *  For an *enum_type* `E`, the default value is `0`, converted to the type `E`.
 *  For a *struct_type*, the default value is the value produced by setting all value type fields to their default value and all reference type fields to `null`.
-*  For a *nullable_type* the default value is an instance for which the `HasValue` property is false and the `Value` property is undefined. The default value is also known as the *__null value__* of the nullable type.
+*  For a *nullable_type* the default value is an instance for which the `HasValue` property is false and the `Value` property is undefined. The default value is also known as the ***null value*** of the nullable type.
 
 Like any other instance constructor, the default constructor of a value type is invoked using the `new` operator. For efficiency reasons, this requirement is not intended to actually have the implementation generate a constructor call. In the example below, variables `i` and `j` are both initialized to zero.
 
@@ -119,7 +119,7 @@ A struct type is a value type that can declare constants, fields, methods, prope
 
 ### Simple types
 
-C# provides a set of predefined struct types called the *__simple types__*. The simple types are identified through reserved words, but these reserved words are simply aliases for predefined struct types in the `System` namespace, as described in the table below.
+C# provides a set of predefined struct types called the ***simple types***. The simple types are identified through reserved words, but these reserved words are simply aliases for predefined struct types in the `System` namespace, as described in the table below.
 
 
 | __Reserved word__ | __Aliased type__ |
@@ -141,9 +141,9 @@ C# provides a set of predefined struct types called the *__simple types__*. The 
 Because a simple type aliases a struct type, every simple type has members. For example, `int` has the members declared in `System.Int32` and the members inherited from `System.Object`, and the following statements are permitted:
 
 ```csharp
-int i = int.MaxValue;            // System.Int32.MaxValue constant
+int i = int.MaxValue;           // System.Int32.MaxValue constant
 string s = i.ToString();        // System.Int32.ToString() instance method
-string t = 123.ToString();        // System.Int32.ToString() instance method
+string t = 123.ToString();      // System.Int32.ToString() instance method
 ```
 
 The simple types differ from other struct types in that they permit certain additional operations:
@@ -187,7 +187,7 @@ C# supports two floating point types: `float` and `double`. The `float` and `dou
 
 *  Positive zero and negative zero. In most situations, positive zero and negative zero behave identically as the simple value zero, but certain operations distinguish between the two (§7.8.2).
 *  Positive infinity and negative infinity. Infinities are produced by such operations as dividing a non-zero number by zero. For example, `1.0``/``0.0` yields positive infinity, and `–1.0``/``0.0` yields negative infinity.
-*  The *__Not-a-Number__* value, often abbreviated NaN. NaNs are produced by invalid floating-point operations, such as dividing zero by zero.
+*  The ***Not-a-Number*** value, often abbreviated NaN. NaNs are produced by invalid floating-point operations, such as dividing zero by zero.
 *  The finite set of non-zero values of the form `s * m * 2^e`, where `s` is 1 or -1, and `m` and `e` are determined by the particular floating-point type: For `float`, `0 < m < 2^24` and `-149 <= e <= 104`, and for `double`, `0 < m < 2^53` and `1075 <= e <= 970`. Denormalized floating-point numbers are considered valid non-zero values.
 
 The `float` type can represent values ranging from approximately `1.5 * 10^-45` to `3.4 * 10^38` with a precision of 7 digits.
@@ -237,9 +237,9 @@ An enumeration type is a distinct type with named constants. Every enumeration t
 
 ### Nullable types
 
-A nullable type can represent all values of its *__underlying type__* plus an additional null value. A nullable type is written `T?`, where `T` is the underlying type. This syntax is shorthand for `System.Nullable<T>`, and the two forms can be used interchangeably.
+A nullable type can represent all values of its ***underlying type*** plus an additional null value. A nullable type is written `T?`, where `T` is the underlying type. This syntax is shorthand for `System.Nullable<T>`, and the two forms can be used interchangeably.
 
-A *__non-nullable value type__* conversely is any value type other than `System.Nullable<T>` and its shorthand `T?` (for any `T`), plus any type parameter that is constrained to be a non-nullable value type (that is, any type parameter with a `struct` constraint). The `System.Nullable<T>` type specifies the value type constraint for `T` (§10.1.5), which means that the underlying type of a nullable type can be any non-nullable value type. The underlying type of a nullable type cannot be a nullable type or a reference type. For example, `int??` and `string?` are invalid types.
+A ***non-nullable value type*** conversely is any value type other than `System.Nullable<T>` and its shorthand `T?` (for any `T`), plus any type parameter that is constrained to be a non-nullable value type (that is, any type parameter with a `struct` constraint). The `System.Nullable<T>` type specifies the value type constraint for `T` (§10.1.5), which means that the underlying type of a nullable type can be any non-nullable value type. The underlying type of a nullable type cannot be a nullable type or a reference type. For example, `int??` and `string?` are invalid types.
 
 An instance of a nullable type `T?` has two public read-only properties:
 
@@ -248,14 +248,14 @@ An instance of a nullable type `T?` has two public read-only properties:
 
 An instance for which `HasValue` is true is said to be non-null. A non-null instance contains a known value and `Value` returns that value.
 
-An instance for which `HasValue` is false is said to be null. A null instance has an undefined value. Attempting to read the `Value` of a null instance causes a `System.InvalidOperationException` to be thrown. The process of accessing the `Value` property of a nullable instance is referred to as *__unwrapping__*.
+An instance for which `HasValue` is false is said to be null. A null instance has an undefined value. Attempting to read the `Value` of a null instance causes a `System.InvalidOperationException` to be thrown. The process of accessing the `Value` property of a nullable instance is referred to as ***unwrapping***.
 
 In addition to the default constructor, every nullable type `T?` has a public constructor that takes a single argument of type `T`. Given a value `x` of type `T`, a constructor invocation of the form
 
 ```csharp
 new T?(x)
 ```
-creates a non-null instance of `T?` for which the `Value` property is `x`. The process of creating a non-null instance of a nullable type for a given value is referred to as *__wrapping__*.
+creates a non-null instance of `T?` for which the `Value` property is `x`. The process of creating a non-null instance of a nullable type for a given value is referred to as ***wrapping***.
 
 Implicit conversions are available from the `null` literal to `T?` (§6.1.5) and from `T` to `T?` (§6.1.4).
 
@@ -302,7 +302,7 @@ delegate_type
     ;
 ```
 
-A reference type value is a reference to an *__instance__* of the type, the latter known as an *__object__*. The special value `null` is compatible with all reference types and indicates the absence of an instance.
+A reference type value is a reference to an ***instance*** of the type, the latter known as an ***object***. The special value `null` is compatible with all reference types and indicates the absence of an instance.
 
 ### Class types
 
@@ -346,7 +346,7 @@ Because of this equivalence, the following holds:
 *  Implicit and explicit conversions to and from `object` also apply to and from `dynamic`.
 *  Method signatures that are the same when replacing `dynamic` with `object` are considered the same signature
 *  The type `dynamic` is indistinguishable from `object` at run-time.
-*  An expression of the type `dynamic` is referred to as a *__dynamic expression__*.
+*  An expression of the type `dynamic` is referred to as a ***dynamic expression***.
 
 ### The string type
 
@@ -396,7 +396,7 @@ Boxing a value of a *non_nullable_value_type* consists of allocating an object i
 
 Boxing a value of a *nullable_type* produces a null reference if it is the `null` value (`HasValue` is `false`), or the result of unwrapping and boxing the underlying value otherwise.
 
-The actual process of boxing a value of a *non_nullable_value_type* is best explained by imagining the existence of a generic *__boxing class__*, which behaves as if it were declared as follows:
+The actual process of boxing a value of a *non_nullable_value_type* is best explained by imagining the existence of a generic ***boxing class***, which behaves as if it were declared as follows:
 
 ```csharp
 sealed class Box<T>: System.ValueType
@@ -410,21 +410,17 @@ sealed class Box<T>: System.ValueType
 ```
 
 Boxing of a value `v` of type `T` now consists of executing the expression `new Box``<T>``(v)`, and returning the resulting instance as a value of type `object`. Thus, the statements
-
 ```csharp
 int i = 123;
 object box = i;
 ```
-
 conceptually correspond to
-
 ```csharp
 int i = 123;
 object box = new Box<int>(i);
 ```
 
 A boxing class like `Box``<T>` above doesn't actually exist and the dynamic type of a boxed value isn't actually a class type. Instead, a boxed value of type `T` has the dynamic type `T`, and a dynamic type check using the `is` operator can simply reference type `T`. For example,
-
 ```csharp
 int i = 123;
 object box = i;
@@ -432,11 +428,9 @@ if (box is int) {
     Console.Write("Box contains an int");
 }
 ```
-
 will output the string "`Box contains an int`" on the console.
 
 A boxing conversion implies making a copy of the value being boxed. This is different from a conversion of a *reference_type* to type `object`, in which the value continues to reference the same instance and simply is regarded as the less derived type `object`. For example, given the declaration
-
 ```csharp
 struct Point
 {
@@ -448,16 +442,13 @@ struct Point
     }
 }
 ```
-
 the following statements
-
 ```csharp
 Point p = new Point(10, 10);
 object box = p;
 p.x = 20;
 Console.Write(((Point)box).x);
 ```
-
 will output the value 10 on the console because the implicit boxing operation that occurs in the assignment of `p` to `box` causes the value of `p` to be copied. Had `Point` been declared a `class` instead, the value 20 would be output because `p` and `box` would reference the same instance.
 
 ### Unboxing conversions
@@ -477,14 +468,11 @@ An unboxing operation to a *non_nullable_value_type* consists of first checking 
 Unboxing to a *nullable_type* produces the null value of the *nullable_type* if the source operand is `null`, or the wrapped result of unboxing the object instance to the underlying type of the *nullable_type* otherwise.
 
 Referring to the imaginary boxing class described in the previous section, an unboxing conversion of an object `box` to a *value_type* `T` consists of executing the expression `((``Box``<T>``)box).value`. Thus, the statements
-
 ```csharp
 object box = 123;
 int i = (int)box;
 ```
-
 conceptually correspond to
-
 ```csharp
 object box = new Box<int>(123);
 int i = ((Box<int>)box).value;
@@ -496,7 +484,7 @@ For an unboxing conversion to a given *nullable_type* to succeed at run-time, th
 
 ## Constructed types
 
-A generic type declaration, by itself, denotes an *__unbound generic type__* that is used as a "blueprint" to form many different types, by way of applying *__type arguments__*. The type arguments are written within angle brackets (`<` and `>`) immediately following the name of the generic type. A type that includes at least one type argument is called a *__constructed type__*. A constructed type can be used in most places in the language in which a type name can appear. An unbound generic type can only be used within a *typeof_expression* (§7.6.11).
+A generic type declaration, by itself, denotes an ***unbound generic type*** that is used as a "blueprint" to form many different types, by way of applying ***type arguments***. The type arguments are written within angle brackets (`<` and `>`) immediately following the name of the generic type. A type that includes at least one type argument is called a ***constructed type***. A constructed type can be used in most places in the language in which a type name can appear. An unbound generic type can only be used within a *typeof_expression* (§7.6.11).
 
 Constructed types can also be used in expressions as simple names (§7.6.2) or when accessing a member (§7.6.4).
 
@@ -557,7 +545,7 @@ In unsafe code (§18), a *type_argument* may not be a pointer type. Each type ar
 
 ### Open and closed types
 
-All types can be classified as either *__open types__* or *__closed types__*. An open type is a type that involves type parameters. More specifically:
+All types can be classified as either ***open types*** or ***closed types***. An open type is a type that involves type parameters. More specifically:
 
 *  A type parameter defines an open type.
 *  An array type is an open type if and only if its element type is an open type.
@@ -571,7 +559,7 @@ Each closed constructed type has its own set of static variables, which are not 
 
 ### Bound and unbound types
 
-The term *__unbound type__* refers to a non-generic type or an unbound generic type. The term *__bound type__* refers to a non-generic type or a constructed type.
+The term ***unbound type*** refers to a non-generic type or an unbound generic type. The term ***bound type*** refers to a non-generic type or a constructed type.
 
 An unbound type refers to the entity declared by a type declaration. An unbound generic type is not itself a type, and cannot be used as the type of a variable, argument or return value, or as a base type. The only construct in which an unbound generic type can be referenced is the `typeof` expression (§7.6.11).
 
@@ -580,38 +568,22 @@ An unbound type refers to the entity declared by a type declaration. An unbound 
 Whenever a constructed type or generic method is referenced, the supplied type arguments are checked against the type parameter constraints declared on the generic type or method (§10.1.5). For each `where` clause, the type argument `A` that corresponds to the named type parameter is checked against each constraint as follows:
 
 *  If the constraint is a class type, an interface type, or a type parameter, let `C` represent that constraint with the supplied type arguments substituted for any type parameters that appear in the constraint. To satisfy the constraint, it must be the case that type `A` is convertible to type `C` by one of the following:
-
-An identity conversion (§6.1.1)
-
-An implicit reference conversion (§6.1.6)
-
-A boxing conversion (§6.1.7), provided that type A is a non-nullable value type.
-
-An implicit reference, boxing or type parameter conversion from a type parameter `A` to `C`.
-
+    * An identity conversion (§6.1.1)
+    * An implicit reference conversion (§6.1.6)
+    * A boxing conversion (§6.1.7), provided that type A is a non-nullable value type.
+    * An implicit reference, boxing or type parameter conversion from a type parameter `A` to `C`.
 *  If the constraint is the reference type constraint (`class`), the type `A` must satisfy one of the following:
-
-`A` is an interface type, class type, delegate type or array type. Note that `System.ValueType` and `System.Enum` are reference types that satisfy this constraint.
-
-`A` is a type parameter that is known to be a reference type (§10.1.5).
-
+    * `A` is an interface type, class type, delegate type or array type. Note that `System.ValueType` and `System.Enum` are reference types that satisfy this constraint.
+    * `A` is a type parameter that is known to be a reference type (§10.1.5).
 *  If the constraint is the value type constraint (`struct`), the type `A` must satisfy one of the following:
-
-`A` is a struct type or enum type, but not a nullable type. Note that `System.ValueType` and `System.Enum` are reference types that do not satisfy this constraint.
-
-`A` is a type parameter having the value type constraint (§10.1.5).
-
+    * `A` is a struct type or enum type, but not a nullable type. Note that `System.ValueType` and `System.Enum` are reference types that do not satisfy this constraint.
+    * `A` is a type parameter having the value type constraint (§10.1.5).
 *  If the constraint is the constructor constraint `new()`, the type `A` must not be `abstract` and must have a public parameterless constructor. This is satisfied if one of the following is true:
-
-`A` is a value type, since all value types have a public default constructor (§4.1.2).
-
-`A` is a type parameter having the constructor constraint (§10.1.5).
-
-`A` is a type parameter having the value type constraint (§10.1.5).
-
-`A` is a class that is not `abstract` and contains an explicitly declared `public` constructor with no parameters.
-
-`A` is not `abstract` and has a default constructor (§10.11.4).
+    * `A` is a value type, since all value types have a public default constructor (§4.1.2).
+    * `A` is a type parameter having the constructor constraint (§10.1.5).
+    * `A` is a type parameter having the value type constraint (§10.1.5).
+    * `A` is a class that is not `abstract` and contains an explicitly declared `public` constructor with no parameters.
+    * `A` is not `abstract` and has a default constructor (§10.11.4).
 
 A compile-time error occurs if one or more of a type parameter's constraints are not satisfied by the given type arguments.
 
@@ -650,7 +622,7 @@ As a type, type parameters are purely a compile-time construct. At run-time, eac
 
 ## Expression tree types
 
-*__Expression trees__* permit lambda expressions to be represented as data structures instead of executable code. Expression trees are values of *__expression tree types__* of the form `System.Linq.Expressions.Expression<D>`, where `D` is any delegate type. For the remainder of this specification we will refer to these types using the shorthand `Expression<D>`.
+***Expression trees*** permit lambda expressions to be represented as data structures instead of executable code. Expression trees are values of ***expression tree types*** of the form `System.Linq.Expressions.Expression<D>`, where `D` is any delegate type. For the remainder of this specification we will refer to these types using the shorthand `Expression<D>`.
 
 If a conversion exists from a lambda expression to a delegate type `D`, a conversion also exists to the expression tree type `Expression<D>`. Whereas the conversion of a lambda expression to a delegate type generates a delegate that references executable code for the lambda expression, conversion to an expression tree type creates an expression tree representation of the lambda expression.
 
@@ -661,7 +633,7 @@ Just like a delegate type `D`, `Expression<D>` is said to have parameter and ret
 The following example represents a lambda expressionboth as executable code and as an expression tree. Because a conversion exists to `Func<int,int>`, a conversion also exists to `Expression<Func<int,int>>`:
 
 ```csharp
-Func<int,int> del = x => x + 1;                        // Code
+Func<int,int> del = x => x + 1;                    // Code
 
 Expression<Func<int,int>> exp = x => x + 1;        // Data
 ```
@@ -672,20 +644,16 @@ The exact definition of the generic type `Expression<D>` as well as the precise 
 
 Two things are important to make explicit:
 
-*  Not all lambda expressionscan be converted to expression trees. For instance, lambda expressionswith statement bodies, and lambda expressionscontaining assignment expressions cannot be represented. In these cases, a conversion still exists, but will fail at compile-time. These exceptions are detailed in §6.5.
-*  `Expression<D>` offers an instance method `Compile` which produces a delegate of type `D`:
-
-```csharp
-Func<int,int> del2 = exp.Compile();
-```
-
-Invoking this delegate causes the code represented by the expression tree to be executed. Thus, given the definitions above, del and del2 are equivalent, and the following two statements will have the same effect:
-
-```csharp
-int i1 = del(1);
-
-int i2 = del2(1);
-```
-
-After executing this code,  `i1` and `i2` will both have the value `2`.
+*  Not all lambda expressions can be converted to expression trees. For instance, lambda expressions with statement bodies, and lambda expressions containing assignment expressions cannot be represented. In these cases, a conversion still exists, but will fail at compile-time. These exceptions are detailed in §6.5.
+*   `Expression<D>` offers an instance method `Compile` which produces a delegate of type `D`:
+    ```csharp
+    Func<int,int> del2 = exp.Compile();
+    ```
+    Invoking this delegate causes the code represented by the expression tree to be executed. Thus, given the definitions above, del and del2 are equivalent, and the following two statements will have the same effect:
+    ```csharp
+    int i1 = del(1);
+    
+    int i2 = del2(1);
+    ```
+    After executing this code,  `i1` and `i2` will both have the value `2`.
 

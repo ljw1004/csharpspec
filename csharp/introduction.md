@@ -1,14 +1,14 @@
 # Introduction
 
-C# (pronounced "See Sharp") is a simple, modern, object-oriented, and type-safe programming language. C# has its roots in the C family of languages and will be immediately familiar to C, C++, and Java programmers. C# is standardized by ECMA International as the *__ECMA-334__* standard and by ISO/IEC as the *__ISO/IEC 23270__* standard. Microsoft's C# compiler for the .NET Framework is a conforming implementation of both of these standards.
+C# (pronounced "See Sharp") is a simple, modern, object-oriented, and type-safe programming language. C# has its roots in the C family of languages and will be immediately familiar to C, C++, and Java programmers. C# is standardized by ECMA International as the ***ECMA-334*** standard and by ISO/IEC as the ***ISO/IEC 23270*** standard. Microsoft's C# compiler for the .NET Framework is a conforming implementation of both of these standards.
 
-C# is an object-oriented language, but C# further includes support for *__component-oriented__* programming. Contemporary software design increasingly relies on software components in the form of self-contained and self-describing packages of functionality. Key to such components is that they present a programming model with properties, methods, and events; they have attributes that provide declarative information about the component; and they incorporate their own documentation. C# provides language constructs to directly support these concepts, making C# a very natural language in which to create and use software components.
+C# is an object-oriented language, but C# further includes support for ***component-oriented*** programming. Contemporary software design increasingly relies on software components in the form of self-contained and self-describing packages of functionality. Key to such components is that they present a programming model with properties, methods, and events; they have attributes that provide declarative information about the component; and they incorporate their own documentation. C# provides language constructs to directly support these concepts, making C# a very natural language in which to create and use software components.
 
-Several C# features aid in the construction of robust and durable applications: *__Garbage collection__* automatically reclaims memory occupied by unused objects; *__exception handling__* provides a structured and extensible approach to error detection and recovery; and the *__type-safe__* design of the language makes it impossible to read from uninitialized variables, to index arrays beyond their bounds, or to perform unchecked type casts.
+Several C# features aid in the construction of robust and durable applications: ***Garbage collection*** automatically reclaims memory occupied by unused objects; ***exception handling*** provides a structured and extensible approach to error detection and recovery; and the ***type-safe*** design of the language makes it impossible to read from uninitialized variables, to index arrays beyond their bounds, or to perform unchecked type casts.
 
-C# has a *__unified type system__*. All C# types, including primitive types such as `int` and `double`, inherit from a single root `object` type. Thus, all types share a set of common operations, and values of any type can be stored, transported, and operated upon in a consistent manner. Furthermore, C# supports both user-defined reference types and value types, allowing dynamic allocation of objects as well as in-line storage of lightweight structures.
+C# has a ***unified type system***. All C# types, including primitive types such as `int` and `double`, inherit from a single root `object` type. Thus, all types share a set of common operations, and values of any type can be stored, transported, and operated upon in a consistent manner. Furthermore, C# supports both user-defined reference types and value types, allowing dynamic allocation of objects as well as in-line storage of lightweight structures.
 
-To ensure that C# programs and libraries can evolve over time in a compatible manner, much emphasis has been placed on *__versioning__* in C#'s design. Many programming languages pay little attention to this issue, and, as a result, programs written in those languages break more often than necessary when newer versions of dependent libraries are introduced. Aspects of C#'s design that were directly influenced by versioning considerations include the separate `virtual` and `override` modifiers, the rules for method overload resolution, and support for explicit interface member declarations.
+To ensure that C# programs and libraries can evolve over time in a compatible manner, much emphasis has been placed on ***versioning*** in C#'s design. Many programming languages pay little attention to this issue, and, as a result, programs written in those languages break more often than necessary when newer versions of dependent libraries are introduced. Aspects of C#'s design that were directly influenced by versioning considerations include the separate `virtual` and `override` modifiers, the rules for method overload resolution, and support for explicit interface member declarations.
 
 The rest of this chapter describes the essential features of the C# language. Although later chapters describe rules and exceptions in a detail-oriented and sometimes mathematical manner, this chapter strives for clarity and brevity at the expense of completeness. The intent is to provide the reader with an introduction to the language that will facilitate the writing of early programs and the reading of later chapters.
 
@@ -44,7 +44,7 @@ The output of the program is produced by the `WriteLine` method of the `Console`
 
 ## Program structure
 
-The key organizational concepts in C# are *__programs__*, *__namespaces__*, *__types__*, *__members__*, and *__assemblies__*. C# programs consist of one or more source files. Programs declare types, which contain members and can be organized into namespaces. Classes and interfaces are examples of types. Fields, methods, properties, and events are examples of members. When C# programs are compiled, they are physically packaged into assemblies. Assemblies typically have the file extension `.exe` or `.dll`, depending on whether they implement *__applications__* or *__libraries__*.
+The key organizational concepts in C# are ***programs***, ***namespaces***, ***types***, ***members***, and ***assemblies***. C# programs consist of one or more source files. Programs declare types, which contain members and can be organized into namespaces. Classes and interfaces are examples of types. Fields, methods, properties, and events are examples of members. When C# programs are compiled, they are physically packaged into assemblies. Assemblies typically have the file extension `.exe` or `.dll`, depending on whether they implement ***applications*** or ***libraries***.
 
 The example
 
@@ -88,7 +88,7 @@ csc /t:library acme.cs
 ```
 compiles the example as a library (code without a `Main` entry point) and produces an assembly named `acme.dll`.
 
-Assemblies contain executable code in the form of *__Intermediate Language__* (IL) instructions, and symbolic information in the form of *__metadata__*. Before it is executed, the IL code in an assembly is automatically converted to processor-specific code by the Just-In-Time (JIT) compiler of .NET Common Language Runtime.
+Assemblies contain executable code in the form of ***Intermediate Language*** (IL) instructions, and symbolic information in the form of ***metadata***. Before it is executed, the IL code in an assembly is automatically converted to processor-specific code by the Just-In-Time (JIT) compiler of .NET Common Language Runtime.
 
 Because an assembly is a self-describing unit of functionality containing both code and metadata, there is no need for `#include` directives and header files in C#. The public types and members contained in a particular assembly are made available in a C# program simply by referencing that assembly when compiling the program. For example, this program uses the `Acme.Collections.Stack` class from the `acme.dll` assembly:
 
@@ -125,9 +125,9 @@ C# permits the source text of a program to be stored in several source files. Wh
 
 ## Types and variables
 
-There are two kinds of types in C#: *__value types__* and *__reference types__*. Variables of value types directly contain their data whereas variables of reference types store references to their data, the latter being known as objects. With reference types, it is possible for two variables to reference the same object and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other (except in the case of `ref` and `out` parameter variables).
+There are two kinds of types in C#: ***value types*** and ***reference types***. Variables of value types directly contain their data whereas variables of reference types store references to their data, the latter being known as objects. With reference types, it is possible for two variables to reference the same object and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other (except in the case of `ref` and `out` parameter variables).
 
-C#'s value types are further divided into *__simple types__*, *__enum types__*, *__struct types__*, and *__nullable types__*, and C#'s reference types are further divided into *__class types__*, *__interface types__*, *__array types__*, and *__delegate types__*.
+C#'s value types are further divided into ***simple types***, ***enum types***, ***struct types***, and ***nullable types***, and C#'s reference types are further divided into ***class types***, ***interface types***, ***array types***, and ***delegate types***.
 
 The following table provides an overview of C#'s type system.
 
@@ -176,7 +176,7 @@ The following table summarizes C#'s numeric types.
 |                   | 64       | `double`  | 5.0 × 10^−324 to 1.7 × 10^308, 15-digit precision |
 | Decimal           | 128      | `decimal` | 1.0 × 10^−28 to 7.9 × 10^28, 28-digit precision |
 
-C# programs use *__type declarations__* to create new types. A type declaration specifies the name and the members of the new type. Five of C#'s categories of types are user-definable: class types, struct types, interface types, enum types, and delegate types.
+C# programs use ***type declarations*** to create new types. A type declaration specifies the name and the members of the new type. Five of C#'s categories of types are user-definable: class types, struct types, interface types, enum types, and delegate types.
 
 A class type defines a data structure that contains data members (fields) and function members (methods, properties, and others). Class types support single inheritance and polymorphism, mechanisms whereby derived classes can extend and specialize base classes.
 
@@ -194,7 +194,7 @@ C# supports single- and multi-dimensional arrays of any type. Unlike the types l
 
 Nullable types also do not have to be declared before they can be used. For each non-nullable value type `T` there is a corresponding nullable type `T?`, which can hold an additional value `null`. For instance, `int?` is a type that can hold any 32 bit integer or the value `null`.
 
-C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the `object` class type, and `object` is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type `object`. Values of value types are treated as objects by performing *__boxing__* and *__unboxing__* operations. In the following example, an `int` value is converted to `object` and back again to `int`.
+C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the `object` class type, and `object` is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type `object`. Values of value types are treated as objects by performing ***boxing*** and ***unboxing*** operations. In the following example, an `int` value is converted to `object` and back again to `int`.
 
 ```csharp
 using System;
@@ -212,7 +212,7 @@ When a value of a value type is converted to type `object`, an object instance, 
 
 C#'s unified type system effectively means that value types can become objects "on demand." Because of the unification, general-purpose libraries that use type `object` can be used with both reference types and value types.
 
-There are several kinds of *__variables__* in C#, including fields, array elements, local variables, and parameters. Variables represent storage locations, and every variable has a type that determines what values can be stored in the variable, as shown by the following table.
+There are several kinds of ***variables*** in C#, including fields, array elements, local variables, and parameters. Variables represent storage locations, and every variable has a type that determines what values can be stored in the variable, as shown by the following table.
 
 
 | __Type of Variable__    | __Possible Contents__ |
@@ -227,11 +227,11 @@ There are several kinds of *__variables__* in C#, including fields, array elemen
 
 ## Expressions
 
-*__Expressions__* are constructed from *__operands__* and *__operators__*. The operators of an expression indicate which operations to apply to the operands. Examples of operators include `+`, `-`, `*`, `/`, and `new`. Examples of operands include literals, fields, local variables, and expressions.
+***Expressions*** are constructed from ***operands*** and ***operators***. The operators of an expression indicate which operations to apply to the operands. Examples of operators include `+`, `-`, `*`, `/`, and `new`. Examples of operands include literals, fields, local variables, and expressions.
 
-When an expression contains multiple operators, the *__precedence__* of the operators controls the order in which the individual operators are evaluated. For example, the expression `x + y * z` is evaluated as `x + (y * z)` because the `*` operator has higher precedence than the `+` operator.
+When an expression contains multiple operators, the ***precedence*** of the operators controls the order in which the individual operators are evaluated. For example, the expression `x + y * z` is evaluated as `x + (y * z)` because the `*` operator has higher precedence than the `+` operator.
 
-Most operators can be *__overloaded__*. Operator overloading permits user-defined operator implementations to be specified for operations where one or both of the operands are of a user-defined class or struct type.
+Most operators can be ***overloaded***. Operator overloading permits user-defined operator implementations to be specified for operations where one or both of the operands are of a user-defined class or struct type.
 
 The following table summarizes C#'s operators, listing the operator categories in order of precedence from highest to lowest. Operators in the same category have equal precedence.
 
@@ -288,19 +288,19 @@ The following table summarizes C#'s operators, listing the operator categories i
 
 ## Statements
 
-The actions of a program are expressed using *__statements__*. C# supports several different kinds of statements, a number of which are defined in terms of embedded statements.
+The actions of a program are expressed using ***statements***. C# supports several different kinds of statements, a number of which are defined in terms of embedded statements.
 
-A *__block__* permits multiple statements to be written in contexts where a single statement is allowed. A block consists of a list of statements written between the delimiters `{` and `}`.
+A ***block*** permits multiple statements to be written in contexts where a single statement is allowed. A block consists of a list of statements written between the delimiters `{` and `}`.
 
-*__Declaration statements__* are used to declare local variables and constants.
+***Declaration statements*** are used to declare local variables and constants.
 
-*__Expression statements__* are used to evaluate expressions. Expressions that can be used as statements include method invocations, object allocations using the `new` operator, assignments using `=` and the compound assignment operators, increment and decrement operations using the `++` and `--` operators and await expressions.
+***Expression statements*** are used to evaluate expressions. Expressions that can be used as statements include method invocations, object allocations using the `new` operator, assignments using `=` and the compound assignment operators, increment and decrement operations using the `++` and `--` operators and await expressions.
 
-*__Selection statements__* are used to select one of a number of possible statements for execution based on the value of some expression. In this group are the `if` and `switch` statements.
+***Selection statements*** are used to select one of a number of possible statements for execution based on the value of some expression. In this group are the `if` and `switch` statements.
 
-*__Iteration statements__* are used to repeatedly execute an embedded statement. In this group are the `while`, `do`, `for`, and `foreach` statements.
+***Iteration statements*** are used to repeatedly execute an embedded statement. In this group are the `while`, `do`, `for`, and `foreach` statements.
 
-*__Jump statements__* are used to transfer control. In this group are the `break`, `continue`, `goto`, `throw`, `return`, and `yield` statements.
+***Jump statements*** are used to transfer control. In this group are the `break`, `continue`, `goto`, `throw`, `return`, and `yield` statements.
 
 The `try`...`catch` statement is used to catch exceptions that occur during execution of a block, and the `try`...`finally` statement is used to specify finalization code that is always executed, whether an exception occurred or not.
 
@@ -563,7 +563,7 @@ static void Main() {
 
 ## Classes and objects
 
-*__Classes__* are the most fundamental of C#'s types. A class is a data structure that combines state (fields) and actions (methods and other function members) in a single unit. A class provides a definition for dynamically created *__instances__* of the class, also known as *__objects__*. Classes support *__inheritance__* and *__polymorphism__*, mechanisms whereby *__derived classes__* can extend and specialize *__base classes__*.
+***Classes*** are the most fundamental of C#'s types. A class is a data structure that combines state (fields) and actions (methods and other function members) in a single unit. A class provides a definition for dynamically created ***instances*** of the class, also known as ***objects***. Classes support ***inheritance*** and ***polymorphism***, mechanisms whereby ***derived classes*** can extend and specialize ***base classes***.
 
 New classes are created using class declarations. A class declaration starts with a header that specifies the attributes and modifiers of the class, the name of the class, the base class (if given), and the interfaces implemented by the class. The header is followed by the class body, which consists of a list of member declarations written between the delimiters `{` and `}`.
 
@@ -590,7 +590,7 @@ The memory occupied by an object is automatically reclaimed when the object is n
 
 ### Members
 
-The members of a class are either *__static members__* or *__instance members__*. Static members belong to classes, and instance members belong to objects (instances of classes).
+The members of a class are either ***static members*** or ***instance members***. Static members belong to classes, and instance members belong to objects (instances of classes).
 
 The following table provides an overview of the kinds of members a class can contain.
 
@@ -681,9 +681,9 @@ Point b = new Point3D(10, 20, 30);
 
 A field is a variable that is associated with a class or with an instance of a class.
 
-A field declared with the `static` modifier defines a *__static field__*. A static field identifies exactly one storage location. No matter how many instances of a class are created, there is only ever one copy of a static field.
+A field declared with the `static` modifier defines a ***static field***. A static field identifies exactly one storage location. No matter how many instances of a class are created, there is only ever one copy of a static field.
 
-A field declared without the `static` modifier defines an *__instance field__*. Every instance of a class contains a separate copy of all the instance fields of that class.
+A field declared without the `static` modifier defines an ***instance field***. Every instance of a class contains a separate copy of all the instance fields of that class.
 
 In the following example, each instance of the `Color` class has a separate copy of the `r`, `g`, and `b` instance fields, but there is only one copy of the `Black`, `White`, `Red`, `Green`, and `Blue` static fields:
 
@@ -704,27 +704,27 @@ public class Color
     }
 }
 ```
-As shown in the previous example, *__read-only fields__* may be declared with a `readonly` modifier. Assignment to a `readonly` field can only occur as part of the field's declaration or in a constructor in the same class.
+As shown in the previous example, ***read-only fields*** may be declared with a `readonly` modifier. Assignment to a `readonly` field can only occur as part of the field's declaration or in a constructor in the same class.
 
 ### Methods
 
-A *__method__* is a member that implements a computation or action that can be performed by an object or class. *__Static methods__* are accessed through the class. *__Instance methods__* are accessed through instances of the class.
+A ***method*** is a member that implements a computation or action that can be performed by an object or class. ***Static methods*** are accessed through the class. ***Instance methods*** are accessed through instances of the class.
 
-Methods have a (possibly empty) list of *__parameters__*, which represent values or variable references passed to the method, and a *__return type__*, which specifies the type of the value computed and returned by the method. A method's return type is `void` if it does not return a value.
+Methods have a (possibly empty) list of ***parameters***, which represent values or variable references passed to the method, and a ***return type***, which specifies the type of the value computed and returned by the method. A method's return type is `void` if it does not return a value.
 
 Like types, methods may also have a set of type parameters, for which type arguments must be specified when the method is called. Unlike types, the type arguments can often be inferred from the arguments of a method call and need not be explicitly given.
 
-The *__signature__* of a method must be unique in the class in which the method is declared. The signature of a method consists of the name of the method, the number of type parameters and the number, modifiers, and types of its parameters. The signature of a method does not include the return type.
+The ***signature*** of a method must be unique in the class in which the method is declared. The signature of a method consists of the name of the method, the number of type parameters and the number, modifiers, and types of its parameters. The signature of a method does not include the return type.
 
 #### Parameters
 
-Parameters are used to pass values or variable references to methods. The parameters of a method get their actual values from the *__arguments__* that are specified when the method is invoked. There are four kinds of parameters: value parameters, reference parameters, output parameters, and parameter arrays.
+Parameters are used to pass values or variable references to methods. The parameters of a method get their actual values from the ***arguments*** that are specified when the method is invoked. There are four kinds of parameters: value parameters, reference parameters, output parameters, and parameter arrays.
 
-A *__value parameter__* is used for input parameter passing. A value parameter corresponds to a local variable that gets its initial value from the argument that was passed for the parameter. Modifications to a value parameter do not affect the argument that was passed for the parameter.
+A ***value parameter*** is used for input parameter passing. A value parameter corresponds to a local variable that gets its initial value from the argument that was passed for the parameter. Modifications to a value parameter do not affect the argument that was passed for the parameter.
 
 Value parameters can be optional, by specifying a default value so that corresponding arguments can be omitted.
 
-A *__reference parameter__* is used for both input and output parameter passing. The argument passed for a reference parameter must be a variable, and during execution of the method, the reference parameter represents the same storage location as the argument variable. A reference parameter is declared with the `ref` modifier. The following example shows the use of `ref` parameters.
+A ***reference parameter*** is used for both input and output parameter passing. The argument passed for a reference parameter must be a variable, and during execution of the method, the reference parameter represents the same storage location as the argument variable. A reference parameter is declared with the `ref` modifier. The following example shows the use of `ref` parameters.
 
 ```csharp
 using System;
@@ -744,7 +744,7 @@ class Test
     }
 }
 ```
-An *__output parameter__* is used for output parameter passing. An output parameter is similar to a reference parameter except that the initial value of the caller-provided argument is unimportant. An output parameter is declared with the `out` modifier. The following example shows the use of `out` parameters.
+An ***output parameter*** is used for output parameter passing. An output parameter is similar to a reference parameter except that the initial value of the caller-provided argument is unimportant. An output parameter is declared with the `out` modifier. The following example shows the use of `out` parameters.
 
 ```csharp
 using System;
@@ -763,7 +763,7 @@ class Test
     }
 }
 ```
-A *__parameter array__* permits a variable number of arguments to be passed to a method. A parameter array is declared with the `params` modifier. Only the last parameter of a method can be a parameter array, and the type of a parameter array must be a single-dimensional array type. The `Write` and `WriteLine` methods of the `System.Console` class are good examples of parameter array usage. They are declared as follows.
+A ***parameter array*** permits a variable number of arguments to be passed to a method. A parameter array is declared with the `params` modifier. Only the last parameter of a method can be a parameter array, and the type of a parameter array must be a single-dimensional array type. The `Write` and `WriteLine` methods of the `System.Console` class are good examples of parameter array usage. They are declared as follows.
 
 ```csharp
 public class Console
@@ -793,7 +793,7 @@ Console.WriteLine(s, args);
 
 A method's body specifies the statements to execute when the method is invoked.
 
-A method body can declare variables that are specific to the invocation of the method. Such variables are called *__local variables__*. A local variable declaration specifies a type name, a variable name, and possibly an initial value. The following example declares a local variable `i` with an initial value of zero and a local variable `j` with no initial value.
+A method body can declare variables that are specific to the invocation of the method. Such variables are called ***local variables***. A local variable declaration specifies a type name, a variable name, and possibly an initial value. The following example declares a local variable `i` with an initial value of zero and a local variable `j` with no initial value.
 
 ```csharp
 using System;
@@ -811,15 +811,15 @@ class Squares
     }
 }
 ```
-C# requires a local variable to be *__definitely assigned__* before its value can be obtained. For example, if the declaration of the previous `i` did not include an initial value, the compiler would report an error for the subsequent usages of `i` because `i` would not be definitely assigned at those points in the program.
+C# requires a local variable to be ***definitely assigned*** before its value can be obtained. For example, if the declaration of the previous `i` did not include an initial value, the compiler would report an error for the subsequent usages of `i` because `i` would not be definitely assigned at those points in the program.
 
 A method can use `return` statements to return control to its caller. In a method returning `void`, `return` statements cannot specify an expression. In a method returning non-`void`, `return` statements must include an expression that computes the return value.
 
 #### Static and instance methods
 
-A method declared with a `static` modifier is a *__static method__*. A static method does not operate on a specific instance and can only directly access static members.
+A method declared with a `static` modifier is a ***static method***. A static method does not operate on a specific instance and can only directly access static members.
 
-A method declared without a `static` modifier is an *__instance method__*. An instance method operates on a specific instance and can access both static and instance members. The instance on which an instance method was invoked can be explicitly accessed as `this`. It is an error to refer to `this` in a static method.
+A method declared without a `static` modifier is an ***instance method***. An instance method operates on a specific instance and can access both static and instance members. The instance on which an instance method was invoked can be explicitly accessed as `this`. It is an error to refer to `this` in a static method.
 
 The following `Entity` class has both static and instance members.
 
@@ -871,13 +871,13 @@ Note that the `SetNextSerialNo` and `GetNextSerialNo` static methods are invoked
 
 #### Virtual, override, and abstract methods
 
-When an instance method declaration includes a `virtual` modifier, the method is said to be a *__virtual method__*. When no `virtual` modifier is present, the method is said to be a *__non-virtual method__*.
+When an instance method declaration includes a `virtual` modifier, the method is said to be a ***virtual method***. When no `virtual` modifier is present, the method is said to be a ***non-virtual method***.
 
-When a virtual method is invoked, the *__run-time type__* of the instance for which that invocation takes place determines the actual method implementation to invoke. In a nonvirtual method invocation, the *__compile-time type__* of the instance is the determining factor.
+When a virtual method is invoked, the ***run-time type*** of the instance for which that invocation takes place determines the actual method implementation to invoke. In a nonvirtual method invocation, the ***compile-time type*** of the instance is the determining factor.
 
-A virtual method can be *__overridden__* in a derived class. When an instance method declaration includes an `override` modifier, the method overrides an inherited virtual method with the same signature. Whereas a virtual method declaration introduces a new method, an override method declaration specializes an existing inherited virtual method by providing a new implementation of that method.
+A virtual method can be ***overridden*** in a derived class. When an instance method declaration includes an `override` modifier, the method overrides an inherited virtual method with the same signature. Whereas a virtual method declaration introduces a new method, an override method declaration specializes an existing inherited virtual method by providing a new implementation of that method.
 
-An *__abstract__* method is a virtual method with no implementation. An abstract method is declared with the `abstract` modifier and is permitted only in a class that is also declared `abstract`. An abstract method must be overridden in every non-abstract derived class.
+An ***abstract*** method is a virtual method with no implementation. An abstract method is declared with the `abstract` modifier and is permitted only in a class that is also declared `abstract`. An abstract method must be overridden in every non-abstract derived class.
 
 The following example declares an abstract class, `Expression`, which represents an expression tree node, and three derived classes, `Constant`, `VariableReference`, and `Operation`, which implement expression tree nodes for constants, variable references, and arithmetic operations. (This is similar to, but not to be confused with the expression tree types introduced in section §4.6).
 
@@ -988,7 +988,7 @@ class Test
 
 #### Method overloading
 
-Method *__overloading__* permits multiple methods in the same class to have the same name as long as they have unique signatures. When compiling an invocation of an overloaded method, the compiler uses *__overload resolution__* to determine the specific method to invoke. Overload resolution finds the one method that best matches the arguments or reports an error if no single best match can be found. The following example shows overload resolution in effect. The comment for each invocation in the `Main` method shows which method is actually invoked.
+Method ***overloading*** permits multiple methods in the same class to have the same name as long as they have unique signatures. When compiling an invocation of an overloaded method, the compiler uses ***overload resolution*** to determine the specific method to invoke. Overload resolution finds the one method that best matches the arguments or reports an error if no single best match can be found. The following example shows overload resolution in effect. The comment for each invocation in the `Main` method shows which method is actually invoked.
 
 ```csharp
 class Test
@@ -1033,7 +1033,7 @@ As shown by the example, a particular method can always be selected by explicitl
 
 ### Other function members
 
-Members that contain executable code are collectively known as the *__function members__* of a class. The preceding section describes methods, which are the primary kind of function members. This section describes the other kinds of function members supported by C#: constructors, properties, indexers, events, operators, and destructors.
+Members that contain executable code are collectively known as the ***function members*** of a class. The preceding section describes methods, which are the primary kind of function members. This section describes the other kinds of function members supported by C#: constructors, properties, indexers, events, operators, and destructors.
 
 The following code shows a generic class called `List<T>`, which implements a growable list of objects. The class contains several examples of the most common kinds of function members.
 
@@ -1120,7 +1120,7 @@ public class List<T> {
 
 #### Constructors
 
-C# supports both instance and static constructors. An *__instance constructor__* is a member that implements the actions required to initialize an instance of a class. A *__static constructor__* is a member that implements the actions required to initialize a class itself when it is first loaded.
+C# supports both instance and static constructors. An ***instance constructor*** is a member that implements the actions required to initialize an instance of a class. A ***static constructor*** is a member that implements the actions required to initialize a class itself when it is first loaded.
 
 A constructor is declared like a method with no return type and the same name as the containing class. If a constructor declaration includes a `static` modifier, it declares a static constructor. Otherwise, it declares an instance constructor.
 
@@ -1136,9 +1136,9 @@ Unlike other members, instance constructors are not inherited, and a class has n
 
 #### Properties
 
-*__Properties__* are a natural extension of fields. Both are named members with associated types, and the syntax for accessing fields and properties is the same. However, unlike fields, properties do not denote storage locations. Instead, properties have *__accessors__* that specify the statements to be executed when their values are read or written.
+***Properties*** are a natural extension of fields. Both are named members with associated types, and the syntax for accessing fields and properties is the same. However, unlike fields, properties do not denote storage locations. Instead, properties have ***accessors*** that specify the statements to be executed when their values are read or written.
 
-A property is declared like a field, except that the declaration ends with a `get` accessor and/or a `set` accessor written between the delimiters `{` and `}` instead of ending in a semicolon. A property that has both a `get` accessor and a `set` accessor is a *__read-write property__*, a property that has only a `get` accessor is a *__read-only property__*, and a property that has only a `set` accessor is a *__write-only property__*.
+A property is declared like a field, except that the declaration ends with a `get` accessor and/or a `set` accessor written between the delimiters `{` and `}` instead of ending in a semicolon. A property that has both a `get` accessor and a `set` accessor is a ***read-write property***, a property that has only a `get` accessor is a ***read-only property***, and a property that has only a `set` accessor is a ***write-only property***.
 
 A `get` accessor corresponds to a parameterless method with a return value of the property type. Except as the target of an assignment, when a property is referenced in an expression, the `get` accessor of the property is invoked to compute the value of the property.
 
@@ -1159,7 +1159,7 @@ The accessor(s) of a property can be virtual. When a property declaration includ
 
 #### Indexers
 
-An *__indexer__* is a member that enables objects to be indexed in the same way as an array. An indexer is declared like a property except that the name of the member is `this` followed by a parameter list written between the delimiters `[` and `]`. The parameters are available in the accessor(s) of the indexer. Similar to properties, indexers can be read-write, read-only, and write-only, and the accessor(s) of an indexer can be virtual.
+An ***indexer*** is a member that enables objects to be indexed in the same way as an array. An indexer is declared like a property except that the name of the member is `this` followed by a parameter list written between the delimiters `[` and `]`. The parameters are available in the accessor(s) of the indexer. Similar to properties, indexers can be read-write, read-only, and write-only, and the accessor(s) of an indexer can be virtual.
 
 The `List` class declares a single read-write indexer that takes an `int` parameter. The indexer makes it possible to index `List` instances with `int` values. For example
 
@@ -1177,14 +1177,14 @@ Indexers can be overloaded, meaning that a class can declare multiple indexers a
 
 #### Events
 
-An *__event__* is a member that enables a class or object to provide notifications. An event is declared like a field except that the declaration includes an `event` keyword and the type must be a delegate type.
+An ***event*** is a member that enables a class or object to provide notifications. An event is declared like a field except that the declaration includes an `event` keyword and the type must be a delegate type.
 
 Within a class that declares an event member, the event behaves just like a field of a delegate type (provided the event is not abstract and does not declare accessors). The field stores a reference to a delegate that represents the event handlers that have been added to the event. If no event handles are present, the field is `null`.
 
 The `List<T>
 ` class declares a single event member called `Changed`, which indicates that a new item has been added to the list. The `Changed` event is raised by the `OnChanged` virtual method, which first checks whether the event is `null` (meaning that no handlers are present). The notion of raising an event is precisely equivalent to invoking the delegate represented by the event—thus, there are no special language constructs for raising events.
 
-Clients react to events through *__event handlers__*. Event handlers are attached using the `+=` operator and removed using the `-=` operator. The following example attaches an event handler to the `Changed` event of a `List<string>
+Clients react to events through ***event handlers***. Event handlers are attached using the `+=` operator and removed using the `-=` operator. The following example attaches an event handler to the `Changed` event of a `List<string>
 `.
 
 ```csharp
@@ -1212,7 +1212,7 @@ For advanced scenarios where control of the underlying storage of an event is de
 
 #### Operators
 
-An *__operator__* is a member that defines the meaning of applying a particular expression operator to instances of a class. Three kinds of operators can be defined: unary operators, binary operators, and conversion operators. All operators must be declared as `public` and `static`.
+An ***operator*** is a member that defines the meaning of applying a particular expression operator to instances of a class. Three kinds of operators can be defined: unary operators, binary operators, and conversion operators. All operators must be declared as `public` and `static`.
 
 The `List<T>
 ` class declares two operators, `operator==` and `operator!=`, and thus gives new meaning to expressions that apply those operators to `List` instances. Specifically, the operators define equality of two `List<T>
@@ -1244,7 +1244,7 @@ The first `Console.WriteLine` outputs `True` because the two lists contain the s
 
 #### Destructors
 
-A *__destructor__* is a member that implements the actions required to destruct an instance of a class. Destructors cannot have parameters, they cannot have accessibility modifiers, and they cannot be invoked explicitly. The destructor for an instance is invoked automatically during garbage collection.
+A ***destructor*** is a member that implements the actions required to destruct an instance of a class. Destructors cannot have parameters, they cannot have accessibility modifiers, and they cannot be invoked explicitly. The destructor for an instance is invoked automatically during garbage collection.
 
 The garbage collector is allowed wide latitude in deciding when to collect objects and run destructors. Specifically, the timing of destructor invocations is not deterministic, and destructors may be executed on any thread. For these and other reasons, classes should implement destructors only when no other solutions are feasible.
 
@@ -1252,7 +1252,7 @@ The `using` statement provides a better approach to object destruction.
 
 ## Structs
 
-Like classes, *__structs__* are data structures that can contain data members and function members, but unlike classes, structs are value types and do not require heap allocation. A variable of a struct type directly stores the data of the struct, whereas a variable of a class type stores a reference to a dynamically allocated object. Struct types do not support user-specified inheritance, and all struct types implicitly inherit from type `object`.
+Like classes, ***structs*** are data structures that can contain data members and function members, but unlike classes, structs are value types and do not require heap allocation. A variable of a struct type directly stores the data of the struct, whereas a variable of a class type stores a reference to a dynamically allocated object. Struct types do not support user-specified inheritance, and all struct types implicitly inherit from type `object`.
 
 Structs are particularly useful for small data structures that have value semantics. Complex numbers, points in a coordinate system, or key-value pairs in a dictionary are all good examples of structs. The use of structs rather than classes for small data structures can make a large difference in the number of memory allocations an application performs. For example, the following program creates and initializes an array of 100 points. With `Point` implemented as a class, 101 separate objects are instantiated—one for the array and one each for the 100 elements.
 
@@ -1306,9 +1306,9 @@ The previous example highlights two of the limitations of structs. First, copyin
 
 ## Arrays
 
-An *__array__* is a data structure that contains a number of variables that are accessed through computed indices. The variables contained in an array, also called the *__elements__* of the array, are all of the same type, and this type is called the *__element type__* of the array.
+An ***array*** is a data structure that contains a number of variables that are accessed through computed indices. The variables contained in an array, also called the ***elements*** of the array, are all of the same type, and this type is called the ***element type*** of the array.
 
-Array types are reference types, and the declaration of an array variable simply sets aside space for a reference to an array instance. Actual array instances are created dynamically at run-time using the `new` operator. The `new` operation specifies the *__length__* of the new array instance, which is then fixed for the lifetime of the instance. The indices of the elements of an array range from `0` to `Length - 1`. The `new` operator automatically initializes the elements of an array to their default value, which, for example, is zero for all numeric types and `null` for all reference types.
+Array types are reference types, and the declaration of an array variable simply sets aside space for a reference to an array instance. Actual array instances are created dynamically at run-time using the `new` operator. The `new` operation specifies the ***length*** of the new array instance, which is then fixed for the lifetime of the instance. The indices of the elements of an array range from `0` to `Length - 1`. The `new` operator automatically initializes the elements of an array to their default value, which, for example, is zero for all numeric types and `null` for all reference types.
 
 The following example creates an array of `int` elements, initializes the array, and prints out the contents of the array.
 
@@ -1328,7 +1328,7 @@ class Test
     }
 }
 ```
-This example creates and operates on a *__single-dimensional array__*. C# also supports *__multi-dimensional arrays__*. The number of dimensions of an array type, also known as the *__rank__* of the array type, is one plus the number of commas written between the square brackets of the array type. The following example allocates a one-dimensional, a two-dimensional, and a three-dimensional array.
+This example creates and operates on a ***single-dimensional array***. C# also supports ***multi-dimensional arrays***. The number of dimensions of an array type, also known as the ***rank*** of the array type, is one plus the number of commas written between the square brackets of the array type. The following example allocates a one-dimensional, a two-dimensional, and a three-dimensional array.
 
 ```csharp
 int[] a1 = new int[10];
@@ -1337,7 +1337,7 @@ int[,,] a3 = new int[10, 5, 2];
 ```
 The `a1` array contains 10 elements, the `a2` array contains 50 (10 × 5) elements, and the `a3` array contains 100 (10 × 5 × 2) elements.
 
-The element type of an array can be any type, including an array type. An array with elements of an array type is sometimes called a *__jagged array__* because the lengths of the element arrays do not all have to be the same. The following example allocates an array of arrays of `int`:
+The element type of an array can be any type, including an array type. An array with elements of an array type is sometimes called a ***jagged array*** because the lengths of the element arrays do not all have to be the same. The following example allocates an array of arrays of `int`:
 
 ```csharp
 int[][] a = new int[3][];
@@ -1347,7 +1347,7 @@ a[2] = new int[20];
 ```
 The first line creates an array with three elements, each of type `int[]` and each with an initial value of `null`. The subsequent lines then initialize the three elements with references to individual array instances of varying lengths.
 
-The `new` operator permits the initial values of the array elements to be specified using an *__array initializer__*, which is a list of expressions written between the delimiters `{` and `}`. The following example allocates and initializes an `int[]` with three elements.
+The `new` operator permits the initial values of the array elements to be specified using an ***array initializer***, which is a list of expressions written between the delimiters `{` and `}`. The following example allocates and initializes an `int[]` with three elements.
 
 ```csharp
 int[] a = new int[] {1, 2, 3};
@@ -1368,9 +1368,9 @@ int[] a = t;
 ```
 ## Interfaces
 
-An *__interface__* defines a contract that can be implemented by classes and structs. An interface can contain methods, properties, events, and indexers. An interface does not provide implementations of the members it defines—it merely specifies the members that must be supplied by classes or structs that implement the interface.
+An ***interface*** defines a contract that can be implemented by classes and structs. An interface can contain methods, properties, events, and indexers. An interface does not provide implementations of the members it defines—it merely specifies the members that must be supplied by classes or structs that implement the interface.
 
-Interfaces may employ *__multiple inheritance__*. In the following example, the interface `IComboBox` inherits from both `ITextBox` and `IListBox`.
+Interfaces may employ ***multiple inheritance***. In the following example, the interface `IComboBox` inherits from both `ITextBox` and `IListBox`.
 
 ```csharp
 interface IControl
@@ -1418,7 +1418,7 @@ object obj = new EditBox();
 IControl control = (IControl)obj;
 IDataBound dataBound = (IDataBound)obj;
 ```
-In the previous `EditBox` class, the `Paint` method from the `IControl` interface and the `Bind` method from the `IDataBound` interface are implemented using `public` members. C# also supports *__explicit interface member implementations__*, using which the class or struct can avoid making the members `public`. An explicit interface member implementation is written using the fully qualified interface member name. For example, the `EditBox` class could implement the `IControl.Paint` and `IDataBound.Bind` methods using explicit interface member implementations as follows.
+In the previous `EditBox` class, the `Paint` method from the `IControl` interface and the `Bind` method from the `IDataBound` interface are implemented using `public` members. C# also supports ***explicit interface member implementations***, using which the class or struct can avoid making the members `public`. An explicit interface member implementation is written using the fully qualified interface member name. For example, the `EditBox` class could implement the `IControl.Paint` and `IDataBound.Bind` methods using explicit interface member implementations as follows.
 
 ```csharp
 public class EditBox: IControl, IDataBound
@@ -1438,7 +1438,7 @@ control.Paint();                        // Ok
 
 ## Enums
 
-An *__enum type__* is a distinct value type with a set of named constants. The following example declares and uses an enum type named `Color` with three constant values, `Red`, `Green`, and `Blue`.
+An ***enum type*** is a distinct value type with a set of named constants. The following example declares and uses an enum type named `Color` with three constant values, `Red`, `Green`, and `Blue`.
 
 ```csharp
 using System;
@@ -1476,7 +1476,7 @@ class Test
     }
 }
 ```
-Each enum type has a corresponding integral type called the *__underlying type__* of the enum type. An enum type that does not explicitly declare an underlying type has an underlying type of `int`. An enum type's storage format and range of possible values are determined by its underlying type. The set of values that an enum type can take on is not limited by its enum members. In particular, any value of the underlying type of an enum can be cast to the enum type and is a distinct valid value of that enum type.
+Each enum type has a corresponding integral type called the ***underlying type*** of the enum type. An enum type that does not explicitly declare an underlying type has an underlying type of `int`. An enum type's storage format and range of possible values are determined by its underlying type. The set of values that an enum type can take on is not limited by its enum members. In particular, any value of the underlying type of an enum can be cast to the enum type and is a distinct valid value of that enum type.
 
 The following example declares an enum type named `Alignment` with an underlying type of `sbyte`.
 
@@ -1504,7 +1504,7 @@ Color c = 0;
 
 ## Delegates
 
-A *__delegate type__* represents references to methods with a particular parameter list and return type. Delegates make it possible to treat methods as entities that can be assigned to variables and passed as parameters. Delegates are similar to the concept of function pointers found in some other languages, but unlike function pointers, delegates are object-oriented and type-safe.
+A ***delegate type*** represents references to methods with a particular parameter list and return type. Delegates make it possible to treat methods as entities that can be assigned to variables and passed as parameters. Delegates are similar to the concept of function pointers found in some other languages, but unlike function pointers, delegates are object-oriented and type-safe.
 
 The following example declares and uses a delegate type named `Function`.
 
@@ -1560,7 +1560,7 @@ An interesting and useful property of a delegate is that it does not know or car
 
 ## Attributes
 
-Types, members, and other entities in a C# program support modifiers that control certain aspects of their behavior. For example, the accessibility of a method is controlled using the `public`, `protected`, `internal`, and `private` modifiers. C# generalizes this capability such that user-defined types of declarative information can be attached to program entities and retrieved at run-time. Programs specify this additional declarative information by defining and using *__attributes__*.
+Types, members, and other entities in a C# program support modifiers that control certain aspects of their behavior. For example, the accessibility of a method is controlled using the `public`, `protected`, `internal`, and `private` modifiers. C# generalizes this capability such that user-defined types of declarative information can be attached to program entities and retrieved at run-time. Programs specify this additional declarative information by defining and using ***attributes***.
 
 The following example declares a `HelpAttribute` attribute that can be placed on program entities to provide links to their associated documentation.
 

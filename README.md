@@ -89,35 +89,45 @@ Links are like this, which will render in github as a hyperlinked word "Conventi
 For more information see Section [Conventions](README.md#conventions)
 ```
 
+
+
+
 ## Experiments and stuff
+
+
+-------------------------------------------------------------
+
+Here's about links.
 
 The following is [link1](README.md#conventions)
 
 The following is [link2](README.md#experiments-and-stuff)
 
-The following is a heading with inline code. Github gives it the link [link3](README.md#c)
+-------------------------------------------------------------
 
-First try a heading with a codeblock:
+The following experiment is about code inside lists.
 
-### `<c>`
+*   Bullet1
+*   Without any newlines between code and text
+    ```csharp
+    x += y;
+    ```
+    More discussion
+*   Bullet2
 
-Next try a heading with ampersand-escapes for the lt/gt characters:
+*   Bullet3
+*   With newlines between code and text
 
-### &lt;c&gt;
+    ```csharp
+    x += y;
+    ```
 
-Next try a heading with just lt/gt characters:
+    More discussion
 
-### <c>
+*   Bullet2
 
-Next, that was the end of my heading experiments. Back to links.
 
-The following is a heading with numbers. Github gives it the link [link4](README.md#123-hello-456-world)
-
-### 123 hello 456 world
-
-The following is a heading with symbols. Github gives it the link [link5](README.md#abcdefghijk_l-mnopqrstuvwxyz). It preserves hyphen, underscore, numerics, alphas (converted to lowercase), and removes the rest.
-
-### a!b@c#d$e%f^g&h*i(j)k_l-m+n=o[p{q|r\s;t:u'v"w,x.y?z/
+-------------------------------------------------------------
 
 The following experiment is about code blocks in quoted blocks. Both styles are fine.
 
@@ -284,19 +294,48 @@ Here's an experiment about spacing and inline-code blocks. It shows that the fir
 
 -------------------------------------------------------------
 
-Here's an experiment about bold and italic
+Here's an experiment about bold and italic, which C# spec uses for its ***terms***. We should use either ***[1]*** or ___[4]___ or _**[6]**_.  I think that [1] is clearly best.
 
-***asterisk asterisk asterisk***
+***[1] asterisk asterisk asterisk, looks bold+italic in Github, looks bold in WebEssentials editor, looks bold+italic in WebEssentials previwer***
 
-**_asterisk asterisk underscore_**
+**_[2] asterisk asterisk underscore, looks bold+italic in Github, looks italic or bold in WebEssentials editor depending on whether there's a space at the end, looks plaintext in WebEssentials previewer_**
 
-*__asterisk underscore underscore__*
+*__[3] asterisk underscore underscore, looks bold+italic in Github, looks italic in WebEssentials editor depending on whether there's a space at the end, looks plaintext in WebEssentaisl previewer__*
 
-___underscore underscore underscore___
+___[4] underscore underscore underscore, looks bold+italic in Github, looks bold in WebEssentials editor, looks bold+italic in WebEssentials previewer___
 
-__*underscore underscore asterisk*__
+__*[5] underscore underscore asterisk, looks bold+italic in Github, looks italic or bold in WebEssentials editor depending on whether there's a space at the end, looks plaintext in WebEssentials previewer*__
 
-_**underscore asterisk asterisk**_
+_**[6] underscore asterisk asterisk, looks bold+italic in Github, looks italic in WebEssentials editor, looks bold+italic in WebEssentials previewer**_
+
+
+-------------------------------------------------------------
+
+
+The following is a heading with inline code. Github gives it the link [link3](README.md#c)
+
+First try a heading with a codeblock:
+
+### `<c>`
+
+Next try a heading with ampersand-escapes for the lt/gt characters:
+
+### &lt;c&gt;
+
+Next try a heading with just lt/gt characters:
+
+### <c>
+
+Next, that was the end of my heading experiments. Back to links.
+
+The following is a heading with numbers. Github gives it the link [link4](README.md#123-hello-456-world)
+
+### 123 hello 456 world
+
+The following is a heading with symbols. Github gives it the link [link5](README.md#abcdefghijk_l-mnopqrstuvwxyz). It preserves hyphen, underscore, numerics, alphas (converted to lowercase), and removes the rest.
+
+### a!b@c#d$e%f^g&h*i(j)k_l-m+n=o[p{q|r\s;t:u'v"w,x.y?z/
+
 
 -------------------------------------------------------------
 

@@ -199,7 +199,7 @@ Module Colorizer
             ElseIf token.KindCS = CSharp.SyntaxKind.StringLiteralToken Then
                 r = Col(token.Text, "StringLiteral")
             ElseIf token.KindCS = CSharp.SyntaxKind.CharacterLiteralToken Then
-                r = Col(token.Text, "CharacterLiteral")
+                r = Col(token.Text, "StringLiteral")
             ElseIf token.KindCS = CSharp.SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is CSharp.Syntax.SimpleNameSyntax Then
                 Dim name = CType(token.Parent, CSharp.Syntax.SimpleNameSyntax)
                 Dim symbol = sm.GetSymbolInfo(name).Symbol
@@ -277,7 +277,6 @@ Module Colorizer
                 Case "Keyword" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 255}
                 Case "UserType" : Return New ColorizedWord With {.Text = token, .Red = 43, .Green = 145, .Blue = 175}
                 Case "StringLiteral" : Return New ColorizedWord With {.Text = token, .Red = 163, .Green = 21, .Blue = 21}
-                Case "CharacterLiteral" : Return New ColorizedWord With {.Text = token, .Red = 210, .Green = 2, .Blue = 254}
                 Case "Comment" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 128, .Blue = 0}
                 Case "ExcludedCode" : Return New ColorizedWord With {.Text = token, .Red = 128, .Green = 128, .Blue = 128}
                 Case "Region" : Return New ColorizedWord With {.Text = token, .Red = 224, .Green = 224, .Blue = 224}
