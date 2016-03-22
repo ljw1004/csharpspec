@@ -293,11 +293,18 @@ Class MarkdownSpec
                 If numberingPart.Numbering Is Nothing Then numberingPart.Numbering = New Numbering()
 
                 Dim createLevel = Function(level As Integer, isOrdered As Boolean) As Level
-                                      Dim numFormat = NumberFormatValues.Bullet, levelText = "·"
+                                      Dim numFormat = NumberFormatValues.Bullet, levelText = {"·", "o", "o"}(level)
                                       If isOrdered AndAlso level = 0 Then numFormat = NumberFormatValues.Decimal : levelText = "%1."
                                       If isOrdered AndAlso level = 1 Then numFormat = NumberFormatValues.LowerLetter : levelText = "%2."
                                       If isOrdered AndAlso level = 2 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%3."
-                                      Return New Level(New StartNumberingValue With {.Val = 1}, New NumberingFormat With {.Val = numFormat}, New LevelText With {.Val = levelText}, New ParagraphProperties(New Indentation With {.Left = CStr(540 + 360 * level), .Hanging = "360"})) With {.LevelIndex = level}
+                                      Dim r As New Level With {.LevelIndex = level}
+                                      r.Append(New StartNumberingValue With {.Val = 1})
+                                      r.Append(New NumberingFormat With {.Val = numFormat})
+                                      r.Append(New LevelText With {.Val = levelText})
+                                      r.Append(New ParagraphProperties(New Indentation With {.Left = CStr(540 + 360 * level), .Hanging = "360"}))
+                                      If levelText = "·" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Symbol", .HighAnsi = "Symbol", .EastAsia = "Times New Roman", .ComplexScript = "Times New Roman"}))
+                                      If levelText = "o" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Courier New", .HighAnsi = "Courier New", .ComplexScript = "Courier New"}))
+                                      Return r
                                   End Function
                 Dim level0 = createLevel(0, format(0) = "1")
                 Dim level1 = createLevel(1, format(1) = "1")

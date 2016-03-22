@@ -284,4 +284,21 @@ Here's an experiment about spacing and inline-code blocks. It shows that the fir
 
 -------------------------------------------------------------
 
+Here's an experiment about bold and italic
+
+***asterisk asterisk asterisk***
+
+**_asterisk asterisk underscore_**
+
+*__asterisk underscore underscore__*
+
+___underscore underscore underscore___
+
+__*underscore underscore asterisk*__
+
+_**underscore asterisk asterisk**_
+
+-------------------------------------------------------------
+
+
 End of experiments.
