@@ -113,17 +113,19 @@ This first example renders fine in GitHub:
 int x = (y is bool);
 ```
 
-This next one isnt' even recognized as a codeblock! Github just turns it into a paragraph.
-
-```csharp additional information
-int x = (y is bool);
-```
-
 As for this one
 
 ```csharp class C { void f() {
 int x = (y is bool);
 ```
+
+
+This next one isnt' even recognized as a codeblock! Github just turns it into a paragraph, and it thinks the trailing backticks are the start of a new codeblock!
+
+```csharp additional information
+int x = (y is bool);
+```
+
 
 
 -------------------------------------------------------------
