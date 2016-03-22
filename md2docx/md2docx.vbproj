@@ -84,6 +84,10 @@
       <Link>introduction.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\csharp\lexical-structure.md">
+      <Link>lexical-structure.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\csharp\readme.md">
       <Link>readme.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -300,6 +300,11 @@ Module Colorizer
 
         Overloads Sub VisitTrivia(trivias As SyntaxTriviaList)
             For Each trivia In trivias
+                Dim leadingTrivia = If(trivia.HasStructure AndAlso trivia.GetStructure().HasLeadingTrivia, trivia.GetStructure().GetLeadingTrivia(), Nothing)
+                Dim trailingTrivia = If(trivia.HasStructure AndAlso trivia.GetStructure().HasTrailingTrivia, trivia.GetStructure().GetTrailingTrivia(), Nothing)
+
+                VisitTrivia(leadingTrivia)
+
                 Dim text = trivia.ToFullString
                 If trivia.KindCS = CSharp.SyntaxKind.EndOfLineTrivia Then
                     words.AddLast(CType(Nothing, ColorizedWord))
@@ -316,6 +321,8 @@ Module Colorizer
                 Else
                     words.AddLast(Col(text, "PlainText"))
                 End If
+
+                VisitTrivia(trailingTrivia)
             Next
         End Sub
 

@@ -171,7 +171,7 @@ Comments are not processed within character and string literals.
 
 The example
 
-````
+```csharp
 /* Hello, world program
    This program writes "hello, world" to the console
 */
@@ -181,13 +181,13 @@ class Hello
         System.Console.WriteLine("hello, world");
     }
 }
-````
+```
 
 includes a delimited comment.
 
 The example
 
-````
+```csharp
 // Hello, world program
 // This program writes "hello, world" to the console
 //
@@ -197,7 +197,7 @@ class Hello // any name will do for this class
         System.Console.WriteLine("hello, world");
     }
 }
-````
+```
 
 shows several single-line comments.
 
@@ -238,7 +238,7 @@ Multiple translations are not performed. For instance, the string literal "`\u00
 
 The example
 
-````
+```csharp
 class Class1
 {
     static void Test(bool \u0066) {
@@ -247,11 +247,11 @@ class Class1
             System.Console.WriteLine(c.ToString());
     }        
 }
-````
+```
 
 shows several uses of `\u0066`, which is the escape sequence for the letter "`f`". The program is equivalent to
 
-````
+```csharp
 class Class1
 {
     static void Test(bool f) {
@@ -260,7 +260,7 @@ class Class1
             System.Console.WriteLine(c.ToString());
     }        
 }
-````
+```
 
 ### Identifiers
 
@@ -321,7 +321,7 @@ The prefix "`@`" enables the use of keywords as identifiers, which is useful whe
 
 The example:
 
-````
+```csharp
 class @class
 {
     public static void @static(bool @bool) {
@@ -338,7 +338,7 @@ class Class1
         cl\u0061ss.st\u0061tic(true);
     }
 }
-````
+```
 
 defines a class named "`class`" with a static method named "`static`" that takes a parameter named "`bool`". Note that since Unicode escapes are not permitted in keywords, the token "`cl\u0061ss`" is an identifier, and is the same identifier as "`@class`".
 
@@ -573,7 +573,7 @@ A character that follows a backslash character (`\`) in a *regular-string-litera
 
 The example
 
-````
+```csharp
 string a = "hello, world";                        // hello, world
 string b = @"hello, world";                    // hello, world
 
@@ -590,7 +590,7 @@ string i = "one\r\ntwo\r\nthree";
 string j = @"one
 two
 three";
-````
+```
 
 shows a variety of string literals. The last string literal, `j`, is a verbatim string literal that spans multiple lines. The characters between the quotation marks, including white space such as new line characters, are preserved verbatim.
 
@@ -600,7 +600,7 @@ The type of a *string-literal* is `string`.
 
 Each string literal does not necessarily result in a new string instance. When two or more string literals that are equivalent according to the string equality operator (§7.10.7) appear in the same program, these string literals refer to the same string instance. For instance, the output produced by
 
-````
+```csharp
 class Test
 {
     static void Main() {
@@ -609,7 +609,7 @@ class Test
         System.Console.WriteLine(a == b);
     }
 }
-````
+```
 
 is `True` because the two literals refer to the same string instance.
 
@@ -666,7 +666,7 @@ A source line containing a `#define`, `#undef`, `#if`, `#elif`, `#else`, `#endif
 
 Pre-processing directives are not tokens and are not part of the syntactic grammar of C#. However, pre-processing directives can be used to include or exclude sequences of tokens and can in that way affect the meaning of a C# program. For example, when compiled, the program:
 
-````
+```csharp
 #define A
 #undef B
 
@@ -684,17 +684,17 @@ class C
     void I() {}
 #endif
 }
-````
+```
 
 results in the exact same sequence of tokens as the program:
 
-````
+```csharp
 class C
 {
     void F() {}
     void I() {}
 }
-````
+```
 
 Thus, whereas lexically, the two programs are quite different, syntactically, they are identical.
 
@@ -762,7 +762,7 @@ Any `#define` and `#undef` directives in a source file must occur before the fir
 
 The example:
 
-````
+```csharp
 #define Enterprise
 
 #if Professional || Enterprise
@@ -775,13 +775,13 @@ namespace Megacorp.Data
     class PivotTable {...}
     #endif
 }
-````
+```
 
 is valid because the `#define` directives precede the first token (the `namespace` keyword) in the source file.
 
 The following example results in a compile-time error because a `#define` follows real code:
 
-````
+```csharp
 #define A
 namespace N
 {
@@ -790,22 +790,22 @@ namespace N
     class Class1 {}
     #endif
 }
-````
+```
 
 A `#define` may define a conditional compilation symbol that is already defined, without there being any intervening `#undef` for that symbol. The example below defines a conditional compilation symbol `A` and then defines it again.
 
-````
+```csharp
 #define A
 #define A
-````
+```
 
 A `#undef` may "undefine" a conditional compilation symbol that is not defined. The example below defines a conditional compilation symbol `A` and then undefines it twice; although the second `#undef` has no effect, it is still valid.
 
-````
+```csharp
 #define A
 #undef A
 #undef A
-````
+```
 
 ### Conditional compilation directives
 
@@ -862,7 +862,7 @@ The remaining *conditional-section* s, if any, are processed as *skipped-section
 
 The following example illustrates how conditional compilation directives can nest:
 
-````
+```csharp
 #define Debug        // Debugging on
 #undef Trace        // Tracing off
 
@@ -878,11 +878,11 @@ class PurchaseTransaction
         CommitHelper();
     }
 }
-````
+```
 
 Except for pre-processing directives, skipped source code is not subject to lexical analysis. For example, the following is valid despite the unterminated comment in the `#else` section:
 
-````
+```csharp
 #define Debug        // Debugging on
 
 class PurchaseTransaction
@@ -895,13 +895,13 @@ class PurchaseTransaction
         #endif
     }
 }
-````
+```
 
 Note, however, that pre-processing directives are required to be lexically correct even in skipped sections of source code.
 
 Pre-processing directives are not processed when they appear inside multi-line input elements. For example, the program:
 
-````
+```csharp
 class Hello
 {
     static void Main() {
@@ -914,28 +914,28 @@ class Hello
         ");
     }
 }
-````
+```
 
 results in the output:
 
-````
+```
 hello,
 #if Debug
         world
 #else
         Nebraska
 #endif
-````
+```
 
 In peculiar cases, the set of pre-processing directives that is processed might depend on the evaluation of the *pp-expression*. The example:
 
-````
+```csharp
 #if X
     /*
 #else
     /* */ class Q { }
 #endif
-````
+```
 
 always produces the same token stream (`class``Q``{``}`), regardless of whether or not `X` is defined. If `X` is defined, the only processed directives are `#if` and `#endif`, due to the multi-line comment. If `X` is undefined, then three directives (`#if`, `#else`, `#endif`) are part of the directive set.
 
@@ -953,7 +953,7 @@ whitespace   input-characters<sub>opt</sub>   new-line</i>
 
 The example:
 
-````
+```csharp
 #warning Code review needed before check-in
 
 #if Debug &amp;&amp; Retail
@@ -961,7 +961,7 @@ The example:
 #endif
 
 class Test {...}
-````
+```
 
 always produces a warning ("Code review needed before check-in"), and produces a compile-time error ("A build can't be both debug and retail") if the conditional symbols `Debug` and `Retail` are both defined. Note that a *pp-message* can contain arbitrary text; specifically, it need not contain well-formed tokens, as shown by the single quote in the word `can't`.
 
@@ -982,19 +982,19 @@ No semantic meaning is attached to a region; regions are intended for use by the
 
 The lexical processing of a region:
 
-````
+```csharp
 #region
 ...
 #endregion
-````
+```
 
 corresponds exactly to the lexical processing of a conditional compilation directive of the form:
 
-````
+```csharp
 #if true
 ...
 #endif
-````
+```
 
 ### Line directives
 
@@ -1065,7 +1065,7 @@ A `#pragma``warning``restore` directive restores all or the given set of warning
 
 The following example shows use of `#pragma``warning` to temporarily disable the warning reported when obsoleted members are referenced, using the warning number from the Microsoft C# compiler.
 
-````
+```csharp
 using System;
 
 class Program
@@ -1079,4 +1079,4 @@ class Program
 #pragma warning restore 612
     }
 }
-````
+```
