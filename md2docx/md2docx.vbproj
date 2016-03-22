@@ -74,6 +74,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Colorizer.vb" />
     <Compile Include="GenerateDocx.vb" />
     <Compile Include="GenerateGrammar.vb" />
     <Compile Include="Module1.vb" />

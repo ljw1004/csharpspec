@@ -846,51 +846,6 @@ End Class
 
 Class Antlr
 
-    Public Shared Shadows Function Colorize(grammar As Grammar) As List(Of List(Of Tuple(Of String, Integer, Integer, Integer)))
-        Dim r As New List(Of List(Of Tuple(Of String, Integer, Integer, Integer)))
-        For Each p In grammar.Productions
-            r.AddRange(Colorize(p))
-        Next
-        Return r
-    End Function
-
-    Private Shared Function Col(token As String, color As String) As Tuple(Of String, Integer, Integer, Integer)
-        Select Case color
-            Case "PlainText" : Return Tuple.Create(token, 0, 0, 0)
-            Case "Production" : Return Tuple.Create(token, 114, 98, 208)
-            'Case "Keyword" : Return Tuple.Create(token, 0, 0, 255)
-            'Case "UserType" : Return Tuple.Create(token, 43, 145, 175)
-            'Case "StringLiteral" : Return Tuple.Create(token, 163, 21, 21)
-            'Case "CharacterLiteral" : Return Tuple.Create(token, 210, 2, 254)
-            Case "Comment" : Return Tuple.Create(token, 0, 128, 0)
-                'Case "ExcludedCode" : Return Tuple.Create(token, 128, 128, 128)
-                'Case "Region" : Return Tuple.Create(token, 224, 224, 224)
-            Case Else : Throw New Exception("bad color name")
-        End Select
-    End Function
-
-    Public Shared Shadows Iterator Function Colorize(p As Production) As IEnumerable(Of List(Of Tuple(Of String, Integer, Integer, Integer)))
-        If p.EBNF Is Nothing AndAlso String.IsNullOrEmpty(p.Comment) Then
-            Yield Nothing
-            Return
-        ElseIf p.EBNF Is Nothing Then
-            Dim r As New List(Of Tuple(Of String, Integer, Integer, Integer))
-            r.Add(Col("// " & p.Comment, "Comment"))
-            Yield r
-            Return
-        Else
-            Dim r As New List(Of Tuple(Of String, Integer, Integer, Integer))
-            r.Add(Col(p.ProductionName, "Production"))
-            r.Add(Col(":", "PlainText"))
-            If p.RuleStartsOnNewLine Then Yield r : r = New List(Of Tuple(Of String, Integer, Integer, Integer))
-            r.Add(Col(vbTab, "PlainText"))
-            If p.RuleStartsOnNewLine Then r.Add(Col("| ", "PlainText"))
-            r &= ToString(p.EBNF) & ";" & If(String.IsNullOrEmpty(p.Comment), "", "  //" & p.Comment) & vbCrLf
-            Return r
-        End If
-
-    End Function
-
     Public Shared Shadows Function ToString(grammar As Grammar, grammarName As String) As String
         Dim r = ""
         r &= "grammar " & grammarName & ";" & vbCrLf

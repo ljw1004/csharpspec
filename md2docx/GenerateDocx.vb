@@ -1,13 +1,11 @@
 ﻿Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
-Imports System.Text.RegularExpressions
 Imports DocumentFormat.OpenXml
 Imports DocumentFormat.OpenXml.Packaging
 Imports DocumentFormat.OpenXml.Wordprocessing
 Imports FSharp.Markdown
 Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.CSharp
 Imports Microsoft.FSharp.Core
 
 Class MarkdownSpec
@@ -261,7 +259,6 @@ Class MarkdownSpec
             Next
         End Function
 
-        Dim re_grammar As New Regex("^([a-zA-Z]+):?$")
 
         Iterator Function Paragraph2Paragraphs(md As MarkdownParagraph) As IEnumerable(Of OpenXmlCompositeElement)
             If md.IsHeading Then
@@ -340,58 +337,23 @@ Class MarkdownSpec
 
             ElseIf md.IsCodeBlock Then
                 Dim mdc = CType(md, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
-                If lang = "antlr" Then
-                    Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None).ToList()
-                    If String.IsNullOrWhiteSpace(lines.Last) Then lines.RemoveAt(lines.Count - 1)
-                    If String.IsNullOrWhiteSpace(lines.First) Then lines.RemoveAt(0)
-                    Dim run As Run = Nothing
-                    For Each line In lines
-                        If run Is Nothing Then run = New Run()
-                        run.Append(New Break)
-                        run.Append(New Text(line) With {.Space = SpaceProcessingModeValues.Preserve})
+                Dim runs As New List(Of Run), onFirstLine = True
+                Dim lines = Colorize(code, lang)
+                For Each line In lines
+                    If onFirstLine Then onFirstLine = False Else runs.Add(New Run(New Break))
+                    For Each word In line.Words
+                        Dim run As New Run
+                        Dim props As New RunProperties
+                        If word.Red <> 0 OrElse word.Green <> 0 OrElse word.Blue <> 0 Then props.Append(New Color With {.Val = $"{word.Red:X2}{word.Green:X2}{word.Blue:X2}"})
+                        If word.IsItalic Then props.Append(New Italic)
+                        If props.HasChildren Then run.Append(props)
+                        run.Append(New Text(word.Text) With {.Space = SpaceProcessingModeValues.Preserve})
+                        runs.Add(run)
                     Next
-                    If run IsNot Nothing Then Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "Grammar"})}
-                    Return
-
-                ElseIf lang = "csharp" OrElse lang = "cs" OrElse lang = "c#" Then
-                    Dim runs As New List(Of Run), onFirstLine = True
-                    Dim lines = CSharpColorizer.Colorize(code)
-                    If lines.Last Is Nothing Then lines.RemoveAt(lines.Count - 1)
-                    If lines.First Is Nothing Then lines.RemoveAt(0)
-
-                    For Each line In lines
-                        If onFirstLine Then onFirstLine = False Else runs.Add(New Run(New Break))
-                        If line IsNot Nothing Then
-                            For Each word In line
-                                Dim run As New Run
-                                If word.Item2 <> 0 OrElse word.Item3 <> 0 OrElse word.Item4 <> 0 Then
-                                    run.Append(New RunProperties(New Color With {.Val = $"{word.Item2:X2}{word.Item3:X2}{word.Item4:X2}"}))
-                                End If
-                                run.Append(New Text(word.Item1) With {.Space = SpaceProcessingModeValues.Preserve})
-                                runs.Add(run)
-                            Next
-                        End If
-                    Next
-                    Dim style As New ParagraphStyleId With {.Val = "Code"}
-                    Yield New Paragraph(runs) With {.ParagraphProperties = New ParagraphProperties(style)}
-                    Return
-
-                ElseIf lang = "" Then
-                    Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None).ToList()
-                    If String.IsNullOrWhiteSpace(lines.Last) Then lines.RemoveAt(lines.Count - 1)
-                    If String.IsNullOrWhiteSpace(lines.First) Then lines.RemoveAt(0)
-                    Dim run As New Run, onFirstLine = True
-                    For Each line In lines
-                        If onFirstLine Then onFirstLine = False Else run.AppendChild(New Break)
-                        run.AppendChild(New Text(line) With {.Space = SpaceProcessingModeValues.Preserve})
-                    Next
-                    Dim style As New ParagraphStyleId With {.Val = "Code"}
-                    Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(style)}
-                    Return
-
-                Else
-                    Throw New NotSupportedException($"Unknown language '{lang}'")
-                End If
+                Next
+                Dim style As New ParagraphStyleId With {.Val = If(lang = "antlr", "Grammar", "Code")}
+                Yield New Paragraph(runs) With {.ParagraphProperties = New ParagraphProperties(style)}
+                Return
 
             ElseIf md.IsQuotedBlock Then
                 Dim mdq = CType(md, MarkdownParagraph.QuotedBlock), quoteds = mdq.Item
@@ -650,148 +612,6 @@ End Class
 
 
 
-Class CSharpColorizer
-    Inherits SyntaxWalker
-    ' This code is based on that of Shiv Kumar at http://www.matlus.com/c-to-html-syntax-highlighter-using-roslyn/
-
-    Public Shared Function Colorize(code As String) As List(Of List(Of Tuple(Of String, Integer, Integer, Integer)))
-        Dim cunit = SyntaxFactory.ParseCompilationUnit(code)
-        Dim stree = cunit.SyntaxTree
-        Dim ref = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
-        Dim cc = CSharpCompilation.Create("dummyAssemblyName", {stree}, {ref})
-        Dim sm = cc.GetSemanticModel(stree, True)
-        Dim w As New CSharpColorizer With {.sm = sm}
-        w.Visit(stree.GetRoot)
-
-        Dim r As New List(Of List(Of Tuple(Of String, Integer, Integer, Integer)))
-        For Each line In w.lines
-            Dim rr As New List(Of Tuple(Of String, Integer, Integer, Integer))
-            For Each word In line
-                Dim prev = rr.LastOrDefault
-                If rr.Count = 0 Then
-                    rr.Add(word)
-                ElseIf String.IsNullOrWhiteSpace(prev.Item1) Then
-                    rr(rr.Count - 1) = Tuple.Create(prev.Item1 & word.Item1, word.Item2, word.Item3, word.Item4)
-                ElseIf String.IsNullOrWhiteSpace(word.Item1) Then
-                    rr(rr.Count - 1) = Tuple.Create(prev.Item1 & word.Item1, prev.Item2, prev.Item3, prev.Item4)
-                ElseIf prev.Item2 = word.Item2 AndAlso prev.Item3 = word.Item3 AndAlso prev.Item4 = word.Item4 Then
-                    rr(rr.Count - 1) = Tuple.Create(prev.Item1 & word.Item1, prev.Item2, prev.Item3, prev.Item4)
-                Else
-                    rr.Add(word)
-                End If
-            Next
-            If rr.Count = 1 AndAlso String.IsNullOrWhiteSpace(rr.First.Item1) Then r.Add(Nothing) Else r.Add(rr)
-        Next
-        Return r
-
-    End Function
-
-    Private lines As New LinkedList(Of LinkedList(Of Tuple(Of String, Integer, Integer, Integer)))
-    Private sm As SemanticModel
-
-    Private Sub New()
-        MyBase.New(SyntaxWalkerDepth.StructuredTrivia)
-        lines.AddLast(New LinkedList(Of Tuple(Of String, Integer, Integer, Integer)))
-    End Sub
-
-    Protected Overrides Sub VisitToken(token As SyntaxToken)
-        VisitTrivia(token.LeadingTrivia)
-
-        Dim r As Tuple(Of String, Integer, Integer, Integer) = Nothing
-
-        Dim specialCase = False
-        If token.IsKeyword Then
-            r = Col(token.Text, "Keyword")
-        ElseIf token.Kind = SyntaxKind.StringLiteralToken Then
-            r = Col(token.Text, "StringLiteral")
-        ElseIf token.Kind = SyntaxKind.CharacterLiteralToken Then
-            r = Col(token.Text, "CharacterLiteral")
-        ElseIf token.Kind = SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is Syntax.SimpleNameSyntax Then
-            Dim name = CType(token.Parent, Syntax.SimpleNameSyntax)
-            Dim symbol = sm.GetSymbolInfo(name).Symbol
-            If symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.NamedType Then
-                r = Col(token.Text, "UserType")
-            ElseIf symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.Namespace OrElse
-                        symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.Parameter OrElse
-                        symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.Local OrElse
-                        symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.Field OrElse
-                        symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.Property Then
-                r = Col(token.Text, "PlainText")
-            End If
-        ElseIf token.Kind = SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is Syntax.TypeDeclarationSyntax Then
-            Dim name = CType(token.Parent, Syntax.TypeDeclarationSyntax)
-            Dim symbol = sm.GetDeclaredSymbol(name)
-            If symbol?.Kind = Microsoft.CodeAnalysis.SymbolKind.NamedType Then
-                r = Col(token.Text, "UserType")
-            End If
-        End If
-
-        If r Is Nothing Then
-            If (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.Parameter) OrElse
-                    token.Parent.Kind = SyntaxKind.EnumDeclaration OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.Attribute) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.CatchDeclaration) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.ObjectCreationExpression) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> SyntaxKind.CloseParenToken) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Parent.Kind = SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> SyntaxKind.DotToken) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.MethodDeclaration) OrElse
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.CastExpression) OrElse
-                    (token.Parent.Kind = SyntaxKind.GenericName AndAlso token.Parent.Parent.Kind = SyntaxKind.VariableDeclaration) OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
-                    (token.Parent.Kind = SyntaxKind.GenericName AndAlso token.Parent.Parent.Kind = SyntaxKind.ObjectCreationExpression) OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.BaseList) OrElse ' e.g. "public sealed class BuilderRouteHandler  IRouteHandler" IRouteHandler in this case
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Parent.Kind = SyntaxKind.TypeOfExpression) OrElse ' e.g. "Type baseBuilderType = TypeOf(BaseBuilder);" BaseBuilder in this case
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.VariableDeclaration) OrElse ' e.g. "private DbProviderFactory dbProviderFactory;" Or "DbConnection connection = dbProviderFactory.CreateConnection();"
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.TypeArgumentList) OrElse ' e.g. "DbTypes = New Dictionary();" DbType in this case
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
-                    (token.Parent.Kind = SyntaxKind.IdentifierName AndAlso token.Parent.Parent.Kind = SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) Then
-                r = Col(token.Text, "UserType")
-            Else
-                r = Col(token.Text, "PlainText")
-            End If
-        End If
-
-        lines.Last.Value.AddLast(r)
-
-        VisitTrivia(token.TrailingTrivia)
-
-    End Sub
-
-    Overloads Sub VisitTrivia(trivias As SyntaxTriviaList)
-        For Each trivia In trivias
-            Dim text = trivia.ToFullString
-            If trivia.Kind = SyntaxKind.EndOfLineTrivia Then
-                lines.AddLast(New LinkedList(Of Tuple(Of String, Integer, Integer, Integer)))
-            ElseIf trivia.Kind = SyntaxKind.MultiLineCommentTrivia OrElse
-                trivia.RawKind = SyntaxKind.SingleLineCommentTrivia OrElse
-                trivia.RawKind = SyntaxKind.MultiLineDocumentationCommentTrivia OrElse
-                trivia.RawKind = SyntaxKind.SingleLineDocumentationCommentTrivia Then
-                lines.Last.Value.AddLast(Col(text, "Comment"))
-            ElseIf trivia.Kind = SyntaxKind.DisabledTextTrivia Then
-                lines.Last.Value.AddLast(Col(text, "ExcludedCode"))
-            ElseIf trivia.Kind = SyntaxKind.RegionDirectiveTrivia OrElse
-                    trivia.RawKind = SyntaxKind.EndRegionDirectiveTrivia Then
-                lines.Last.Value.AddLast(Col(text, "Region"))
-            Else
-                lines.Last.Value.AddLast(Col(text, "PlainText"))
-            End If
-        Next
-    End Sub
-
-    Private Function Col(token As String, color As String) As Tuple(Of String, Integer, Integer, Integer)
-        Select Case color
-            Case "PlainText" : Return Tuple.Create(token, 0, 0, 0)
-            Case "Keyword" : Return Tuple.Create(token, 0, 0, 255)
-            Case "UserType" : Return Tuple.Create(token, 43, 145, 175)
-            Case "StringLiteral" : Return Tuple.Create(token, 163, 21, 21)
-            Case "CharacterLiteral" : Return Tuple.Create(token, 210, 2, 254)
-            Case "Comment" : Return Tuple.Create(token, 0, 128, 0)
-            Case "ExcludedCode" : Return Tuple.Create(token, 128, 128, 128)
-            Case "Region" : Return Tuple.Create(token, 224, 224, 224)
-            Case Else : Throw New Exception("bad color name")
-        End Select
-    End Function
-
-End Class
 
 
 
