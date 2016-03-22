@@ -33,11 +33,10 @@
                      Where IO.File.Exists(url) ' TODO: remove this
                      Select url).ToList.Distinct
         If files.Count = 0 Then files = {ifn}
-        Dim md = MarkdownSpec.ReadFiles(files)
+        'Dim md = MarkdownSpec.ReadFiles(files)
 
-        md = MarkdownSpec.ReadString("
-```csharp
-class C { void f() {
+        Dim md = MarkdownSpec.ReadString("
+```csharp class C { void f() {
 int i = 123;
 object box = i;
 if (box is int) {

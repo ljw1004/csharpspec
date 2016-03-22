@@ -105,15 +105,21 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
-The following experiment is about languages for codeblocks.
+The following experiment is about languages for codeblocks. I was hoping to use the CommonMark notion of "info-string" to provide additional context for the code block. But it turns out that GitHub doesn't recognize info-strings at all, so I can't.
+
+This first example renders fine in GitHub:
 
 ```csharp
 int x = (y is bool);
 ```
 
+This next one isnt' even recognized as a codeblock! Github just turns it into a paragraph.
+
 ```csharp additional information
 int x = (y is bool);
 ```
+
+As for this one
 
 ```csharp class C { void f() {
 int x = (y is bool);
