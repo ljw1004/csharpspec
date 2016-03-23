@@ -88,6 +88,10 @@
       <Link>conversions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\csharp\expressions.md">
+      <Link>expressions.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\csharp\introduction.md">
       <Link>introduction.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
