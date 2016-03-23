@@ -19,6 +19,7 @@ Class EBNF
     Public Kind As EBNFKind
     Public s As String
     Public Children As List(Of EBNF)
+    Public FollowingWhitespace As String
     Public FollowingComment As String = "" ' Does not contain *) or newline
     Public FollowingNewline As Boolean
 End Class
@@ -77,270 +78,6 @@ Class Grammar
 End Class
 
 
-Class ISO14977
-    Public Shared Shadows Function ToString(grammar As Grammar) As String
-        Dim productions = grammar.Productions, grammarName = grammar.Name
-        Dim r = ""
-        r &= "(* Grammar " & grammarName & " *)" & vbCrLf
-        For Each p In productions
-            If p.EBNF Is Nothing AndAlso String.IsNullOrEmpty(p.Comment) Then
-                r &= vbCrLf
-            ElseIf p.EBNF Is Nothing Then
-                r &= "(*" & p.Comment & "*) " & vbCrLf
-            Else
-                r &= p.ProductionName & " ="
-                If p.RuleStartsOnNewLine Then r &= vbCrLf
-                r &= vbTab & ToString(p.EBNF) & ";" & If(String.IsNullOrEmpty(p.Comment), "", "  (*" & p.Comment & "*)") & vbCrLf
-            End If
-        Next
-        Return r
-    End Function
-
-    Public Shared Shadows Function ToString(ebnf As EBNF) As String
-        Dim r = ""
-        Select Case ebnf.Kind
-            Case EBNFKind.Terminal : If ebnf.s.Contains("'") Then r = """" & ebnf.s & """" Else r = "'" & ebnf.s & "'"
-            Case EBNFKind.ExtendedTerminal : r = "?" & ebnf.s & "?"
-            Case EBNFKind.Reference
-                r = ebnf.s
-            Case EBNFKind.ZeroOrMoreOf : r = "{" & ToString(ebnf.Children(0)) & "}"
-            Case EBNFKind.ZeroOrOneOf : r = "[" & ToString(ebnf.Children(0)) & "]"
-            Case EBNFKind.OneOrMoreOf : r = "{" & ToString(ebnf.Children(0)) & "}-"
-            Case EBNFKind.Choice : r = String.Join(" | ", From c In ebnf.Children Select ToString(c))
-            Case EBNFKind.Sequence
-                Dim firstElement = True
-                For Each c In ebnf.Children
-                    If firstElement Then firstElement = False Else r &= ", "
-                    Dim c2 = New EBNF With {.Kind = c.Kind, .s = c.s, .Children = c.Children}
-                    If c2.Kind = EBNFKind.Choice Then r &= "(" & ToString(c2) & ")" Else r &= ToString(c2)
-                    If Not String.IsNullOrEmpty(c.FollowingComment) Then r &= " (*" & c.FollowingComment & "*)"
-                    If c.FollowingNewline Then r &= vbCrLf & vbTab
-                Next
-            Case Else : r = "???"
-        End Select
-        If Not String.IsNullOrEmpty(ebnf.FollowingComment) Then r &= " (*" & ebnf.FollowingComment & "*)"
-        If ebnf.FollowingNewline Then r &= vbCrLf & vbTab
-        Return r
-    End Function
-
-    Public Shared Function Parse(src As String) As LinkedList(Of Production)
-        Dim tokens = Tokenize(src)
-        Dim productions As New LinkedList(Of Production)
-        While tokens.Count > 0
-            Dim t = tokens.First.Value : tokens.RemoveFirst()
-            If t.StartsWith("(* grammar") Then
-                If tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
-            ElseIf t.StartsWith("(*") Then
-                productions.AddLast(New Production With {.Comment = t.Substring(2, t.Length - 4)})
-                If tokens.Count > 0 AndAlso tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
-            ElseIf t = vbCrLf Then
-                productions.AddLast(New Production)
-            ElseIf tokens.Count > 0 AndAlso tokens.First.Value = "=" Then
-                tokens.RemoveFirst()
-                Dim comment = "", newline = False
-                GobbleUpComments(tokens, comment, newline)
-                Dim p = ParseProduction(tokens, comment)
-                GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-                If tokens.Count > 0 AndAlso tokens.First.Value = ";" Then tokens.RemoveFirst()
-                If tokens.Count > 0 AndAlso tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
-                productions.AddLast(New Production With {.Comment = comment, .EBNF = p, .ProductionName = t, .RuleStartsOnNewLine = newline})
-                While tokens.Count > 0 AndAlso tokens.First.Value.StartsWith("(*")
-                    productions.Last.Value.Comment &= tokens.First.Value.Substring(2, tokens.First.Value.Length - 4) : tokens.RemoveFirst()
-                    If tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
-                End While
-            Else
-                Throw New Exception("Unrecognized " & t)
-            End If
-        End While
-
-        Return productions
-    End Function
-
-
-    Private Shared Function Tokenize(s As String) As LinkedList(Of String)
-        s = s.Trim()
-        Dim tokens As New LinkedList(Of String), pos = 0
-
-        While (pos < s.Length)
-            If s(pos) = "="c Then
-                tokens.AddLast("=") : pos += 1
-            ElseIf s(pos) = "{"c Then
-                tokens.AddLast("{") : pos += 1
-            ElseIf pos + 1 < s.Length AndAlso s.Substring(pos, 2) = "}-" Then
-                tokens.AddLast("}-") : pos += 2
-            ElseIf s(pos) = "}"c Then
-                tokens.AddLast("}") : pos += 1
-            ElseIf s(pos) = "["c Then
-                tokens.AddLast("[") : pos += 1
-            ElseIf s(pos) = "]"c Then
-                tokens.AddLast("]") : pos += 1
-            ElseIf pos + 1 < s.Length AndAlso s.Substring(pos, 2) = "(*" Then
-                pos += 2
-                Dim t = ""
-                While pos < s.Length AndAlso (pos >= s.Length - 1 OrElse s.Substring(pos, 2) <> "*)")
-                    t += s(pos) : pos += 1
-                End While
-                If t.Contains(vbCrLf) OrElse t.Contains(vbCr) OrElse t.Contains(vbLf) Then Throw New Exception("Comments must be single-line")
-                If pos < s.Length - 1 AndAlso s.Substring(pos, 2) = "*)" Then pos += 2
-                tokens.AddLast("(*" & t & "*)")
-            ElseIf s(pos) = "("c Then
-                tokens.AddLast("(") : pos += 1
-            ElseIf s(pos) = ")"c Then
-                tokens.AddLast(")") : pos += 1
-            ElseIf s(pos) = "|"c Then
-                tokens.AddLast("|") : pos += 1
-            ElseIf s(pos) = ","c Then
-                tokens.AddLast(",") : pos += 1
-            ElseIf s(pos) = ";"c Then
-                tokens.AddLast(";") : pos += 1
-            ElseIf pos + 1 < s.Length AndAlso s.Substring(pos, 2) = vbCrLf Then
-                tokens.AddLast(vbCrLf) : pos += 2
-            ElseIf s.Substring(pos, 1) = vbCr Then
-                tokens.AddLast(vbCrLf) : pos += 1
-            ElseIf s.Substring(pos, 1) = vbLf Then
-                tokens.AddLast(vbCrLf) : pos += 1
-            ElseIf s.Substring(pos, 1) = "?" Then
-                pos += 1
-                Dim t = ""
-                While pos < s.Length AndAlso s(pos) <> "?"c
-                    t += s(pos) : pos += 1
-                End While
-                If t.Contains(vbCrLf) OrElse t.Contains(vbCr) OrElse t.Contains(vbLf) Then Throw New Exception("Special-terminals must be single-line")
-                tokens.AddLast("?" & t & "?")
-                If pos < s.Length AndAlso s(pos) = "?" Then pos += 1
-            ElseIf s(pos) = "'" Then
-                Dim t = "" : pos += 1
-                While pos < s.Length AndAlso s.Substring(pos, 1) <> "'"c
-                    t &= s(pos) : pos += 1
-                End While
-                If t.Contains(vbCrLf) OrElse t.Contains(vbCr) OrElse t.Contains(vbLf) Then Throw New Exception("Terminals must be single-line")
-                If t.Contains("'") Then Throw New Exception("Single-quoted terminals may not include single-quote")
-                tokens.AddLast("'" & t & "'")
-                If pos < s.Length AndAlso s(pos) = "'" Then pos += 1
-            ElseIf s(pos) = """" Then
-                Dim t = "" : pos += 1
-                While pos < s.Length AndAlso s.Substring(pos, 1) <> """"c
-                    t &= s(pos) : pos += 1
-                End While
-                If t.Contains(vbCrLf) OrElse t.Contains(vbCr) OrElse t.Contains(vbLf) Then Throw New Exception("Terminals must be single-line")
-                If t.Contains("""") Then Throw New Exception("Double-quoted terminals may not include double-quote")
-                tokens.AddLast("'" & t & "'")
-                If pos < s.Length AndAlso s(pos) = """" Then pos += 1
-            Else
-                Dim t = ""
-                While pos < s.Length AndAlso Not String.IsNullOrWhiteSpace(s(pos)) AndAlso
-                    s(pos) <> "="c AndAlso s(pos) <> "{"c AndAlso s(pos) <> "}"c AndAlso s(pos) <> "-" AndAlso
-                    s(pos) <> "["c AndAlso s(pos) <> "]"c AndAlso s(pos) <> "("c AndAlso s(pos) <> ")"c AndAlso
-                    s(pos) <> "|"c AndAlso s(pos) <> ","c AndAlso s(pos) <> ";"c AndAlso
-                    s(pos) <> "'"c AndAlso s(pos) <> """" AndAlso s(pos) <> "?"c AndAlso
-                    s(pos) <> vbCr(0) AndAlso s(pos) <> vbLf(0) AndAlso
-                    (pos + 1 >= s.Length OrElse s.Substring(pos, 2) <> "(*")
-                    t &= s(pos) : pos += 1
-                End While
-                t = t.Trim()
-                If t.Length > 0 Then tokens.AddLast(t)
-            End If
-            ' Bump up to the next non-whitespace character:
-            While pos < s.Length AndAlso s(pos) <> vbCr(0) AndAlso s(pos) <> vbLf(0) AndAlso String.IsNullOrWhiteSpace(s(pos))
-                pos += 1
-            End While
-        End While
-
-        Return tokens
-    End Function
-
-
-    Private Shared Sub GobbleUpComments(tokens As LinkedList(Of String), ByRef ExtraComments As String, ByRef HasNewline As Boolean)
-        If tokens.Count = 0 Then Return
-        While True
-            If tokens.First.Value.StartsWith("(*") Then
-                ExtraComments &= tokens.First.Value.Substring(2, tokens.First.Value.Length - 4) : tokens.RemoveFirst()
-            ElseIf tokens.First.Value = vbCrLf Then
-                HasNewline = True : tokens.RemoveFirst() : If ExtraComments.Length > 0 Then ExtraComments &= " "
-            Else
-                Exit While
-            End If
-        End While
-        ExtraComments = ExtraComments.TrimEnd()
-    End Sub
-
-    Private Shared Function ParseProduction(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
-        If tokens.Count = 0 Then Throw New Exception("empty input stream")
-        GobbleUpComments(tokens, ExtraComments, False)
-        Return ParsePar(tokens, ExtraComments)
-    End Function
-
-    Private Shared Function ParsePar(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
-        Dim pp As New LinkedList(Of EBNF)
-        pp.AddLast(ParseSeq(tokens, ExtraComments))
-        While tokens.Count > 0 AndAlso tokens.First.Value = "|"
-            tokens.RemoveFirst()
-            GobbleUpComments(tokens, ExtraComments, pp.Last.Value.FollowingNewline)
-            pp.AddLast(ParseSeq(tokens, ExtraComments))
-        End While
-        If pp.Count = 1 Then Return pp(0)
-        Return New EBNF With {.Kind = EBNFKind.Choice, .Children = pp.ToList}
-    End Function
-
-    Private Shared Function ParseSeq(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
-        Dim pp As New LinkedList(Of EBNF)
-        pp.AddLast(ParseAtom(tokens, ExtraComments))
-        While tokens.Count > 0 AndAlso tokens.First.Value = ","
-            tokens.RemoveFirst()
-            GobbleUpComments(tokens, ExtraComments, pp.Last.Value.FollowingNewline)
-            pp.AddLast(ParseAtom(tokens, ExtraComments))
-        End While
-        If pp.Count = 1 Then Return pp(0)
-        Return New EBNF With {.Kind = EBNFKind.Sequence, .Children = pp.ToList}
-    End Function
-
-    Private Shared Function ParseAtom(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
-        If tokens.First.Value = "(" Then
-            tokens.RemoveFirst()
-            Dim p = ParseProduction(tokens, ExtraComments)
-            If tokens.Count = 0 OrElse tokens.First.Value <> ")" Then Throw New Exception("mismatched parentheses")
-            tokens.RemoveFirst()
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        ElseIf tokens.First.Value = "{" Then
-            tokens.RemoveFirst()
-            Dim p = ParseProduction(tokens, ExtraComments)
-            If tokens.Count = 0 OrElse (tokens.First.Value <> "}" AndAlso tokens.First.Value <> "}-") Then Throw New Exception("mismatched braces")
-            Dim kind = If(tokens.First.Value = "}", EBNFKind.ZeroOrMoreOf, EBNFKind.OneOrMoreOf)
-            tokens.RemoveFirst()
-            p = New EBNF With {.Kind = kind, .Children = {p}.ToList}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        ElseIf tokens.First.Value = "[" Then
-            tokens.RemoveFirst()
-            Dim p = ParseProduction(tokens, ExtraComments)
-            If tokens.Count = 0 OrElse tokens.First.Value <> "]" Then Throw New Exception("mismatched brackets")
-            tokens.RemoveFirst()
-            p = New EBNF With {.Kind = EBNFKind.ZeroOrOneOf, .Children = {p}.ToList}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        ElseIf tokens.First.Value.StartsWith("'") Then
-            Dim t = tokens.First.Value : tokens.RemoveFirst()
-            t = t.Substring(1, t.Length - 2)
-            Dim p = New EBNF With {.Kind = EBNFKind.Terminal, .s = t}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        ElseIf tokens.First.Value.StartsWith("?") Then
-            Dim t = tokens.First.Value : tokens.RemoveFirst()
-            t = t.Substring(1, t.Length - 2)
-            Dim p = New EBNF With {.Kind = EBNFKind.ExtendedTerminal, .s = t}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        Else
-            Dim t = tokens.First.Value : tokens.RemoveFirst()
-            Dim p = New EBNF With {.Kind = EBNFKind.Reference, .s = t}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
-            Return p
-        End If
-    End Function
-
-
-End Class
 
 
 Class Html
@@ -927,14 +664,19 @@ Class Antlr
                 If tokens.Count > 0 AndAlso tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
             ElseIf t = vbCrLf Then
                 Yield New Production
+            ElseIf String.IsNullOrWhiteSpace(t) Then
+                ' skip
             Else
-                Dim comment = "", newline = False
-                While tokens.Count > 0 AndAlso tokens.First.Value = vbCrLf : tokens.RemoveFirst() : newline = True : End While
+                Dim whitespace = "", comment = "", newline = False
+                While tokens.Count > 0 AndAlso String.IsNullOrWhiteSpace(tokens.First.Value)
+                    If tokens.First.Value = vbCrLf Then newline = True
+                    tokens.RemoveFirst()
+                End While
                 If Not tokens.First.Value = ":" Then Throw New Exception($"After '{t}' expected ':' not {tokens.First.Value}")
                 tokens.RemoveFirst()
-                GobbleUpComments(tokens, comment, newline)
-                Dim p = ParseProduction(tokens, comment)
-                GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+                GobbleUpComments(tokens, whitespace, comment, newline)
+                Dim p = ParseProduction(tokens, whitespace, comment)
+                GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
                 If tokens.Count > 0 AndAlso tokens.First.Value = ";" Then tokens.RemoveFirst()
                 If tokens.Count > 0 AndAlso tokens.First.Value = vbCrLf Then tokens.RemoveFirst()
                 Dim production As New Production With {.Comment = comment, .EBNF = p, .ProductionName = t, .RuleStartsOnNewLine = newline}
@@ -945,10 +687,6 @@ Class Antlr
                 Yield production
             End If
         End While
-    End Function
-
-    Private Shared Function SkipWhitespace(n As LinkedList(Of String)) As LinkedList(Of String)
-        Return n
     End Function
 
     Private Shared Function Tokenize(s As String) As LinkedList(Of String)
@@ -1013,22 +751,27 @@ Class Antlr
                 tokens.AddLast(t)
             End If
             ' Bump up to the next non-whitespace character:
+            Dim whitespace = ""
             While pos < s.Length AndAlso s(pos) <> vbCr(0) AndAlso s(pos) <> vbLf(0) AndAlso String.IsNullOrWhiteSpace(s(pos))
+                whitespace &= s(pos)
                 pos += 1
             End While
+            If whitespace <> "" Then tokens.AddLast(whitespace)
         End While
 
         Return tokens
     End Function
 
 
-    Private Shared Sub GobbleUpComments(tokens As LinkedList(Of String), ByRef ExtraComments As String, ByRef HasNewline As Boolean)
+    Private Shared Sub GobbleUpComments(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String, ByRef HasNewline As Boolean)
         If tokens.Count = 0 Then Return
         While True
             If tokens.First.Value.StartsWith("//") Then
                 ExtraComments &= tokens.First.Value.Substring(2) : tokens.RemoveFirst()
             ElseIf tokens.First.Value = vbCrLf Then
                 HasNewline = True : tokens.RemoveFirst() : If ExtraComments.Length > 0 Then ExtraComments &= " "
+            ElseIf String.IsNullOrWhiteSpace(tokens.First.value) Then
+                ExtraWhitespace &= tokens.First.Value : tokens.RemoveFirst()
             Else
                 Exit While
             End If
@@ -1036,54 +779,54 @@ Class Antlr
         ExtraComments = ExtraComments.TrimEnd()
     End Sub
 
-    Private Shared Function ParseProduction(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
+    Private Shared Function ParseProduction(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String) As EBNF
         If tokens.Count = 0 Then Throw New Exception("empty input stream")
-        GobbleUpComments(tokens, ExtraComments, False)
-        Return ParsePar(tokens, ExtraComments)
+        GobbleUpComments(tokens, ExtraWhitespace, ExtraComments, False)
+        Return ParsePar(tokens, ExtraWhitespace, ExtraComments)
     End Function
 
-    Private Shared Function ParsePar(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
+    Private Shared Function ParsePar(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String) As EBNF
         Dim pp As New LinkedList(Of EBNF)
         If tokens.First.Value = "|" Then
             tokens.RemoveFirst()
-            GobbleUpComments(tokens, ExtraComments, False)
+            GobbleUpComments(tokens, ExtraWhitespace, ExtraComments, False)
         End If
-        pp.AddLast(ParseSeq(tokens, ExtraComments))
+        pp.AddLast(ParseSeq(tokens, ExtraWhitespace, ExtraComments))
         While tokens.Count > 0 AndAlso tokens.First.Value = "|"
             tokens.RemoveFirst()
-            GobbleUpComments(tokens, ExtraComments, pp.Last.Value.FollowingNewline)
-            pp.AddLast(ParseSeq(tokens, ExtraComments))
+            GobbleUpComments(tokens, ExtraWhitespace, ExtraComments, pp.Last.Value.FollowingNewline)
+            pp.AddLast(ParseSeq(tokens, ExtraWhitespace, ExtraComments))
         End While
         If pp.Count = 1 Then Return pp(0)
         Return New EBNF With {.Kind = EBNFKind.Choice, .Children = pp.ToList}
     End Function
 
-    Private Shared Function ParseSeq(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
+    Private Shared Function ParseSeq(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String) As EBNF
         Dim pp As New LinkedList(Of EBNF)
-        pp.AddLast(ParseUnary(tokens, ExtraComments))
+        pp.AddLast(ParseUnary(tokens, ExtraWhitespace, ExtraComments))
         While tokens.Count > 0 AndAlso tokens.First.Value <> "|" AndAlso tokens.First.Value <> ";" AndAlso tokens.First.Value <> ")"
-            GobbleUpComments(tokens, ExtraComments, pp.Last.Value.FollowingNewline)
-            pp.AddLast(ParseUnary(tokens, ExtraComments))
+            GobbleUpComments(tokens, ExtraWhitespace, ExtraComments, pp.Last.Value.FollowingNewline)
+            pp.AddLast(ParseUnary(tokens, ExtraWhitespace, ExtraComments))
         End While
         If pp.Count = 1 Then Return pp(0)
         Return New EBNF With {.Kind = EBNFKind.Sequence, .Children = pp.ToList}
     End Function
 
-    Private Shared Function ParseUnary(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
-        Dim p = ParseAtom(tokens, ExtraComments)
+    Private Shared Function ParseUnary(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String) As EBNF
+        Dim p = ParseAtom(tokens, ExtraWhitespace, ExtraComments)
         While tokens.Count > 0
             If tokens.First.Value = "+" Then
                 tokens.RemoveFirst()
                 p = New EBNF With {.Kind = EBNFKind.OneOrMoreOf, .Children = {p}.ToList}
-                GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+                GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             ElseIf tokens.First.Value = "*" Then
                 tokens.RemoveFirst()
                 p = New EBNF With {.Kind = EBNFKind.ZeroOrMoreOf, .Children = {p}.ToList}
-                GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+                GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             ElseIf tokens.First.Value = "?" Then
                 tokens.RemoveFirst()
                 p = New EBNF With {.Kind = EBNFKind.ZeroOrOneOf, .Children = {p}.ToList}
-                GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+                GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             Else
                 Exit While
             End If
@@ -1091,13 +834,13 @@ Class Antlr
         Return p
     End Function
 
-    Private Shared Function ParseAtom(tokens As LinkedList(Of String), ByRef ExtraComments As String) As EBNF
+    Private Shared Function ParseAtom(tokens As LinkedList(Of String), ByRef ExtraWhitespace As String, ByRef ExtraComments As String) As EBNF
         If tokens.First.Value = "(" Then
             tokens.RemoveFirst()
-            Dim p = ParseProduction(tokens, ExtraComments)
+            Dim p = ParseProduction(tokens, ExtraWhitespace, ExtraComments)
             If tokens.Count = 0 OrElse tokens.First.Value <> ")" Then Throw New Exception("mismatched parentheses")
             tokens.RemoveFirst()
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+            GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             Return p
         ElseIf tokens.First.Value.StartsWith("'") Then
             Dim t = tokens.First.Value : tokens.RemoveFirst()
@@ -1110,12 +853,12 @@ Class Antlr
             Else
                 If t.Contains("'") AndAlso t.Contains("""") Then Throw New Exception("A terminal must either contain no ' or no """)
             End If
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+            GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             Return p
         Else
             Dim t = tokens.First.Value : tokens.RemoveFirst()
             Dim p = New EBNF With {.Kind = EBNFKind.Reference, .s = t}
-            GobbleUpComments(tokens, p.FollowingComment, p.FollowingNewline)
+            GobbleUpComments(tokens, p.FollowingWhitespace, p.FollowingComment, p.FollowingNewline)
             Return p
         End If
     End Function

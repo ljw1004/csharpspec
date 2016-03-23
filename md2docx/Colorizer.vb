@@ -110,8 +110,7 @@ Module Colorizer
             Else
                 Yield Col(p.ProductionName, "Production")
                 Yield Col(":", "PlainText")
-                If p.RuleStartsOnNewLine Then Yield Nothing
-                Yield Col(vbTab, "PlainText")
+                If p.RuleStartsOnNewLine Then Yield Nothing : Yield Col(vbTab, "PlainText") Else Yield Col(" ", "PlainText")
                 If p.RuleStartsOnNewLine Then Yield Col("| ", "PlainText")
                 For Each word In Colorize(p.EBNF) : Yield word : Next
                 Yield Col(";", "PlainText")
@@ -143,7 +142,7 @@ Module Colorizer
                     Dim lastWasTab = False
                     Dim prevElement As EBNF = Nothing
                     For Each c In ebnf.Children
-                        If prevElement IsNot Nothing Then Yield Col(If(lastWasTab, "| ", " | "), "PlainText")
+                        If prevElement IsNot Nothing Then Yield Col(If(lastWasTab, "| ", "| "), "PlainText")
                         For Each word In Colorize(c) : Yield word : lastWasTab = (word IsNot Nothing AndAlso word.Text = vbTab) : Next
                         prevElement = c
                     Next
@@ -152,7 +151,7 @@ Module Colorizer
                     Dim prevElement As EBNF = Nothing
                     For Each c In ebnf.Children
                         ' put a space if r was a non-empty non-tab thing
-                        If prevElement IsNot Nothing AndAlso lastWasNonTab Then Yield Col(" ", "PlainText")
+                        'If prevElement IsNot Nothing AndAlso lastWasNonTab Then Yield Col(" ", "PlainText")
                         If c.Kind = EBNFKind.Choice Then
                             Yield Col("( ", "PlainText")
                             For Each word In Colorize(c) : Yield word : Next
@@ -166,6 +165,7 @@ Module Colorizer
                 Case Else
                     Throw New NotSupportedException("Unrecognized EBNF")
             End Select
+            If Not String.IsNullOrEmpty(ebnf.FollowingWhitespace) Then Yield Col(ebnf.FollowingWhitespace, "Comment")
             If Not String.IsNullOrEmpty(ebnf.FollowingComment) Then Yield Col(" //" & ebnf.FollowingComment, "Comment")
             If ebnf.FollowingNewline Then Yield Nothing : Yield Col(vbTab, "PlainText")
         End Function
