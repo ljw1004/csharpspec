@@ -80,6 +80,10 @@
     <Compile Include="Module1.vb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\csharp\basic-concepts.md">
+      <Link>basic-concepts.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\csharp\introduction.md">
       <Link>introduction.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

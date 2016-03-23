@@ -40,7 +40,10 @@ Module Colorizer
         Dim currentWord As ColorizedWord = Nothing
         For Each nextWord In words
             If nextWord Is Nothing Then ' linebreak
-                If currentWord IsNot Nothing Then currentLine.Words.Add(currentWord)
+                If currentWord IsNot Nothing Then
+                    currentWord.Text = currentWord.Text.TrimEnd()
+                    If Not String.IsNullOrWhiteSpace(currentWord.Text) Then currentLine.Words.Add(currentWord)
+                End If
                 If encounteredFirstLinebreak OrElse currentLine.Words.Count > 0 Then Yield currentLine
                 encounteredFirstLinebreak = True
                 currentLine = New ColorizedLine
@@ -59,7 +62,10 @@ Module Colorizer
                 currentWord = nextWord
             End If
         Next
-        If currentWord IsNot Nothing Then currentLine.Words.Add(currentWord)
+        If currentWord IsNot Nothing Then
+            currentWord.Text = currentWord.Text.TrimEnd()
+            If Not String.IsNullOrWhiteSpace(currentWord.Text) Then currentLine.Words.Add(currentWord)
+        End If
         If currentLine.Words.Count > 0 Then Yield currentLine
     End Function
 

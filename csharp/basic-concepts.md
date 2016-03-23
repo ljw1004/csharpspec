@@ -2,11 +2,11 @@
 
 ## Application Startup
 
-An assembly that has an *__entry point__* is called an *__application__*. When an application is run, a new *__application domain__* is created. Several different instantiations of an application may exist on the same machine at the same time, and each has its own application domain.
+An assembly that has an ***entry point*** is called an ***application***. When an application is run, a new ***application domain*** is created. Several different instantiations of an application may exist on the same machine at the same time, and each has its own application domain.
 
 An application domain enables application isolation by acting as a container for application state. An application domain acts as a container and boundary for the types defined in the application and the class libraries it uses. Types loaded into one application domain are distinct from the same type loaded into another application domain, and instances of objects are not directly shared between application domains. For instance, each application domain has its own copy of static variables for these types, and a static constructor for a type is run at most once per application domain. Implementations are free to provide implementation-specific policy or mechanisms for the creation and destruction of application domains.
 
-*__Application startup__* occurs when the execution environment calls a designated method, which is referred to as the application's entry point. This entry point method is always named `Main`, and can have one of the following signatures:
+***Application startup*** occurs when the execution environment calls a designated method, which is referred to as the application's entry point. This entry point method is always named `Main`, and can have one of the following signatures:
 
 ```csharp
 static void Main() {...}
@@ -34,9 +34,9 @@ In all other respects, entry point methods behave like those that are not entry 
 
 ## Application termination
 
-*__Application termination__* returns control to the execution environment.
+***Application termination*** returns control to the execution environment.
 
-If the return type of the application's *__entry point__* method is `int`, the value returned serves as the application's *__termination status code__*. The purpose of this code is to allow communication of success or failure to the execution environment.
+If the return type of the application's ***entry point*** method is `int`, the value returned serves as the application's ***termination status code***. The purpose of this code is to allow communication of success or failure to the execution environment.
 
 If the return type of the entry point method is `void`, reaching the right brace (`}`) which terminates that method, or executing a `return` statement that has no expression, results in a termination status code of `0`.
 
@@ -46,27 +46,26 @@ Prior to an application's termination, destructors for all of its objects that h
 
 Declarations in a C# program define the constituent elements of the program. C# programs are organized using namespaces (§9), which can contain type declarations and nested namespace declarations. Type declarations (§9.6) are used to define classes (§10), structs (§10.14), interfaces (§13), enums (§14), and delegates (§15). The kinds of members permitted in a type declaration depend on the form of the type declaration. For instance, class declarations can contain declarations for constants (§10.4), fields (§10.5), methods (§10.6), properties (§10.7), events (§10.8), indexers (§10.9), operators (§10.10), instance constructors (§10.11), static constructors (§10.12), destructors (§10.13), and nested types(§10.3.8).
 
-A declaration defines a name in the *__declaration space__* to which the declaration belongs. Except for overloaded members (§3.6), it is a compile-time error to have two or more declarations that introduce members with the same name in a declaration space. It is never possible for a declaration space to contain different kinds of members with the same name. For example, a declaration space can never contain a field and a method by the same name.
+A declaration defines a name in the ***declaration space*** to which the declaration belongs. Except for overloaded members (§3.6), it is a compile-time error to have two or more declarations that introduce members with the same name in a declaration space. It is never possible for a declaration space to contain different kinds of members with the same name. For example, a declaration space can never contain a field and a method by the same name.
 
 There are several different types of declaration spaces, as described in the following.
 
--  Within all source files of a program, *namespace-member-declaration* s with no enclosing *namespace-declaration* are members of a single combined declaration space called the *__global declaration space__*.
--  Within all source files of a program, *namespace-member-declaration* s within *namespace-declaration* s that have the same fully qualified namespace name are members of a single combined declaration space.
--  Each class, struct, or interface declaration creates a new declaration space. Names are introduced into this declaration space through *class-member-declaration* s, *struct-member-declaration* s, *interface-member-declaration* s, or *type-parameter* s. Except for overloaded instance constructor declarations and static constructor declarations, a class or struct cannot contain a member declaration with the same name as the class or struct. A class, struct, or interface permits the declaration of overloaded methods and indexers. Furthermore, a class or struct permits the declaration of overloaded instance constructors and operators. For example, a class, struct, or interface may contain multiple method declarations with the same name, provided these method declarations differ in their signature (§3.6). Note that base classes do not contribute to the declaration space of a class, and base interfaces do not contribute to the declaration space of an interface. Thus, a derived class or interface is allowed to declare a member with the same name as an inherited member. Such a member is said to *__hide__* the inherited member.
--  Each delegate declaration creates a new declaration space. Names are introduced into this declaration space through formal parameters (*fixed-parameter* s and *parameter-array* s) and *type-parameter* s.
--  Each enumeration declaration creates a new declaration space. Names are introduced into this declaration space through *enum-member-declarations*.
--  Each method declaration, indexer declaration, operator declaration, instance constructor declaration and anonymous function creates a new declaration space called a *__local variable declaration space__*. Names are introduced into this declaration space through formal parameters (*fixed-parameter*s and *parameter-array*s) and *type-parameter*s. The body of the function member or anonymous function, if any, is considered to be nested within the local variable declaration space. It is an error for a local variable declaration space and a nested local variable declaration space to contain elements with the same name. Thus, within a nested declaration space it is not possible to declare a local variable or constant with the same name as a local variable or constant in an enclosing declaration space. It is possible for two declaration spaces to contain elements with the same name as long as neither declaration space contains the other.
--  Each *block* or *switch-block* , as well as a *for*, *foreach* and *using* statement, creates a local variable declaration space for local variables and local constants . Names are introduced into this declaration space through *local-variable-declaration* s **and *local-constant-declaration* s. Note that blocks that occur as or within the body of a function member or anonymous function are nested within the local variable declaration space declared by those functions for their parameters. Thus it is an error to have e.g. a method with a local variable and a parameter of the same name.
--  Each *block* or *switch-block* creates a separate declaration space for labels. Names are introduced into this declaration space through *labeled-statement* s, and the names are referenced through *goto-statement*s. The *__label declaration space__* of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a label with the same name as a label in an enclosing block.
+*  Within all source files of a program, *namespace-member-declaration*s with no enclosing *namespace-declaration* are members of a single combined declaration space called the ***global declaration space***.
+*  Within all source files of a program, *namespace-member-declaration*s within *namespace-declaration*s that have the same fully qualified namespace name are members of a single combined declaration space.
+*  Each class, struct, or interface declaration creates a new declaration space. Names are introduced into this declaration space through *class-member-declaration*s, *struct-member-declaration*s, *interface-member-declaration*s, or *type-parameter*s. Except for overloaded instance constructor declarations and static constructor declarations, a class or struct cannot contain a member declaration with the same name as the class or struct. A class, struct, or interface permits the declaration of overloaded methods and indexers. Furthermore, a class or struct permits the declaration of overloaded instance constructors and operators. For example, a class, struct, or interface may contain multiple method declarations with the same name, provided these method declarations differ in their signature (§3.6). Note that base classes do not contribute to the declaration space of a class, and base interfaces do not contribute to the declaration space of an interface. Thus, a derived class or interface is allowed to declare a member with the same name as an inherited member. Such a member is said to ***hide*** the inherited member.
+*  Each delegate declaration creates a new declaration space. Names are introduced into this declaration space through formal parameters (*fixed-parameter*s and *parameter-array*s) and *type-parameter*s.
+*  Each enumeration declaration creates a new declaration space. Names are introduced into this declaration space through *enum-member-declarations*.
+*  Each method declaration, indexer declaration, operator declaration, instance constructor declaration and anonymous function creates a new declaration space called a ***local variable declaration space***. Names are introduced into this declaration space through formal parameters (*fixed-parameter*s and *parameter-array*s) and *type-parameter*s. The body of the function member or anonymous function, if any, is considered to be nested within the local variable declaration space. It is an error for a local variable declaration space and a nested local variable declaration space to contain elements with the same name. Thus, within a nested declaration space it is not possible to declare a local variable or constant with the same name as a local variable or constant in an enclosing declaration space. It is possible for two declaration spaces to contain elements with the same name as long as neither declaration space contains the other.
+*  Each *block* or *switch-block* , as well as a *for*, *foreach* and *using* statement, creates a local variable declaration space for local variables and local constants . Names are introduced into this declaration space through *local-variable-declaration*s and *local-constant-declaration*s. Note that blocks that occur as or within the body of a function member or anonymous function are nested within the local variable declaration space declared by those functions for their parameters. Thus it is an error to have e.g. a method with a local variable and a parameter of the same name.
+*  Each *block* or *switch-block* creates a separate declaration space for labels. Names are introduced into this declaration space through *labeled-statement*s, and the names are referenced through *goto-statement*s. The ***label declaration space*** of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a label with the same name as a label in an enclosing block.
 
 The textual order in which names are declared is generally of no significance. In particular, textual order is not significant for the declaration and use of namespaces, constants, methods, properties, events, indexers, operators, instance constructors, destructors, static constructors, and types. Declaration order is significant in the following ways:
 
--  Declaration order for field declarations and local variable declarations determines the order in which their initializers (if any) are executed.
--  Local variables must be defined before they are used (§3.7).
--  Declaration order for enum member declarations (§14.3) is significant when *constant-expression* values are omitted.
+*  Declaration order for field declarations and local variable declarations determines the order in which their initializers (if any) are executed.
+*  Local variables must be defined before they are used (§3.7).
+*  Declaration order for enum member declarations (§14.3) is significant when *constant-expression* values are omitted.
 
 The declaration space of a namespace is "open ended", and two namespace declarations with the same fully qualified name contribute to the same declaration space. For example
-
 ```csharp
 namespace Megacorp.Data
 {
@@ -126,13 +125,13 @@ class A
 
 ## Members
 
-Namespaces and types have *__members__*. The members of an entity are generally available through the use of a qualified name that starts with a reference to the entity, followed by a "`.`" token, followed by the name of the member.
+Namespaces and types have ***members***. The members of an entity are generally available through the use of a qualified name that starts with a reference to the entity, followed by a "`.`" token, followed by the name of the member.
 
-Members of a type are either declared in the type declaration or *__inherited__* from the base class of the type. When a type inherits from a base class, all members of the base class, except instance constructors, destructors and static constructors, become members of the derived type. The declared accessibility of a base class member does not control whether the member is inherited—inheritance extends to any member that isn't an instance constructor, static constructor, or destructor. However, an inherited member may not be accessible in a derived type, either because of its declared accessibility (§3.5.1) or because it is hidden by a declaration in the type itself (§3.7.1.2).
+Members of a type are either declared in the type declaration or ***inherited*** from the base class of the type. When a type inherits from a base class, all members of the base class, except instance constructors, destructors and static constructors, become members of the derived type. The declared accessibility of a base class member does not control whether the member is inherited—inheritance extends to any member that isn't an instance constructor, static constructor, or destructor. However, an inherited member may not be accessible in a derived type, either because of its declared accessibility (§3.5.1) or because it is hidden by a declaration in the type itself (§3.7.1.2).
 
 ### Namespace members
 
-Namespaces and types that have no enclosing namespace are members of the *__global namespace__*. This corresponds directly to the names declared in the global declaration space.
+Namespaces and types that have no enclosing namespace are members of the ***global namespace***. This corresponds directly to the names declared in the global declaration space.
 
 Namespaces and types declared within a namespace are members of that namespace. This corresponds directly to the names declared in the declaration space of the namespace.
 
@@ -144,23 +143,23 @@ The members of a struct are the members declared in the struct and the members i
 
 The members of a simple type correspond directly to the members of the struct type aliased by the simple type:
 
--  The members of `sbyte` are the members of the `System.SByte` struct.
--  The members of `byte` are the members of the `System.Byte` struct.
--  The members of `short` are the members of the `System.Int16` struct.
--  The members of `ushort` are the members of the `System.UInt16` struct.
--  The members of `int` are the members of the `System.Int32` struct.
--  The members of `uint` are the members of the `System.UInt32` struct.
--  The members of `long` are the members of the `System.Int64` struct.
--  The members of `ulong` are the members of the `System.UInt64` struct.
--  The members of `char` are the members of the `System.Char` struct.
--  The members of `float` are the members of the `System.Single` struct.
--  The members of `double` are the members of the `System.Double` struct.
--  The members of `decimal` are the members of the `System.Decimal` struct.
--  The members of `bool` are the members of the `System.Boolean` struct.
+*  The members of `sbyte` are the members of the `System.SByte` struct.
+*  The members of `byte` are the members of the `System.Byte` struct.
+*  The members of `short` are the members of the `System.Int16` struct.
+*  The members of `ushort` are the members of the `System.UInt16` struct.
+*  The members of `int` are the members of the `System.Int32` struct.
+*  The members of `uint` are the members of the `System.UInt32` struct.
+*  The members of `long` are the members of the `System.Int64` struct.
+*  The members of `ulong` are the members of the `System.UInt64` struct.
+*  The members of `char` are the members of the `System.Char` struct.
+*  The members of `float` are the members of the `System.Single` struct.
+*  The members of `double` are the members of the `System.Double` struct.
+*  The members of `decimal` are the members of the `System.Decimal` struct.
+*  The members of `bool` are the members of the `System.Boolean` struct.
 
 ### Enumeration members
 
-The members of an enumeration are the constants declared in the enumeration and the members inherited from the enumeration's direct base class `System.``Enum` and the indirect base classes `System.ValueType` and `object`.
+The members of an enumeration are the constants declared in the enumeration and the members inherited from the enumeration's direct base class `System.Enum` and the indirect base classes `System.ValueType` and `object`.
 
 ### Class members
 
@@ -170,8 +169,8 @@ A class declaration may contain declarations of constants, fields, methods, prop
 
 The members of `object` and `string` correspond directly to the members of the class types they alias:
 
--  The members of `object` are the members of the `System.Object` class.
--  The members of `string` are the members of the `System.String` class.
+*  The members of `object` are the members of the `System.Object` class.
+*  The members of `string` are the members of the `System.String` class.
 
 ### Interface members
 
@@ -189,64 +188,63 @@ The members of a delegate are the members inherited from class `System.Delegate`
 
 Declarations of members allow control over member access. The accessibility of a member is established by the declared accessibility (§3.5.1) of the member combined with the accessibility of the immediately containing type, if any.
 
-When access to a particular member is allowed, the member is said to be *__accessible__*. Conversely, when access to a particular member is disallowed, the member is said to be *__inaccessible__*. Access to a member is permitted when the textual location in which the access takes place is included in the accessibility domain (§3.5.2) of the member.
+When access to a particular member is allowed, the member is said to be ***accessible***. Conversely, when access to a particular member is disallowed, the member is said to be ***inaccessible***. Access to a member is permitted when the textual location in which the access takes place is included in the accessibility domain (§3.5.2) of the member.
 
 ### Declared accessibility
 
-The *__declared accessibility__* of a member can be one of the following:
+The ***declared accessibility*** of a member can be one of the following:
 
--  Public, which is selected by including a `public` modifier in the member declaration. The intuitive meaning of `public` is "access not limited".
--  Protected, which is selected by including a `protected` modifier in the member declaration. The intuitive meaning of `protected` is "access limited to the containing class or types derived from the containing class".
--  Internal, which is selected by including an `internal` modifier in the member declaration. The intuitive meaning of `internal` is "access limited to this program".
--  Protected internal (meaning protected or internal), which is selected by including both a `protected` and an `internal` modifier in the member declaration. The intuitive meaning of `protected``internal` is "access limited to this program or types derived from the containing class".
--  Private, which is selected by including a `private` modifier in the member declaration. The intuitive meaning of `private` is "access limited to the containing type".
+*  Public, which is selected by including a `public` modifier in the member declaration. The intuitive meaning of `public` is "access not limited".
+*  Protected, which is selected by including a `protected` modifier in the member declaration. The intuitive meaning of `protected` is "access limited to the containing class or types derived from the containing class".
+*  Internal, which is selected by including an `internal` modifier in the member declaration. The intuitive meaning of `internal` is "access limited to this program".
+*  Protected internal (meaning protected or internal), which is selected by including both a `protected` and an `internal` modifier in the member declaration. The intuitive meaning of `protected internal` is "access limited to this program or types derived from the containing class".
+*  Private, which is selected by including a `private` modifier in the member declaration. The intuitive meaning of `private` is "access limited to the containing type".
 
 Depending on the context in which a member declaration takes place, only certain types of declared accessibility are permitted. Furthermore, when a member declaration does not include any access modifiers, the context in which the declaration takes place determines the default declared accessibility.
 
--  Namespaces implicitly have `public` declared accessibility. No access modifiers are allowed on namespace declarations.
--  Types declared in compilation units or namespaces can have `public` or `internal` declared accessibility and default to `internal` declared accessibility.
--  Class members can have any of the five kinds of declared accessibility and default to `private` declared accessibility. (Note that a type declared as a member of a class can have any of the five kinds of declared accessibility, whereas a type declared as a member of a namespace can have only `public` or `internal` declared accessibility.)
--  Struct members can have `public`, `internal`, or `private` declared accessibility and default to `private` declared accessibility because structs are implicitly sealed. Struct members introduced in a struct (that is, not inherited by that struct) cannot have `protected` or `protected``internal` declared accessibility. (Note that a type declared as a member of a struct can have `public`, `internal`, or `private` declared accessibility, whereas a type declared as a member of a namespace can have only `public` or `internal` declared accessibility.)
--  Interface members implicitly have `public` declared accessibility. No access modifiers are allowed on interface member declarations.
--  Enumeration members implicitly have `public` declared accessibility. No access modifiers are allowed on enumeration member declarations.
+*  Namespaces implicitly have `public` declared accessibility. No access modifiers are allowed on namespace declarations.
+*  Types declared in compilation units or namespaces can have `public` or `internal` declared accessibility and default to `internal` declared accessibility.
+*  Class members can have any of the five kinds of declared accessibility and default to `private` declared accessibility. (Note that a type declared as a member of a class can have any of the five kinds of declared accessibility, whereas a type declared as a member of a namespace can have only `public` or `internal` declared accessibility.)
+*  Struct members can have `public`, `internal`, or `private` declared accessibility and default to `private` declared accessibility because structs are implicitly sealed. Struct members introduced in a struct (that is, not inherited by that struct) cannot have `protected` or `protected internal` declared accessibility. (Note that a type declared as a member of a struct can have `public`, `internal`, or `private` declared accessibility, whereas a type declared as a member of a namespace can have only `public` or `internal` declared accessibility.)
+*  Interface members implicitly have `public` declared accessibility. No access modifiers are allowed on interface member declarations.
+*  Enumeration members implicitly have `public` declared accessibility. No access modifiers are allowed on enumeration member declarations.
 
 ### Accessibility domains
 
-The *__accessibility domain__* of a member consists of the (possibly disjoint) sections of program text in which access to the member is permitted. For purposes of defining the accessibility domain of a member, a member is said to be *__top-level__* if it is not declared within a type, and a member is said to be *__nested__* if it is declared within another type. Furthermore, the *__program text__* of a program is defined as all program text contained in all source files of the program, and the program text of a type is defined as all program text contained in the *type-declaration* s of that type (including, possibly, types that are nested within the type).
+The ***accessibility domain*** of a member consists of the (possibly disjoint) sections of program text in which access to the member is permitted. For purposes of defining the accessibility domain of a member, a member is said to be ***top-level*** if it is not declared within a type, and a member is said to be ***nested*** if it is declared within another type. Furthermore, the ***program text*** of a program is defined as all program text contained in all source files of the program, and the program text of a type is defined as all program text contained in the *type-declaration*s of that type (including, possibly, types that are nested within the type).
 
 The accessibility domain of a predefined type (such as `object`, `int`, or `double`) is unlimited.
 
 The accessibility domain of a top-level unbound type `T` (§4.4.3) that is declared in a program `P` is defined as follows:
 
--  If the declared accessibility of `T` is `public`, the accessibility domain of `T` is the program text of `P` and any program that references `P`.
--  If the declared accessibility of `T` is `internal`, the accessibility domain of `T` is the program text of `P`.
+*  If the declared accessibility of `T` is `public`, the accessibility domain of `T` is the program text of `P` and any program that references `P`.
+*  If the declared accessibility of `T` is `internal`, the accessibility domain of `T` is the program text of `P`.
 
 From these definitions it follows that the accessibility domain of a top-level unbound type is always at least the program text of the program in which that type is declared.
 
-The accessibility domain for a constructed type `T``&lt;``A`<sub>1</sub>`,` ...`,``A`<sub>N</sub>`>```is the intersection of the accessibility domain of the unbound generic type `T` and the accessibility domains of the type arguments `A`<sub>1</sub>`,` ...`,``A`<sub>N</sub>.
+The accessibility domain for a constructed type `T<A1, ..., An>` is the intersection of the accessibility domain of the unbound generic type `T` and the accessibility domains of the type arguments `A1, ..., An`.
 
 The accessibility domain of a nested member `M` declared in a type `T` within a program `P` is defined as follows (noting that `M` itself may possibly be a type):
 
--  If the declared accessibility of `M` is `public`, the accessibility domain of `M` is the accessibility domain of `T`.
--  If the declared accessibility of `M` is `protected``internal`, let `D` be the union of the program text of `P` and the program text of any type derived from `T`, which is declared outside `P`. The accessibility domain of `M` is the intersection of the accessibility domain of `T` with `D`.
--  If the declared accessibility of `M` is `protected`, let `D` be the union of the program text of `T` and the program text of any type derived from `T`. The accessibility domain of `M` is the intersection of the accessibility domain of `T` with `D`.
--  If the declared accessibility of `M` is `internal`, the accessibility domain of `M` is the intersection of the accessibility domain of `T` with the program text of `P`.
--  If the declared accessibility of `M` is `private`, the accessibility domain of `M` is the program text of `T`.
+*  If the declared accessibility of `M` is `public`, the accessibility domain of `M` is the accessibility domain of `T`.
+*  If the declared accessibility of `M` is `protected internal`, let `D` be the union of the program text of `P` and the program text of any type derived from `T`, which is declared outside `P`. The accessibility domain of `M` is the intersection of the accessibility domain of `T` with `D`.
+*  If the declared accessibility of `M` is `protected`, let `D` be the union of the program text of `T` and the program text of any type derived from `T`. The accessibility domain of `M` is the intersection of the accessibility domain of `T` with `D`.
+*  If the declared accessibility of `M` is `internal`, the accessibility domain of `M` is the intersection of the accessibility domain of `T` with the program text of `P`.
+*  If the declared accessibility of `M` is `private`, the accessibility domain of `M` is the program text of `T`.
 
 From these definitions it follows that the accessibility domain of a nested member is always at least the program text of the type in which the member is declared. Furthermore, it follows that the accessibility domain of a member is never more inclusive than the accessibility domain of the type in which the member is declared.
 
 In intuitive terms, when a type or member `M` is accessed, the following steps are evaluated to ensure that the access is permitted:
 
--  First, if `M` is declared within a type (as opposed to a compilation unit or a namespace), a compile-time error occurs if that type is not accessible.
--  Then, if `M` is `public`, the access is permitted.
--  Otherwise, if `M` is `protected``internal`, the access is permitted if it occurs within the program in which `M` is declared, or if it occurs within a class derived from the class in which `M` is declared and takes place through the derived class type (§3.5.3).
--  Otherwise, if `M` is `protected`, the access is permitted if it occurs within the class in which `M` is declared, or if it occurs within a class derived from the class in which `M` is declared and takes place through the derived class type (§3.5.3).
--  Otherwise, if `M` is `internal`, the access is permitted if it occurs within the program in which `M` is declared.
--  Otherwise, if `M` is `private`, the access is permitted if it occurs within the type in which `M` is declared.
--  Otherwise, the type or member is inaccessible, and a compile-time error occurs.
+*  First, if `M` is declared within a type (as opposed to a compilation unit or a namespace), a compile-time error occurs if that type is not accessible.
+*  Then, if `M` is `public`, the access is permitted.
+*  Otherwise, if `M` is `protected internal`, the access is permitted if it occurs within the program in which `M` is declared, or if it occurs within a class derived from the class in which `M` is declared and takes place through the derived class type (§3.5.3).
+*  Otherwise, if `M` is `protected`, the access is permitted if it occurs within the class in which `M` is declared, or if it occurs within a class derived from the class in which `M` is declared and takes place through the derived class type (§3.5.3).
+*  Otherwise, if `M` is `internal`, the access is permitted if it occurs within the program in which `M` is declared.
+*  Otherwise, if `M` is `private`, the access is permitted if it occurs within the type in which `M` is declared.
+*  Otherwise, the type or member is inaccessible, and a compile-time error occurs.
 
 In the example
-
 ```csharp
 public class A
 {
@@ -276,21 +274,19 @@ internal class B
     }
 }
 ```
-
 the classes and members have the following accessibility domains:
 
--  The accessibility domain of `A` and `A.X` is unlimited.
--  The accessibility domain of `A.Y`, `B`, `B.X`, `B.Y`, `B.C`, `B.C.X`, and `B.C.Y` is the program text of the containing program.
--  The accessibility domain of `A.Z` is the program text of `A`.
--  The accessibility domain of `B.Z` and `B.D` is the program text of `B`, including the program text of `B.C` and `B.D`.
--  The accessibility domain of `B.C.Z` is the program text of `B.C`.
--  The accessibility domain of `B.D.X` and `B.D.Y` is the program text of `B`, including the program text of `B.C` and `B.D`.
--  The accessibility domain of `B.D.Z` is the program text of `B.D`.
+*  The accessibility domain of `A` and `A.X` is unlimited.
+*  The accessibility domain of `A.Y`, `B`, `B.X`, `B.Y`, `B.C`, `B.C.X`, and `B.C.Y` is the program text of the containing program.
+*  The accessibility domain of `A.Z` is the program text of `A`.
+*  The accessibility domain of `B.Z` and `B.D` is the program text of `B`, including the program text of `B.C` and `B.D`.
+*  The accessibility domain of `B.C.Z` is the program text of `B.C`.
+*  The accessibility domain of `B.D.X` and `B.D.Y` is the program text of `B`, including the program text of `B.C` and `B.D`.
+*  The accessibility domain of `B.D.Z` is the program text of `B.D`.
 
 As the example illustrates, the accessibility domain of a member is never larger than that of a containing type. For example, even though all `X` members have public declared accessibility, all but `A.X` have accessibility domains that are constrained by a containing type.
 
 As described in §3.4, all members of a base class, except for instance constructors, destructors and static constructors, are inherited by derived types. This includes even private members of a base class. However, the accessibility domain of a private member includes only the program text of the type in which the member is declared. In the example
-
 ```csharp
 class A
 {
@@ -308,23 +304,21 @@ class B: A
     }
 }
 ```
-
 the `B` class inherits the private member `x` from the `A` class. Because the member is private, it is only accessible within the *class-body* of `A`. Thus, the access to `b.x` succeeds in the `A.F` method, but fails in the `B.F` method.
 
 ### Protected access for instance members
 
-When a `protected` instance member is accessed outside the program text of the class in which it is declared, and when a `protected``internal` instance member is accessed outside the program text of the program in which it is declared, the access must take place within a class declaration that derives from the class in which it is declared. Furthermore, the access is required to take place through an instance of that derived class type or a class type constructed from it. This restriction prevents one derived class from accessing protected members of other derived classes, even when the members are inherited from the same base class.
+When a `protected` instance member is accessed outside the program text of the class in which it is declared, and when a `protected internal` instance member is accessed outside the program text of the program in which it is declared, the access must take place within a class declaration that derives from the class in which it is declared. Furthermore, the access is required to take place through an instance of that derived class type or a class type constructed from it. This restriction prevents one derived class from accessing protected members of other derived classes, even when the members are inherited from the same base class.
 
 Let `B` be a base class that declares a protected instance member `M`, and let `D` be a class that derives from `B`. Within the *class-body* of `D`, access to `M` can take one of the following forms:
 
--  An unqualified *type-name* or *primary-expression* of the form `M`.
--  A *primary-expression* of the form `E.M`, provided the type of `E` is `T` or a class derived from `T`, where `T` is the class type `D`, or a class type constructed from `D`
--  A *primary-expression* of the form `base.M`.
+*  An unqualified *type-name* or *primary-expression* of the form `M`.
+*  A *primary-expression* of the form `E.M`, provided the type of `E` is `T` or a class derived from `T`, where `T` is the class type `D`, or a class type constructed from `D`
+*  A *primary-expression* of the form `base.M`.
 
 In addition to these forms of access, a derived class can access a protected instance constructor of a base class in a *constructor-initializer* (§10.11.1).
 
 In the example
-
 ```csharp
 public class A
 {
@@ -344,11 +338,9 @@ public class B: A
     }
 }
 ```
-
 within `A`, it is possible to access `x` through instances of both `A` and `B`, since in either case the access takes place through an instance of `A` or a class derived from `A`. However, within `B`, it is not possible to access `x` through an instance of `A`, since `A` does not derive from `B`.
 
 In the example
-
 ```csharp
 class C<T>
 {
@@ -367,39 +359,35 @@ class D<T>: C<T>
     }
 }
 ```
-
 the three assignments to `x` are permitted because they all take place through instances of class types constructed from the generic type.
 
 ### Accessibility constraints
 
-Several constructs in the C# language require a type to be *__at least as accessible as__* a member or another type. A type `T` is said to be at least as accessible as a member or type `M` if the accessibility domain of `T` is a superset of the accessibility domain of `M`. In other words, `T` is at least as accessible as `M` if `T` is accessible in all contexts in which `M` is accessible.
+Several constructs in the C# language require a type to be ***at least as accessible as*** a member or another type. A type `T` is said to be at least as accessible as a member or type `M` if the accessibility domain of `T` is a superset of the accessibility domain of `M`. In other words, `T` is at least as accessible as `M` if `T` is accessible in all contexts in which `M` is accessible.
 
 The following accessibility constraints exist:
 
--  The direct base class of a class type must be at least as accessible as the class type itself.
--  The explicit base interfaces of an interface type must be at least as accessible as the interface type itself.
--  The return type and parameter types of a delegate type must be at least as accessible as the delegate type itself.
--  The type of a constant must be at least as accessible as the constant itself.
--  The type of a field must be at least as accessible as the field itself.
--  The return type and parameter types of a method must be at least as accessible as the method itself.
--  The type of a property must be at least as accessible as the property itself.
--  The type of an event must be at least as accessible as the event itself.
--  The type and parameter types of an indexer must be at least as accessible as the indexer itself.
--  The return type and parameter types of an operator must be at least as accessible as the operator itself.
--  The parameter types of an instance constructor must be at least as accessible as the instance constructor itself.
+*  The direct base class of a class type must be at least as accessible as the class type itself.
+*  The explicit base interfaces of an interface type must be at least as accessible as the interface type itself.
+*  The return type and parameter types of a delegate type must be at least as accessible as the delegate type itself.
+*  The type of a constant must be at least as accessible as the constant itself.
+*  The type of a field must be at least as accessible as the field itself.
+*  The return type and parameter types of a method must be at least as accessible as the method itself.
+*  The type of a property must be at least as accessible as the property itself.
+*  The type of an event must be at least as accessible as the event itself.
+*  The type and parameter types of an indexer must be at least as accessible as the indexer itself.
+*  The return type and parameter types of an operator must be at least as accessible as the operator itself.
+*  The parameter types of an instance constructor must be at least as accessible as the instance constructor itself.
 
 In the example
-
 ```csharp
 class A {...}
 
 public class B: A {...}
 ```
-
 the `B` class results in a compile-time error because `A` is not at least as accessible as `B`.
 
 Likewise, in the example
-
 ```csharp
 class A {...}
 
@@ -412,86 +400,83 @@ public class B
     public A H() {...}
 }
 ```
-
 the `H` method in `B` results in a compile-time error because the return type `A` is not at least as accessible as the method.
 
 ## Signatures and overloading
 
-Methods, instance constructors, indexers, and operators are characterized by their *__signatures__*:
+Methods, instance constructors, indexers, and operators are characterized by their ***signatures***:
 
--  The signature of a method consists of the name of the method, the number of type parameters and the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. For these purposes, any type parameter of the method that occurs in the type of a formal parameter is identified not by its name, but by its ordinal position in the type argument list of the method. The signature of a method specifically does not include the return type, the `params` modifier that may be specified for the right-most parameter, nor the optional type parameter constraints.
--  The signature of an instance constructor consists of the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. The signature of an instance constructor specifically does not include the `params` modifier that may be specified for the right-most parameter.
--  The signature of an indexer consists of the type of each of its formal parameters, considered in the order left to right. The signature of an indexer specifically does not include the element type, nor does it include the `params` modifier that may be specified for the right-most parameter.
--  The signature of an operator consists of the name of the operator and the type of each of its formal parameters, considered in the order left to right. The signature of an operator specifically does not include the result type.
+*  The signature of a method consists of the name of the method, the number of type parameters and the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. For these purposes, any type parameter of the method that occurs in the type of a formal parameter is identified not by its name, but by its ordinal position in the type argument list of the method. The signature of a method specifically does not include the return type, the `params` modifier that may be specified for the right-most parameter, nor the optional type parameter constraints.
+*  The signature of an instance constructor consists of the type and kind (value, reference, or output) of each of its formal parameters, considered in the order left to right. The signature of an instance constructor specifically does not include the `params` modifier that may be specified for the right-most parameter.
+*  The signature of an indexer consists of the type of each of its formal parameters, considered in the order left to right. The signature of an indexer specifically does not include the element type, nor does it include the `params` modifier that may be specified for the right-most parameter.
+*  The signature of an operator consists of the name of the operator and the type of each of its formal parameters, considered in the order left to right. The signature of an operator specifically does not include the result type.
 
-Signatures are the enabling mechanism for *__overloading__* of members in classes, structs, and interfaces:
+Signatures are the enabling mechanism for ***overloading*** of members in classes, structs, and interfaces:
 
--  Overloading of methods permits a class, struct, or interface to declare multiple methods with the same name, provided their signatures are unique within that class, struct, or interface.
--  Overloading of instance constructors permits a class or struct to declare multiple instance constructors, provided their signatures are unique within that class or struct.
--  Overloading of indexers permits a class, struct, or interface to declare multiple indexers, provided their signatures are unique within that class, struct, or interface.
--  Overloading of operators permits a class or struct to declare multiple operators with the same name, provided their signatures are unique within that class or struct.
+*  Overloading of methods permits a class, struct, or interface to declare multiple methods with the same name, provided their signatures are unique within that class, struct, or interface.
+*  Overloading of instance constructors permits a class or struct to declare multiple instance constructors, provided their signatures are unique within that class or struct.
+*  Overloading of indexers permits a class, struct, or interface to declare multiple indexers, provided their signatures are unique within that class, struct, or interface.
+*  Overloading of operators permits a class or struct to declare multiple operators with the same name, provided their signatures are unique within that class or struct.
 
 Although `out` and `ref` parameter modifiers are considered part of a signature, members declared in a single type cannot differ in signature solely by `ref` and `out`. A compile-time error occurs if two members are declared in the same type with signatures that would be the same if all parameters in both methods with `out` modifiers were changed to `ref` modifiers. For other purposes of signature matching (e.g., hiding or overriding), `ref` and `out` are considered part of the signature and do not match each other. (This restriction is to allow C#  programs to be easily translated to run on the Common Language Infrastructure (CLI), which does not provide a way to define methods that differ solely in `ref` and `out`.)
 
 For the purposes of singatures, the types `object` and `dynamic` are considered the same. Members declared in a single type can therefore not differ in signature solely by `object` and `dynamic`.
 
 The following example shows a set of overloaded method declarations along with their signatures.
-
 ```csharp
 interface ITest
 {
-    void F();                            // F()
+    void F();                        // F()
 
-    void F(int x);                        // F(int)
+    void F(int x);                   // F(int)
 
-    void F(ref int x);                // F(ref int)
+    void F(ref int x);               // F(ref int)
 
     void F(out int x);               // F(out int)      error
 
     void F(int x, int y);            // F(int, int)
 
-    int F(string s);                    // F(string)
+    int F(string s);                 // F(string)
 
-    int F(int x);                        // F(int)            error
+    int F(int x);                    // F(int)          error
 
-    void F(string[] a);                // F(string[])
+    void F(string[] a);              // F(string[])
 
-    void F(params string[] a);        // F(string[])        error
+    void F(params string[] a);       // F(string[])     error
 }
 ```
 
-Note that any `ref` and `out` parameter modifiers (§10.6.1) are part of a signature. Thus, `F(int)` and `F(ref``int)` are unique signatures. However, `F(ref``int)` and `F(out``int)` cannot be declared within the same interface because their signatures differ solely by `ref` and `out`. Also, note that the return type and the `params` modifier are not part of a signature, so it is not possible to overload solely based on return type or on the inclusion or exclusion of the `params` modifier. As such, the declarations of the methods `F(int)` and `F(params``string[])` identified above result in a compile-time error.
+Note that any `ref` and `out` parameter modifiers (§10.6.1) are part of a signature. Thus, `F(int)` and `F(ref int)` are unique signatures. However, `F(ref int)` and `F(out int)` cannot be declared within the same interface because their signatures differ solely by `ref` and `out`. Also, note that the return type and the `params` modifier are not part of a signature, so it is not possible to overload solely based on return type or on the inclusion or exclusion of the `params` modifier. As such, the declarations of the methods `F(int)` and `F(params string[])` identified above result in a compile-time error.
 
 ## Scopes
 
-The *__scope__* of a name is the region of program text within which it is possible to refer to the entity declared by the name without qualification of the name. Scopes can be *__nested__*, and an inner scope may redeclare the meaning of a name from an outer scope (this does not, however, remove the restriction imposed by §3.3 that within a nested block it is not possible to declare a local variable with the same name as a local variable in an enclosing block). The name from the outer scope is then said to be *__hidden__* in the region of program text covered by the inner scope, and access to the outer name is only possible by qualifying the name.
+The ***scope*** of a name is the region of program text within which it is possible to refer to the entity declared by the name without qualification of the name. Scopes can be ***nested***, and an inner scope may redeclare the meaning of a name from an outer scope (this does not, however, remove the restriction imposed by §3.3 that within a nested block it is not possible to declare a local variable with the same name as a local variable in an enclosing block). The name from the outer scope is then said to be ***hidden*** in the region of program text covered by the inner scope, and access to the outer name is only possible by qualifying the name.
 
--  The scope of a namespace member declared by a *namespace-member-declaration* (§9.5) with no enclosing *namespace-declaration* is the entire program text.
--  The scope of a namespace member declared by a *namespace-member-declaration* within a *namespace-declaration* whose fully qualified name is `N` is the *namespace-body* of every *namespace-declaration* whose fully qualified name is `N` or starts with `N`, followed by a period.
--  The scope of name defined by an *extern**-alias**-directive* extends over the *using-directives*, *global-attributes* and *namespace-member-declarations* of its immediately containing compilation unit or namespace body. An *extern**-alias**-directive* does not contribute any new members to the underlying declaration space. In other words, an *extern-alias-directive* is not transitive, but, rather, affects only the compilation unit or namespace body in which it occurs.
--  The scope of a name defined or imported by a *using-directive* (§9.4) extends over the *namespace-member-declarations* of the *compilation-unit* or *namespace-body* in which the *using-directive* occurs. A *using-directive* may make zero or more namespace or type names available within a particular *compilation-unit* or *namespace-body*, but does not contribute any new members to the underlying declaration space. In other words, a *using-directive* is not transitive but rather affects only the *compilation-unit* or *namespace-body* in which it occurs.
--  The scope of a type parameter declared by a *type-parameter-list* on a *class-declaration* (§10.1) is the *class-base*, *type-parameter-constraints-clauses*, and *class-body* of that *class-declaration*.
--  The scope of a type parameter declared by a *type-parameter-list* on a *struct-declaration* (§11.1) is the *struct-interfaces*, *type-parameter-constraints-clauses*, and *struct-body* of that *struct-declaration*.
--  The scope of a type parameter declared by a *type-parameter-list* on an *interface-declaration* (§13.1) is the *interface-base*, *type-parameter-constraints-clauses*, and *interface-body* of that *interface-declaration*.
--  The scope of a type parameter declared by a *type-parameter-list* on a *delegate-declaration* (§15.1) is the *return-type*, *formal-parameter-list*, and *type-parameter-constraints-clauses* of that *delegate-declaration*.
--  The scope of a member declared by a *class-member-declaration* (§10.1.6) is the *class-body* in which the declaration occurs. In addition, the scope of a class member extends to the *class-body* of those derived classes that are included in the accessibility domain (§3.5.2) of the member.
--  The scope of a member declared by a *struct-member-declaration* (§11.2) is the *struct-body* in which the declaration occurs.
--  The scope of a member declared by an *enum-member-declaration*  (§14.3) is the *enum-body* in which the declaration occurs.
--  The scope of a parameter declared in a *method-declaration* (§10.6) is the *method-body* of that *method-declaration*.
--  The scope of a parameter declared in an *indexer-declaration* (§10.9) is the *accessor-declarations* of that *indexer-declaration*.
--  The scope of a parameter declared in an *operator-declaration* (§10.10) is the *block* of that *operator-declaration*.
--  The scope of a parameter declared in a *constructor-declaration* (§10.11) is the *constructor-initializer* and *block* of that *constructor-declaration*.
--  The scope of a parameter declared in a *lambda-expression* (§7.15) is the *lambda-expression-body* of that *lambda-expression*
--  The scope of a parameter declared in an *anonymous-method-expression* (§7.15) is the *block* of that *anonymous-method-expression*.
--  The scope of a label declared in a *labeled-statement* (§8.4) is the *block* in which the declaration occurs.
--  The scope of a local variable declared in a *local-variable-declaration* (§8.5.1) is the block in which the declaration occurs.
--  The scope of a local variable declared in a *switch-block* of a `switch` statement (§8.7.2) is the *switch-block*.
--  The scope of a local variable declared in a *for-initializer* of a `for` statement (§8.8.3) is the *for-initializer*, the *for-condition*, the *for-iterator*, and the contained *statement* of the `for` statement.
--  The scope of a local constant declared in a *local-constant-declaration* (§8.5.2) is the block in which the declaration occurs. It is a compile-time error to refer to a local constant in a textual position that precedes its *constant-declarator*.
--  The scope of a variable declared as part of a *foreach-statement*, *using-statement*, *lock-statement* or *query-expression* is determined by the expansion of the given construct.
+*  The scope of a namespace member declared by a *namespace-member-declaration* (§9.5) with no enclosing *namespace-declaration* is the entire program text.
+*  The scope of a namespace member declared by a *namespace-member-declaration* within a *namespace-declaration* whose fully qualified name is `N` is the *namespace-body* of every *namespace-declaration* whose fully qualified name is `N` or starts with `N`, followed by a period.
+*  The scope of name defined by an *extern**-alias**-directive* extends over the *using-directives*, *global-attributes* and *namespace-member-declarations* of its immediately containing compilation unit or namespace body. An *extern**-alias**-directive* does not contribute any new members to the underlying declaration space. In other words, an *extern-alias-directive* is not transitive, but, rather, affects only the compilation unit or namespace body in which it occurs.
+*  The scope of a name defined or imported by a *using-directive* (§9.4) extends over the *namespace-member-declarations* of the *compilation-unit* or *namespace-body* in which the *using-directive* occurs. A *using-directive* may make zero or more namespace or type names available within a particular *compilation-unit* or *namespace-body*, but does not contribute any new members to the underlying declaration space. In other words, a *using-directive* is not transitive but rather affects only the *compilation-unit* or *namespace-body* in which it occurs.
+*  The scope of a type parameter declared by a *type-parameter-list* on a *class-declaration* (§10.1) is the *class-base*, *type-parameter-constraints-clauses*, and *class-body* of that *class-declaration*.
+*  The scope of a type parameter declared by a *type-parameter-list* on a *struct-declaration* (§11.1) is the *struct-interfaces*, *type-parameter-constraints-clauses*, and *struct-body* of that *struct-declaration*.
+*  The scope of a type parameter declared by a *type-parameter-list* on an *interface-declaration* (§13.1) is the *interface-base*, *type-parameter-constraints-clauses*, and *interface-body* of that *interface-declaration*.
+*  The scope of a type parameter declared by a *type-parameter-list* on a *delegate-declaration* (§15.1) is the *return-type*, *formal-parameter-list*, and *type-parameter-constraints-clauses* of that *delegate-declaration*.
+*  The scope of a member declared by a *class-member-declaration* (§10.1.6) is the *class-body* in which the declaration occurs. In addition, the scope of a class member extends to the *class-body* of those derived classes that are included in the accessibility domain (§3.5.2) of the member.
+*  The scope of a member declared by a *struct-member-declaration* (§11.2) is the *struct-body* in which the declaration occurs.
+*  The scope of a member declared by an *enum-member-declaration*  (§14.3) is the *enum-body* in which the declaration occurs.
+*  The scope of a parameter declared in a *method-declaration* (§10.6) is the *method-body* of that *method-declaration*.
+*  The scope of a parameter declared in an *indexer-declaration* (§10.9) is the *accessor-declarations* of that *indexer-declaration*.
+*  The scope of a parameter declared in an *operator-declaration* (§10.10) is the *block* of that *operator-declaration*.
+*  The scope of a parameter declared in a *constructor-declaration* (§10.11) is the *constructor-initializer* and *block* of that *constructor-declaration*.
+*  The scope of a parameter declared in a *lambda-expression* (§7.15) is the *lambda-expression-body* of that *lambda-expression*
+*  The scope of a parameter declared in an *anonymous-method-expression* (§7.15) is the *block* of that *anonymous-method-expression*.
+*  The scope of a label declared in a *labeled-statement* (§8.4) is the *block* in which the declaration occurs.
+*  The scope of a local variable declared in a *local-variable-declaration* (§8.5.1) is the block in which the declaration occurs.
+*  The scope of a local variable declared in a *switch-block* of a `switch` statement (§8.7.2) is the *switch-block*.
+*  The scope of a local variable declared in a *for-initializer* of a `for` statement (§8.8.3) is the *for-initializer*, the *for-condition*, the *for-iterator*, and the contained *statement* of the `for` statement.
+*  The scope of a local constant declared in a *local-constant-declaration* (§8.5.2) is the block in which the declaration occurs. It is a compile-time error to refer to a local constant in a textual position that precedes its *constant-declarator*.
+*  The scope of a variable declared as part of a *foreach-statement*, *using-statement*, *lock-statement* or *query-expression* is determined by the expansion of the given construct.
 
 Within the scope of a namespace, class, struct, or enumeration member it is possible to refer to the member in a textual position that precedes the declaration of the member. For example
-
 ```csharp
 class A
 {
@@ -502,11 +487,9 @@ class A
     int i = 0;
 }
 ```
-
 Here, it is valid for `F` to refer to `i` before it is declared.
 
 Within the scope of a local variable, it is a compile-time error to refer to the local variable in a textual position that precedes the *local-variable-declarator* of the local variable. For example
-
 ```csharp
 class A
 {
@@ -533,7 +516,6 @@ In the `F` method above, the first assignment to `i` specifically does not refer
 The scoping rules for local variables are designed to guarantee that the meaning of a name used in an expression context is always the same within a block. If the scope of a local variable were to extend only from its declaration to the end of the block, then in the example above, the first assignment would assign to the instance variable and the second assignment would assign to the local variable, possibly leading to compile-time errors if the statements of the block were later to be rearranged.
 
 The meaning of a name within a block may differ based on the context in which the name is used. In the example
-
 ```csharp
 using System;
 
@@ -552,12 +534,11 @@ class Test
     }
 }
 ```
-
 the name `A` is used in an expression context to refer to the local variable `A` and in a type context to refer to the class `A`.
 
 ### Name hiding
 
-The scope of an entity typically encompasses more program text than the declaration space of the entity. In particular, the scope of an entity may include declarations that introduce new declaration spaces containing entities of the same name. Such declarations cause the original entity to become *__hidden__*. Conversely, an entity is said to be *__visible__* when it is not hidden.
+The scope of an entity typically encompasses more program text than the declaration space of the entity. In particular, the scope of an entity may include declarations that introduce new declaration spaces containing entities of the same name. Such declarations cause the original entity to become ***hidden***. Conversely, an entity is said to be ***visible*** when it is not hidden.
 
 Name hiding occurs when scopes overlap through nesting and when scopes overlap through inheritance. The characteristics of the two types of hiding are described in the following sections.
 
@@ -566,7 +547,6 @@ Name hiding occurs when scopes overlap through nesting and when scopes overlap t
 Name hiding through nesting can occur as a result of nesting namespaces or types within namespaces, as a result of nesting types within classes or structs, and as a result of parameter and local variable declarations.
 
 In the example
-
 ```csharp
 class A
 {
@@ -581,11 +561,9 @@ class A
     }
 }
 ```
-
 within the `F` method, the instance variable `i` is hidden by the local variable `i`, but within the `G` method, `i` still refers to the instance variable.
 
 When a name in an inner scope hides a name in an outer scope, it hides all overloaded occurrences of that name. In the example
-
 ```csharp
 class Outer
 {
@@ -604,21 +582,19 @@ class Outer
     }
 }
 ```
-
 the call `F(1)` invokes the `F` declared in `Inner` because all outer occurrences of `F` are hidden by the inner declaration. For the same reason, the call `F("Hello")` results in a compile-time error.
 
 #### Hiding through inheritance
 
 Name hiding through inheritance occurs when classes or structs redeclare names that were inherited from base classes. This type of name hiding takes one of the following forms:
 
--  A constant, field, property, event, or type introduced in a class or struct hides all base class members with the same name.
--  A method introduced in a class or struct hides all non-method base class members with the same name, and all base class methods with the same signature (method name and parameter count, modifiers, and types).
--  An indexer introduced in a class or struct hides all base class indexers with the same signature (parameter count and types).
+*  A constant, field, property, event, or type introduced in a class or struct hides all base class members with the same name.
+*  A method introduced in a class or struct hides all non-method base class members with the same name, and all base class methods with the same signature (method name and parameter count, modifiers, and types).
+*  An indexer introduced in a class or struct hides all base class indexers with the same signature (parameter count and types).
 
 The rules governing operator declarations (§10.10) make it impossible for a derived class to declare an operator with the same signature as an operator in a base class. Thus, operators never hide one another.
 
 Contrary to hiding a name from an outer scope, hiding an accessible name from an inherited scope causes a warning to be reported. In the example
-
 ```csharp
 class Base
 {
@@ -630,11 +606,9 @@ class Derived: Base
     public void F() {}        // Warning, hiding an inherited name
 }
 ```
-
 the declaration of `F` in `Derived` causes a warning to be reported. Hiding an inherited name is specifically not an error, since that would preclude separate evolution of base classes. For example, the above situation might have come about because a later version of `Base` introduced an `F` method that wasn't present in an earlier version of the class. Had the above situation been an error, then any change made to a base class in a separately versioned class library could potentially cause derived classes to become invalid.
 
 The warning caused by hiding an inherited name can be eliminated through use of the `new` modifier:
-
 ```csharp
 class Base
 {
@@ -674,16 +648,21 @@ In the example above, the declaration of `F` in `Derived` hides the `F` that was
 
 Several contexts in a C# program require a *namespace-name* or a *type-name* to be specified.
 
-<pre>namespace-name:
-namespace-or-type-name</pre>
+```antlr
+namespace_name
+    : namespace_or_type_name
+    ;
 
-<pre>type-name:
-namespace-or-type-name</pre>
+type_name
+    : namespace_or_type_name
+    ;
 
-<pre>namespace-or-type-name:
-identifier   type-argument-list<sub>opt</sub>
-namespace-or-type-name   <b>.</b>   identifier   type-argument-list<sub>op</sub><sub>t</sub><sub>
-</sub>qualified-alias-member</pre>
+namespace_or_type_name
+    : identifier type_argument_list?
+    | namespace_or_type_name '.' identifier type_argument_list?
+    | qualified_alias_member
+    ;
+```
 
 A *namespace-name* is a *namespace-or-type-name* that refers to a namespace. Following resolution as described below, the *namespace-or-type-name* of a *namespace-name* must refer to a namespace, or otherwise a compile-time error occurs. No type arguments (§4.4.1) can be present in a *namespace-name* (only types can have type arguments).
 
@@ -691,75 +670,53 @@ A *type-name* is a *namespace-or-type-name* that refers to a type. Following res
 
 If the *namespace-or-type-name* is a qualified-alias-member its meaning is as described in §9.7. Otherwise, a *namespace-or-type-name* has one of four forms:
 
--  `I`
--  `I<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>`
--  `N.I`
--  `N.I<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>`
+*  `I`
+*  `I<A1, ..., Ak>`
+*  `N.I`
+*  `N.I<A1, ..., Ak>`
 
-where `I` is a single identifier, `N` is a *namespace-or-type-name* and `<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>` is an optional *type-argument-list*. When no *type-argument-list* is specified, consider `K` to be zero.
+where `I` is a single identifier, `N` is a *namespace-or-type-name* and `<A1, ..., Ak>` is an optional *type-argument-list*. When no *type-argument-list* is specified, consider `k` to be zero.
 
 The meaning of a *namespace-or-type-name* is determined as follows:
 
--  If the *namespace-or-type-name* is of the form `I` or of the form `I<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>`:
-
-If `K` is zero and the *namespace-or-type-name* appears within a generic method declaration (§10.6) and if that declaration includes a type parameter (§10.1.3) with name `I`, then the *namespace-or-type-name* refers to that type parameter.
-
-Otherwise, if the *namespace-or-type-name* appears within a type declaration, then for each instance type `T` (§10.3.1), starting with the instance type of that type declaration and continuing with the instance type of each enclosing class or struct declaration (if any):
-
-If `K` is zero and the declaration of `T` includes a type parameter with name `I`, then the *namespace-or-type-name* refers to that type parameter.
-
-Otherwise, if the *namespace-or-type-name* appears within the body of the type declaration, and `T` or any of its base types contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that non-type members (constants, fields, methods, properties, indexers, operators, instance constructors, destructors, and static constructors) and type members with a different number of type parameters are ignored when determining the meaning of the *namespace-or-type-name*.
-
-If the previous steps were unsuccessful then, for each namespace `N`, starting with the namespace in which the *namespace-or-type-name* occurs, continuing with each enclosing namespace (if any), and ending with the global namespace, the following steps are evaluated until an entity is located:
-
-If `K` is zero and `I` is the name of a namespace in `N`, then:
-
-If the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
-
-Otherwise, the *namespace-or-type-name* refers to the namespace named `I` in `N`.
-
-Otherwise, if `N` contains an accessible type having name `I` and `K` type parameters, then:
-
-If `K` is zero and the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
-
-Otherwise, the *namespace-or-type-name* refers to the type constructed with the given type arguments.
-
-Otherwise, if the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N`:
-
-If `K` is zero and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with an imported namespace or type, then the *namespace-or-type-name* refers to that namespace or type.
-
-Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain exactly one type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
-
-Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain more than one type having name `I` and `K` type parameters, then the *namespace-or-type-name* is ambiguous and an error occurs.
-
-Otherwise, the *namespace-or-type-name* is undefined and a compile-time error occurs.
-
--  Otherwise, the *namespace-or-type-name* is of the form `N.I` or of the form `N.I<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>`. `N` is first resolved as a *namespace-or-type-name*. If the resolution of `N` is not successful, a compile-time error occurs. Otherwise, `N.I` or `N.I<A`<sub>1</sub>`,` ...`,``A`<sub>K</sub>`>` is resolved as follows:
-
-If `K` is zero and `N` refers to a namespace and `N` contains a nested namespace with name `I`, then the *namespace-or-type-name* refers to that nested namespace.
-
-Otherwise, if `N` refers to a namespace and `N` contains an accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
-
-Otherwise, if `N` refers to a (possibly constructed) class or struct type and `N` or any of its base classes contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that if the meaning of `N.I` is being determined as part of resolving the base class specification of `N` then the direct base class of `N` is considered to be object (§10.1.4.1).
-
-Otherwise, `N.I` is an invalid* namespace-or-type-name*, and a compile-time error occurs.
+*   If the *namespace-or-type-name* is of the form `I` or of the form `I<A1, ..., Ak>`:
+    * If `K` is zero and the *namespace-or-type-name* appears within a generic method declaration (§10.6) and if that declaration includes a type parameter (§10.1.3) with name `I`, then the *namespace-or-type-name* refers to that type parameter.
+    * Otherwise, if the *namespace-or-type-name* appears within a type declaration, then for each instance type `T` (§10.3.1), starting with the instance type of that type declaration and continuing with the instance type of each enclosing class or struct declaration (if any):
+        * If `K` is zero and the declaration of `T` includes a type parameter with name `I`, then the *namespace-or-type-name* refers to that type parameter.
+        * Otherwise, if the *namespace-or-type-name* appears within the body of the type declaration, and `T` or any of its base types contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that non-type members (constants, fields, methods, properties, indexers, operators, instance constructors, destructors, and static constructors) and type members with a different number of type parameters are ignored when determining the meaning of the *namespace-or-type-name*.
+    * If the previous steps were unsuccessful then, for each namespace `N`, starting with the namespace in which the *namespace-or-type-name* occurs, continuing with each enclosing namespace (if any), and ending with the global namespace, the following steps are evaluated until an entity is located:
+        * If `K` is zero and `I` is the name of a namespace in `N`, then:
+            * If the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
+            * Otherwise, the *namespace-or-type-name* refers to the namespace named `I` in `N`.
+        * Otherwise, if `N` contains an accessible type having name `I` and `K` type parameters, then:
+            * If `K` is zero and the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
+            * Otherwise, the *namespace-or-type-name* refers to the type constructed with the given type arguments.
+        * Otherwise, if the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N`:
+            * If `K` is zero and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with an imported namespace or type, then the *namespace-or-type-name* refers to that namespace or type.
+            * Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain exactly one type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
+            * Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain more than one type having name `I` and `K` type parameters, then the *namespace-or-type-name* is ambiguous and an error occurs.
+    * Otherwise, the *namespace-or-type-name* is undefined and a compile-time error occurs.
+*  Otherwise, the *namespace-or-type-name* is of the form `N.I` or of the form `N.I<A1, ..., Ak>`. `N` is first resolved as a *namespace-or-type-name*. If the resolution of `N` is not successful, a compile-time error occurs. Otherwise, `N.I` or `N.I<A1, ..., Ak>` is resolved as follows:
+    * If `K` is zero and `N` refers to a namespace and `N` contains a nested namespace with name `I`, then the *namespace-or-type-name* refers to that nested namespace.
+    * Otherwise, if `N` refers to a namespace and `N` contains an accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
+    * Otherwise, if `N` refers to a (possibly constructed) class or struct type and `N` or any of its base classes contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that if the meaning of `N.I` is being determined as part of resolving the base class specification of `N` then the direct base class of `N` is considered to be object (§10.1.4.1).
+    * Otherwise, `N.I` is an invalid* namespace-or-type-name*, and a compile-time error occurs.
 
 A *namespace-or-type-name* is permitted to reference a static class (§10.1.1.3) only if
 
--  The *namespace-or-type-name* is the `T` in a *namespace-or-type-name* of the form `T.I`, or
--  The *namespace-or-type-name* is the `T` in a *typeof-expression* (§7.5.11) of the form `typeof(T)`.
+*  The *namespace-or-type-name* is the `T` in a *namespace-or-type-name* of the form `T.I`, or
+*  The *namespace-or-type-name* is the `T` in a *typeof-expression* (§7.5.11) of the form `typeof(T)`.
 
 ### Fully qualified names
 
-Every namespace and type has a *__fully qualified name__*, which uniquely identifies the namespace or type amongst all others. The fully qualified name of a namespace or type `N` is determined as follows:
+Every namespace and type has a ***fully qualified name***, which uniquely identifies the namespace or type amongst all others. The fully qualified name of a namespace or type `N` is determined as follows:
 
--  If `N` is a member of the global namespace, its fully qualified name is `N`.
--  Otherwise, its fully qualified name is `S.N`, where `S` is the fully qualified name of the namespace or type in which `N` is declared.
+*  If `N` is a member of the global namespace, its fully qualified name is `N`.
+*  Otherwise, its fully qualified name is `S.N`, where `S` is the fully qualified name of the namespace or type in which `N` is declared.
 
 In other words, the fully qualified name of `N` is the complete hierarchical path of identifiers that lead to `N`, starting from the global namespace. Because every member of a namespace or type must have a unique name, it follows that the fully qualified name of a namespace or type is always unique.
 
 The example below shows several namespace and type declarations along with their associated fully qualified names.
-
 ```csharp
 class A {}                // A
 
@@ -784,13 +741,13 @@ namespace X.Y             // X.Y
 
 ## Automatic memory management
 
-C# employs automatic memory management, which frees developers from manually allocating and freeing the memory occupied by objects. Automatic memory management policies are implemented by a *__garbage collector__*. The memory management life cycle of an object is as follows:
+C# employs automatic memory management, which frees developers from manually allocating and freeing the memory occupied by objects. Automatic memory management policies are implemented by a ***garbage collector***. The memory management life cycle of an object is as follows:
 
-4. When the object is created, memory is allocated for it, the constructor is run, and the object is considered live.
-5. If the object, or any part of it, cannot be accessed by any possible continuation of execution, other than the running of destructors, the object is considered no longer in use, and it becomes eligible for destruction. The C# compiler and the garbage collector may choose to analyze code to determine which references to an object may be used in the future. For instance, if a local variable that is in scope is the only existing reference to an object, but that local variable is never referred to in any possible continuation of execution from the current execution point in the procedure, the garbage collector may (but is not required to) treat the object as no longer in use.
-6. Once the object is eligible for destruction, at some unspecified later time the destructor (§10.13) (if any) for the object is run. Under normal circumstances the destructor for the object is run once only, though implementation-specific APIs may allow this behavior to be overridden.
-7. Once the destructor for an object is run, if that object, or any part of it, cannot be accessed by any possible continuation of execution, including the running of destructors, the object is considered inaccessible and the object becomes eligible for collection.
-8. Finally, at some time after the object becomes eligible for collection, the garbage collector frees the memory associated with that object.
+1. When the object is created, memory is allocated for it, the constructor is run, and the object is considered live.
+2. If the object, or any part of it, cannot be accessed by any possible continuation of execution, other than the running of destructors, the object is considered no longer in use, and it becomes eligible for destruction. The C# compiler and the garbage collector may choose to analyze code to determine which references to an object may be used in the future. For instance, if a local variable that is in scope is the only existing reference to an object, but that local variable is never referred to in any possible continuation of execution from the current execution point in the procedure, the garbage collector may (but is not required to) treat the object as no longer in use.
+3. Once the object is eligible for destruction, at some unspecified later time the destructor (§10.13) (if any) for the object is run. Under normal circumstances the destructor for the object is run once only, though implementation-specific APIs may allow this behavior to be overridden.
+4. Once the destructor for an object is run, if that object, or any part of it, cannot be accessed by any possible continuation of execution, including the running of destructors, the object is considered inaccessible and the object becomes eligible for collection.
+5. Finally, at some time after the object becomes eligible for collection, the garbage collector frees the memory associated with that object.
 
 The garbage collector maintains information about object usage, and uses this information to make memory management decisions, such as where in memory to locate a newly created object, when to relocate an object, and when an object is no longer in use or inaccessible.
 
@@ -799,7 +756,6 @@ Like other languages that assume the existence of a garbage collector, C# is des
 The behavior of the garbage collector can be controlled, to some degree, via static methods on the class `System.GC`. This class can be used to request a collection to occur, destructors to be run (or not run), and so forth.
 
 Since the garbage collector is allowed wide latitude in deciding when to collect objects and run destructors, a conforming implementation may produce output that differs from that shown by the following code. The program
-
 ```csharp
 using System;
 
@@ -833,25 +789,19 @@ class Test
     }
 }
 ```
-
 creates an instance of class `A` and an instance of class `B`. These objects become eligible for garbage collection when the variable `b` is assigned the value `null`, since after this time it is impossible for any user-written code to access them. The output could be either
-
-```csharp
+```
 Destruct instance of A
 Destruct instance of B
 ```
-
 or
-
-```csharp
+```
 Destruct instance of B
 Destruct instance of A
 ```
-
 because the language imposes no constraints on the order in which objects are garbage collected.
 
 In subtle cases, the distinction between "eligible for destruction" and "eligible for collection" can be important. For example,
-
 ```csharp
 using System;
 
@@ -901,8 +851,7 @@ class Test
 ```
 
 In the above program, if the garbage collector chooses to run the destructor of `A` before the destructor of `B`, then the output of this program might be:
-
-```csharp
+```
 Destruct instance of A
 Destruct instance of B
 A.F
@@ -917,8 +866,8 @@ An alternative to using destructors is to let a class implement the `System.IDis
 
 ## Execution order
 
-Execution of a C# program proceeds such that the side effects of each executing thread are preserved at critical execution points. A *__side effect__* is defined as a read or write of a volatile field, a write to a non-volatile variable, a write to an external resource, and the throwing of an exception. The critical execution points at which the order of these side effects must be preserved are references to volatile fields (§10.5.3), `lock` statements (§8.12), and thread creation and termination. The execution environment is free to change the order of execution of a C# program, subject to the following constraints:
+Execution of a C# program proceeds such that the side effects of each executing thread are preserved at critical execution points. A ***side effect*** is defined as a read or write of a volatile field, a write to a non-volatile variable, a write to an external resource, and the throwing of an exception. The critical execution points at which the order of these side effects must be preserved are references to volatile fields (§10.5.3), `lock` statements (§8.12), and thread creation and termination. The execution environment is free to change the order of execution of a C# program, subject to the following constraints:
 
--  Data dependence is preserved within a thread of execution. That is, the value of each variable is computed as if all statements in the thread were executed in original program order.
--  Initialization ordering rules are preserved (§10.5.4 and §10.5.5).
--  The ordering of side effects is preserved with respect to volatile reads and writes (§10.5.3). Additionally, the execution environment need not evaluate part of an expression if it can deduce that that expression's value is not used and that no needed side effects are produced (including any caused by calling a method or accessing a volatile field). When program execution is interrupted by an asynchronous event (such as an exception thrown by another thread), it is not guaranteed that the observable side effects are visible in the original program order.
+*  Data dependence is preserved within a thread of execution. That is, the value of each variable is computed as if all statements in the thread were executed in original program order.
+*  Initialization ordering rules are preserved (§10.5.4 and §10.5.5).
+*  The ordering of side effects is preserved with respect to volatile reads and writes (§10.5.3). Additionally, the execution environment need not evaluate part of an expression if it can deduce that that expression's value is not used and that no needed side effects are produced (including any caused by calling a method or accessing a volatile field). When program execution is interrupted by an asynchronous event (such as an exception thrown by another thread), it is not guaranteed that the observable side effects are visible in the original program order.

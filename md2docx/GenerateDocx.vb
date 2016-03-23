@@ -283,7 +283,7 @@ Class MarkdownSpec
                 Dim flat = FlattenList(mdl)
 
                 ' Let's figure out what kind of list it is - ordered or unordered? nested?
-                Dim format0 = {"1", "1", "1"}
+                Dim format0 = {"1", "1", "1", "1"}
                 For Each item In flat
                     format0(item.Level) = If(item.IsBulletOrdered, "1", "o")
                 Next
@@ -293,10 +293,11 @@ Class MarkdownSpec
                 If numberingPart.Numbering Is Nothing Then numberingPart.Numbering = New Numbering()
 
                 Dim createLevel = Function(level As Integer, isOrdered As Boolean) As Level
-                                      Dim numFormat = NumberFormatValues.Bullet, levelText = {"·", "o", "o"}(level)
+                                      Dim numFormat = NumberFormatValues.Bullet, levelText = {"·", "o", "·", "o"}(level)
                                       If isOrdered AndAlso level = 0 Then numFormat = NumberFormatValues.Decimal : levelText = "%1."
                                       If isOrdered AndAlso level = 1 Then numFormat = NumberFormatValues.LowerLetter : levelText = "%2."
                                       If isOrdered AndAlso level = 2 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%3."
+                                      If isOrdered AndAlso level = 3 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%4."
                                       Dim r As New Level With {.LevelIndex = level}
                                       r.Append(New StartNumberingValue With {.Val = 1})
                                       r.Append(New NumberingFormat With {.Val = numFormat})
@@ -309,10 +310,11 @@ Class MarkdownSpec
                 Dim level0 = createLevel(0, format(0) = "1")
                 Dim level1 = createLevel(1, format(1) = "1")
                 Dim level2 = createLevel(2, format(2) = "1")
+                Dim level3 = createLevel(3, format(3) = "1")
 
                 Dim abstracts = numberingPart.Numbering.OfType(Of AbstractNum).Select(Function(an) an.AbstractNumberId.Value).ToList()
                 Dim aid = If(abstracts.Count = 0, 1, abstracts.Max() + 1)
-                Dim abstract As New AbstractNum(New MultiLevelType() With {.Val = MultiLevelValues.Multilevel}, level0, level1, level2) With {.AbstractNumberId = aid}
+                Dim abstract As New AbstractNum(New MultiLevelType() With {.Val = MultiLevelValues.Multilevel}, level0, level1, level2, level3) With {.AbstractNumberId = aid}
                 numberingPart.Numbering.InsertAt(abstract, 0)
 
                 Dim instances = numberingPart.Numbering.OfType(Of NumberingInstance).Select(Function(ni) ni.NumberID.Value)
@@ -497,7 +499,7 @@ Class MarkdownSpec
                 If isOrdered.ContainsKey(level) AndAlso isOrdered(level) <> isItemOrdered Then Throw New NotImplementedException("List can't mix ordered and unordered items at same level")
                 If Not isOrdered.ContainsKey(level) Then isOrdered(level) = isItemOrdered
                 If Not content.IsParagraph AndAlso Not content.IsSpan AndAlso Not content.IsQuotedBlock AndAlso Not content.IsCodeBlock Then Throw New NotImplementedException("List can only have text, quoted-blocks and code-blocks")
-                If level > 2 Then Throw New Exception("Can't have more than 3 levels in a list")
+                If level > 3 Then Throw New Exception("Can't have more than 4 levels in a list")
             Next
             Return flat
         End Function
