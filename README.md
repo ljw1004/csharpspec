@@ -225,6 +225,8 @@ Now with a codeblock that might be misconstrued as a bullet:
     More discussion
 
 *   Bullet6
+
+
 -------------------------------------------------------------
 
 The following experiment is about code blocks in quoted blocks. Both styles are fine.

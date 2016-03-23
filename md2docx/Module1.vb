@@ -37,59 +37,17 @@ Module Module1
         If files.Count = 0 Then files = {ifn}
         'Dim md = MarkdownSpec.ReadFiles(files)
 
+        ' Oh dear. I've stumbled upon another markdown-parsing bug https://github.com/tpetricek/FSharp.Formatting/issues/390
+        ' Need to figure out a workaround.
         Dim md = MarkdownSpec.ReadString("
-### Lifted operators
-
-***Lifted operators*** permit predefined and user-defined operators that operate on non-nullable value types to also be used with nullable forms of those types. Lifted operators are constructed from predefined and user-defined operators that meet certain requirements, as described in the following:
-
-*   This is
+*   This is a code-block
 
     ```csharp
-    x   +
+    *   hello
     ```
 
-    awesome
-
-*   Bullet2
-
-
-and some more text
-
-*   For the unary operators
-
-    ```csharp
-    +  ++  -  --  !  ~
-    ```
-
-    a lifted form of an operator exists if the operand and result types are both non-nullable value types. The lifted form is constructed by adding a single `?` modifier to the operand and result types. The lifted operator produces a null value if the operand is null. Otherwise, the lifted operator unwraps the operand, applies the underlying operator, and wraps the result.
-
-*   For the binary operators
-
-    ```csharp
-    +  -  *  /  %  &  |  ^  <<  >>
-    ```
-
-    a lifted form of an operator exists if the operand and result types are all non-nullable value types. The lifted form is constructed by adding a single `?` modifier to each operand and result type. The lifted operator produces a null value if one or both operands are null (an exception being the `&` and `|` operators of the `bool?` type, as described in §7.11.3). Otherwise, the lifted operator unwraps the operands, applies the underlying operator, and wraps the result.
-
-*   For the equality operators
-
-    ```csharp
-    ==  !=
-    ```
-
-    a lifted form of an operator exists if the operand types are both non-nullable value types and if the result type is `bool`. The lifted form is constructed by adding a single `?` modifier to each operand type. The lifted operator considers two null values equal, and a null value unequal to any non-null value. If both operands are non-null, the lifted operator unwraps the operands and applies the underlying operator to produce the `bool` result.
-
-*   For the relational operators
-
-    ```csharp
-    <  >  <=  >=
-    ```
-
-    a lifted form of an operator exists if the operand types are both non-nullable value types and if the result type is `bool`. The lifted form is constructed by adding a single `?` modifier to each operand type. The lifted operator produces the value `false` if one or both operands are null. Otherwise, the lifted operator unwraps the operands and applies the underlying operator to produce the `bool` result.
-
-## Member lookup
-
-A member lookup is the process whereby the meaning of a name in the context of a type is determined.")
+    It doesn't contain any sub-bullets
+")
 
 
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has
