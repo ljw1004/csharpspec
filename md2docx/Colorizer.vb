@@ -211,7 +211,7 @@ Module Colorizer
             Throw New Exception("unable to parse code")
         End Function
 
-        Private words As New LinkedList(Of ColorizedWord)
+        Private words As New List(Of ColorizedWord)
         Private sm As SemanticModel
 
         Private Sub New()
@@ -221,7 +221,7 @@ Module Colorizer
         Public Overrides Sub VisitToken(token As SyntaxToken)
             VisitTriviaList(token.LeadingTrivia)
 
-            Dim r As ColorizedWord = Nothing
+            Dim r As IEnumerable(Of ColorizedWord) = Nothing
 
             Dim specialCase = False
             If token.IsKeywordCS Then
@@ -292,7 +292,7 @@ Module Colorizer
                 r = Col(token.Text, "PlainText")
             End If
 
-            If r IsNot Nothing Then words.AddLast(r)
+            If r IsNot Nothing Then words.AddRange(r)
 
             VisitTriviaList(token.TrailingTrivia)
 
@@ -300,40 +300,41 @@ Module Colorizer
 
         Sub VisitTriviaList(trivias As SyntaxTriviaList)
             For Each trivia In trivias
-                If trivia.KindCS = CSharp.SyntaxKind.EndOfLineTrivia Then words.AddLast(CType(Nothing, ColorizedWord)) : Continue For
+                Dim txt = trivia.ToFullString
 
-                Dim isFirstText = True
-                For Each txt In trivia.ToFullString.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
-                    If isFirstText Then isFirstText = False Else words.AddLast(CType(Nothing, ColorizedWord))
-                    If txt = "" Then Continue For
-
-                    If trivia.KindCS = CSharp.SyntaxKind.MultiLineCommentTrivia OrElse
-                            trivia.RawKind = CSharp.SyntaxKind.SingleLineCommentTrivia OrElse
-                            trivia.RawKind = CSharp.SyntaxKind.MultiLineDocumentationCommentTrivia OrElse
-                            trivia.RawKind = CSharp.SyntaxKind.SingleLineDocumentationCommentTrivia Then
-                        words.AddLast(Col(txt, "Comment"))
-                    ElseIf trivia.KindCS = CSharp.SyntaxKind.DisabledTextTrivia Then
-                        words.AddLast(Col(txt, "ExcludedCode"))
-                    ElseIf trivia.IsDirective Then
-                        words.AddLast(Col(txt, "Preprocessor"))
-                    Else
-                        words.AddLast(Col(txt, "PlainText"))
-                    End If
-                Next
+                If trivia.KindCS = CSharp.SyntaxKind.EndOfLineTrivia Then
+                    words.Add(Nothing)
+                ElseIf trivia.KindCS = CSharp.SyntaxKind.MultiLineCommentTrivia OrElse
+                        trivia.RawKind = CSharp.SyntaxKind.SingleLineCommentTrivia OrElse
+                        trivia.RawKind = CSharp.SyntaxKind.MultiLineDocumentationCommentTrivia OrElse
+                        trivia.RawKind = CSharp.SyntaxKind.SingleLineDocumentationCommentTrivia Then
+                    words.AddRange(Col(txt, "Comment"))
+                ElseIf trivia.KindCS = CSharp.SyntaxKind.DisabledTextTrivia Then
+                    words.AddRange(Col(txt, "ExcludedCode"))
+                ElseIf trivia.IsDirective Then
+                    words.AddRange(Col(txt, "Preprocessor"))
+                Else
+                    words.AddRange(Col(txt, "PlainText"))
+                End If
             Next
         End Sub
 
-        Private Function Col(token As String, color As String) As ColorizedWord
-            Select Case color
-                Case "PlainText" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 0}
-                Case "Keyword" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 0, .Blue = 255}
-                Case "UserType" : Return New ColorizedWord With {.Text = token, .Red = 43, .Green = 145, .Blue = 175}
-                Case "StringLiteral" : Return New ColorizedWord With {.Text = token, .Red = 163, .Green = 21, .Blue = 21}
-                Case "Comment" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 128, .Blue = 0}
-                Case "ExcludedCode" : Return New ColorizedWord With {.Text = token, .Red = 128, .Green = 128, .Blue = 128}
-                Case "Preprocessor" : Return New ColorizedWord With {.Text = token, .Red = 224, .Green = 224, .Blue = 224}
-                Case Else : Throw New Exception("bad color name")
-            End Select
+        Private Iterator Function Col(token As String, color As String) As IEnumerable(Of ColorizedWord)
+            Dim isFirstLine = True
+            For Each txt In token.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+                If isFirstLine Then isFirstLine = False Else Yield Nothing
+                If txt = "" Then Continue For
+                Select Case color
+                    Case "PlainText" : Yield New ColorizedWord With {.Text = txt, .Red = 0, .Green = 0, .Blue = 0}
+                    Case "Keyword" : Yield New ColorizedWord With {.Text = txt, .Red = 0, .Green = 0, .Blue = 255}
+                    Case "UserType" : Yield New ColorizedWord With {.Text = txt, .Red = 43, .Green = 145, .Blue = 175}
+                    Case "StringLiteral" : Yield New ColorizedWord With {.Text = txt, .Red = 163, .Green = 21, .Blue = 21}
+                    Case "Comment" : Yield New ColorizedWord With {.Text = txt, .Red = 0, .Green = 128, .Blue = 0}
+                    Case "ExcludedCode" : Yield New ColorizedWord With {.Text = txt, .Red = 128, .Green = 128, .Blue = 128}
+                    Case "Preprocessor" : Yield New ColorizedWord With {.Text = txt, .Red = 163, .Green = 21, .Blue = 128}
+                    Case Else : Throw New Exception("bad color name")
+                End Select
+            Next
         End Function
 
     End Class

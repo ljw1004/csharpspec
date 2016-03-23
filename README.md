@@ -105,106 +105,32 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
-I wonder how GitHub colorizes preprocessor directives?
-```csharp
-#define A
-#undef B
+I wonder how GitHub colorizes preprocessor directives? Not very well...
 
-class C
-{
+```csharp
+// Disabled code should be greyed out, but it's not
+// The preprocessor directives #if and #else should be the same color, but they're not
 #if A
     void F() {}
 #else
     void G() {}
 #endif
 
-#if B
-    void H() {}
-#else
-    void I() {}
-#endif
-}
-```
-
-```csharp
+// Identifiers should have a uniform color, but they vary between black and purple
 #define Enterprise
-
 #if Professional || Enterprise
     #define Advanced
 #endif
 
-namespace Megacorp.Data
-{
-    #if Advanced
-    class PivotTable {...}
-    #endif
-}
-```
-
-```csharp
+// Escaped keywords should be colorized as identifiers, but they're colorized as keywords
 class @class
 {
-    public static void @static(bool @bool) {
-        if (@bool)
-            System.Console.WriteLine("true");
-        else
-            System.Console.WriteLine("false");
-    }    
+    public static void @static(bool @bool) { }
 }
 
-class Class1
-{
-    static void M() {
-        cl\u0061ss.st\u0061tic(true);
-    }
-}
-```
-
-```csharp
-#define Enterprise
-
-#if Professional || Enterprise
-    #define Advanced
-#endif
-
-namespace Megacorp.Data
-{
-    #if Advanced
-    class PivotTable {...}
-    #endif
-}
-```
-
-```csharp
+// Messages and pragmas should be colorized, but they're not
 #warning Code review needed before check-in
-
-#if Debug &amp;&amp; Retail
-    #error A build can't be both debug and retail
-#endif
-
-class Test {...}
-```
-
-```csharp
-#region NameOfRegion
-void f() {}
-#endregion
-```
-
-```csharp
-using System;
-
-class Program
-{
-    [Obsolete]
-    static void Foo() {}
-
-    static void Main() {
 #pragma warning disable 612
-    Foo();
-#pragma warning restore 612
-    }
-}
 ```
 
 
