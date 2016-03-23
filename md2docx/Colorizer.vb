@@ -191,30 +191,16 @@ Module Colorizer
             Dim ref_system = MetadataReference.CreateFromFile(GetType(Uri).Assembly.Location)
             Dim ref_systemcore = MetadataReference.CreateFromFile(GetType(Enumerable).Assembly.Location)
             Dim ref_systemcollectionsimmutable = MetadataReference.CreateFromFile(GetType(Immutable.ImmutableArray).Assembly.Location)
-            Dim ienumerable = MetadataReference.CreateFromFile(GetType(IEnumerable(Of Integer)).Assembly.Location)
-
-            For i = 0 To 1
-                Dim isScript = (i = 0)
-                Dim code1 = If(isScript, code, "using System; using System.Collections; using System.Collections.Generic;" & vbCrLf & code)
-                Dim parse_options = If(isScript, New CSharp.CSharpParseOptions(kind:=SourceCodeKind.Script), Nothing)
-                Dim compile_options = If(isScript, New CSharp.CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings:={"System", "System.Collections", "System.Collections.Generic"}), Nothing)
-                Dim compilationUnit = CSharp.SyntaxFactory.ParseCompilationUnit(code1, options:=parse_options)
-                Dim syntaxTree = compilationUnit.SyntaxTree
-                Dim compilation As CSharp.CSharpCompilation
-                Try
-                    compilation = CSharp.CSharpCompilation.Create("dummyAssemblyName", {syntaxTree}, {ref_mscorlib, ref_system, ref_systemcore, ref_systemcollectionsimmutable}, compile_options)
-                Catch ex As Exception
-                    ' I believe that Script will parse all complete programs fine, so the convoluted "if" code here isn't needed.
-                    ' But let's see.
-                    Throw New Exception("Oops! It looks like non-script compilation is needed after all")
-                    Continue For
-                End Try
-                Dim semanticModel = compilation.GetSemanticModel(syntaxTree, True)
-                Dim w As New CSharpColorizer With {.sm = semanticModel}
-                w.Visit(syntaxTree.GetRoot)
-                Return If(isScript, w.words, w.words.SkipWhile(Function(c) c IsNot Nothing).Skip(1)) ' skip the dummy "usings" line
-            Next
-            Throw New Exception("unable to parse code")
+            '
+            Dim parse_options = New CSharp.CSharpParseOptions(kind:=SourceCodeKind.Script)
+            Dim compile_options = New CSharp.CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings:={"System", "System.Collections", "System.Collections.Generic"})
+            Dim compilationUnit = CSharp.SyntaxFactory.ParseCompilationUnit(code, options:=parse_options)
+            Dim syntaxTree = compilationUnit.SyntaxTree
+            Dim compilation = CSharp.CSharpCompilation.Create("dummyAssemblyName", {syntaxTree}, {ref_mscorlib, ref_system, ref_systemcore, ref_systemcollectionsimmutable}, compile_options)
+            Dim semanticModel = compilation.GetSemanticModel(syntaxTree, True)
+            Dim w As New CSharpColorizer With {.sm = semanticModel}
+            w.Visit(syntaxTree.GetRoot)
+            Return w.words
         End Function
 
         Private words As New List(Of ColorizedWord)
@@ -242,19 +228,24 @@ Module Colorizer
                 Dim name = CType(token.Parent, CSharp.Syntax.SimpleNameSyntax)
                 Dim symbol As ISymbol = Nothing
                 Try
-                    symbol = sm.GetSymbolInfo(name).Symbol ' How come this throws a NullRefException even when sm and name are non-null?
+                    symbol = sm?.GetSymbolInfo(name).Symbol ' How come this throws a NullRefException even when sm and name are non-null?
+                    ' https://github.com/dotnet/roslyn/issues/10023
+                Catch ex As NullReferenceException
                     ' I don't know. So I'll brute-force hack around it.
-                Catch ex As Exception
                 End Try
                 If symbol?.Kind = SymbolKind.NamedType OrElse
                     symbol?.Kind = SymbolKind.TypeParameter Then
                     r = Col(token.Text, "UserType")
+                ElseIf symbol?.Kind = SymbolKind.DynamicType Then
+                    r = Col(token.Text, "Keyword")
                 ElseIf symbol?.Kind = SymbolKind.Namespace OrElse
                         symbol?.Kind = SymbolKind.Parameter OrElse
                         symbol?.Kind = SymbolKind.Local OrElse
                         symbol?.Kind = SymbolKind.Field OrElse
                         symbol?.Kind = SymbolKind.Property Then
                     r = Col(token.Text, "PlainText")
+                ElseIf name.Identifier.Text = "var" Then
+                    r = Col(token.Text, "Keyword")
                 End If
             ElseIf token.KindCS = CSharp.SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is CSharp.Syntax.TypeDeclarationSyntax Then
                 Dim name = CType(token.Parent, CSharp.Syntax.TypeDeclarationSyntax)

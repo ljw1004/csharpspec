@@ -213,6 +213,18 @@ Now with some newlines:
 *   Bullet4
 
 
+Now with a codeblock that might be misconstrued as a bullet:
+
+*   Bullet5
+*   With newlines and with a bullet-like code block
+
+    ```csharp
+    + x
+    ```
+
+    More discussion
+
+*   Bullet6
 -------------------------------------------------------------
 
 The following experiment is about code blocks in quoted blocks. Both styles are fine.
