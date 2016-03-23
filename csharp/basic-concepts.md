@@ -50,20 +50,20 @@ A declaration defines a name in the ***declaration space*** to which the declara
 
 There are several different types of declaration spaces, as described in the following.
 
-*  Within all source files of a program, *namespace-member-declaration*s with no enclosing *namespace-declaration* are members of a single combined declaration space called the ***global declaration space***.
-*  Within all source files of a program, *namespace-member-declaration*s within *namespace-declaration*s that have the same fully qualified namespace name are members of a single combined declaration space.
-*  Each class, struct, or interface declaration creates a new declaration space. Names are introduced into this declaration space through *class-member-declaration*s, *struct-member-declaration*s, *interface-member-declaration*s, or *type-parameter*s. Except for overloaded instance constructor declarations and static constructor declarations, a class or struct cannot contain a member declaration with the same name as the class or struct. A class, struct, or interface permits the declaration of overloaded methods and indexers. Furthermore, a class or struct permits the declaration of overloaded instance constructors and operators. For example, a class, struct, or interface may contain multiple method declarations with the same name, provided these method declarations differ in their signature (§3.6). Note that base classes do not contribute to the declaration space of a class, and base interfaces do not contribute to the declaration space of an interface. Thus, a derived class or interface is allowed to declare a member with the same name as an inherited member. Such a member is said to ***hide*** the inherited member.
-*  Each delegate declaration creates a new declaration space. Names are introduced into this declaration space through formal parameters (*fixed-parameter*s and *parameter-array*s) and *type-parameter*s.
-*  Each enumeration declaration creates a new declaration space. Names are introduced into this declaration space through *enum-member-declarations*.
-*  Each method declaration, indexer declaration, operator declaration, instance constructor declaration and anonymous function creates a new declaration space called a ***local variable declaration space***. Names are introduced into this declaration space through formal parameters (*fixed-parameter*s and *parameter-array*s) and *type-parameter*s. The body of the function member or anonymous function, if any, is considered to be nested within the local variable declaration space. It is an error for a local variable declaration space and a nested local variable declaration space to contain elements with the same name. Thus, within a nested declaration space it is not possible to declare a local variable or constant with the same name as a local variable or constant in an enclosing declaration space. It is possible for two declaration spaces to contain elements with the same name as long as neither declaration space contains the other.
-*  Each *block* or *switch-block* , as well as a *for*, *foreach* and *using* statement, creates a local variable declaration space for local variables and local constants . Names are introduced into this declaration space through *local-variable-declaration*s and *local-constant-declaration*s. Note that blocks that occur as or within the body of a function member or anonymous function are nested within the local variable declaration space declared by those functions for their parameters. Thus it is an error to have e.g. a method with a local variable and a parameter of the same name.
-*  Each *block* or *switch-block* creates a separate declaration space for labels. Names are introduced into this declaration space through *labeled-statement*s, and the names are referenced through *goto-statement*s. The ***label declaration space*** of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a label with the same name as a label in an enclosing block.
+*  Within all source files of a program, *namespace_member_declaration*s with no enclosing *namespace_declaration* are members of a single combined declaration space called the ***global declaration space***.
+*  Within all source files of a program, *namespace_member_declaration*s within *namespace_declaration*s that have the same fully qualified namespace name are members of a single combined declaration space.
+*  Each class, struct, or interface declaration creates a new declaration space. Names are introduced into this declaration space through *class_member_declaration*s, *struct_member_declaration*s, *interface_member_declaration*s, or *type_parameter*s. Except for overloaded instance constructor declarations and static constructor declarations, a class or struct cannot contain a member declaration with the same name as the class or struct. A class, struct, or interface permits the declaration of overloaded methods and indexers. Furthermore, a class or struct permits the declaration of overloaded instance constructors and operators. For example, a class, struct, or interface may contain multiple method declarations with the same name, provided these method declarations differ in their signature (§3.6). Note that base classes do not contribute to the declaration space of a class, and base interfaces do not contribute to the declaration space of an interface. Thus, a derived class or interface is allowed to declare a member with the same name as an inherited member. Such a member is said to ***hide*** the inherited member.
+*  Each delegate declaration creates a new declaration space. Names are introduced into this declaration space through formal parameters (*fixed_parameter*s and *parameter_array*s) and *type_parameter*s.
+*  Each enumeration declaration creates a new declaration space. Names are introduced into this declaration space through *enum_member_declarations*.
+*  Each method declaration, indexer declaration, operator declaration, instance constructor declaration and anonymous function creates a new declaration space called a ***local variable declaration space***. Names are introduced into this declaration space through formal parameters (*fixed_parameter*s and *parameter_array*s) and *type_parameter*s. The body of the function member or anonymous function, if any, is considered to be nested within the local variable declaration space. It is an error for a local variable declaration space and a nested local variable declaration space to contain elements with the same name. Thus, within a nested declaration space it is not possible to declare a local variable or constant with the same name as a local variable or constant in an enclosing declaration space. It is possible for two declaration spaces to contain elements with the same name as long as neither declaration space contains the other.
+*  Each *block* or *switch_block* , as well as a *for*, *foreach* and *using* statement, creates a local variable declaration space for local variables and local constants . Names are introduced into this declaration space through *local_variable_declaration*s and *local_constant_declaration*s. Note that blocks that occur as or within the body of a function member or anonymous function are nested within the local variable declaration space declared by those functions for their parameters. Thus it is an error to have e.g. a method with a local variable and a parameter of the same name.
+*  Each *block* or *switch_block* creates a separate declaration space for labels. Names are introduced into this declaration space through *labeled_statement*s, and the names are referenced through *goto_statement*s. The ***label declaration space*** of a block includes any nested blocks. Thus, within a nested block it is not possible to declare a label with the same name as a label in an enclosing block.
 
 The textual order in which names are declared is generally of no significance. In particular, textual order is not significant for the declaration and use of namespaces, constants, methods, properties, events, indexers, operators, instance constructors, destructors, static constructors, and types. Declaration order is significant in the following ways:
 
 *  Declaration order for field declarations and local variable declarations determines the order in which their initializers (if any) are executed.
 *  Local variables must be defined before they are used (§3.7).
-*  Declaration order for enum member declarations (§14.3) is significant when *constant-expression* values are omitted.
+*  Declaration order for enum member declarations (§14.3) is significant when *constant_expression* values are omitted.
 
 The declaration space of a namespace is "open ended", and two namespace declarations with the same fully qualified name contribute to the same declaration space. For example
 ```csharp
@@ -211,7 +211,7 @@ Depending on the context in which a member declaration takes place, only certain
 
 ### Accessibility domains
 
-The ***accessibility domain*** of a member consists of the (possibly disjoint) sections of program text in which access to the member is permitted. For purposes of defining the accessibility domain of a member, a member is said to be ***top-level*** if it is not declared within a type, and a member is said to be ***nested*** if it is declared within another type. Furthermore, the ***program text*** of a program is defined as all program text contained in all source files of the program, and the program text of a type is defined as all program text contained in the *type-declaration*s of that type (including, possibly, types that are nested within the type).
+The ***accessibility domain*** of a member consists of the (possibly disjoint) sections of program text in which access to the member is permitted. For purposes of defining the accessibility domain of a member, a member is said to be ***top-level*** if it is not declared within a type, and a member is said to be ***nested*** if it is declared within another type. Furthermore, the ***program text*** of a program is defined as all program text contained in all source files of the program, and the program text of a type is defined as all program text contained in the *type_declaration*s of that type (including, possibly, types that are nested within the type).
 
 The accessibility domain of a predefined type (such as `object`, `int`, or `double`) is unlimited.
 
@@ -304,19 +304,19 @@ class B: A
     }
 }
 ```
-the `B` class inherits the private member `x` from the `A` class. Because the member is private, it is only accessible within the *class-body* of `A`. Thus, the access to `b.x` succeeds in the `A.F` method, but fails in the `B.F` method.
+the `B` class inherits the private member `x` from the `A` class. Because the member is private, it is only accessible within the *class_body* of `A`. Thus, the access to `b.x` succeeds in the `A.F` method, but fails in the `B.F` method.
 
 ### Protected access for instance members
 
 When a `protected` instance member is accessed outside the program text of the class in which it is declared, and when a `protected internal` instance member is accessed outside the program text of the program in which it is declared, the access must take place within a class declaration that derives from the class in which it is declared. Furthermore, the access is required to take place through an instance of that derived class type or a class type constructed from it. This restriction prevents one derived class from accessing protected members of other derived classes, even when the members are inherited from the same base class.
 
-Let `B` be a base class that declares a protected instance member `M`, and let `D` be a class that derives from `B`. Within the *class-body* of `D`, access to `M` can take one of the following forms:
+Let `B` be a base class that declares a protected instance member `M`, and let `D` be a class that derives from `B`. Within the *class_body* of `D`, access to `M` can take one of the following forms:
 
-*  An unqualified *type-name* or *primary-expression* of the form `M`.
-*  A *primary-expression* of the form `E.M`, provided the type of `E` is `T` or a class derived from `T`, where `T` is the class type `D`, or a class type constructed from `D`
-*  A *primary-expression* of the form `base.M`.
+*  An unqualified *type_name* or *primary_expression* of the form `M`.
+*  A *primary_expression* of the form `E.M`, provided the type of `E` is `T` or a class derived from `T`, where `T` is the class type `D`, or a class type constructed from `D`
+*  A *primary_expression* of the form `base.M`.
 
-In addition to these forms of access, a derived class can access a protected instance constructor of a base class in a *constructor-initializer* (§10.11.1).
+In addition to these forms of access, a derived class can access a protected instance constructor of a base class in a *constructor_initializer* (§10.11.1).
 
 In the example
 ```csharp
@@ -452,29 +452,29 @@ Note that any `ref` and `out` parameter modifiers (§10.6.1) are part of a signa
 
 The ***scope*** of a name is the region of program text within which it is possible to refer to the entity declared by the name without qualification of the name. Scopes can be ***nested***, and an inner scope may redeclare the meaning of a name from an outer scope (this does not, however, remove the restriction imposed by §3.3 that within a nested block it is not possible to declare a local variable with the same name as a local variable in an enclosing block). The name from the outer scope is then said to be ***hidden*** in the region of program text covered by the inner scope, and access to the outer name is only possible by qualifying the name.
 
-*  The scope of a namespace member declared by a *namespace-member-declaration* (§9.5) with no enclosing *namespace-declaration* is the entire program text.
-*  The scope of a namespace member declared by a *namespace-member-declaration* within a *namespace-declaration* whose fully qualified name is `N` is the *namespace-body* of every *namespace-declaration* whose fully qualified name is `N` or starts with `N`, followed by a period.
-*  The scope of name defined by an *extern**-alias**-directive* extends over the *using-directives*, *global-attributes* and *namespace-member-declarations* of its immediately containing compilation unit or namespace body. An *extern**-alias**-directive* does not contribute any new members to the underlying declaration space. In other words, an *extern-alias-directive* is not transitive, but, rather, affects only the compilation unit or namespace body in which it occurs.
-*  The scope of a name defined or imported by a *using-directive* (§9.4) extends over the *namespace-member-declarations* of the *compilation-unit* or *namespace-body* in which the *using-directive* occurs. A *using-directive* may make zero or more namespace or type names available within a particular *compilation-unit* or *namespace-body*, but does not contribute any new members to the underlying declaration space. In other words, a *using-directive* is not transitive but rather affects only the *compilation-unit* or *namespace-body* in which it occurs.
-*  The scope of a type parameter declared by a *type-parameter-list* on a *class-declaration* (§10.1) is the *class-base*, *type-parameter-constraints-clauses*, and *class-body* of that *class-declaration*.
-*  The scope of a type parameter declared by a *type-parameter-list* on a *struct-declaration* (§11.1) is the *struct-interfaces*, *type-parameter-constraints-clauses*, and *struct-body* of that *struct-declaration*.
-*  The scope of a type parameter declared by a *type-parameter-list* on an *interface-declaration* (§13.1) is the *interface-base*, *type-parameter-constraints-clauses*, and *interface-body* of that *interface-declaration*.
-*  The scope of a type parameter declared by a *type-parameter-list* on a *delegate-declaration* (§15.1) is the *return-type*, *formal-parameter-list*, and *type-parameter-constraints-clauses* of that *delegate-declaration*.
-*  The scope of a member declared by a *class-member-declaration* (§10.1.6) is the *class-body* in which the declaration occurs. In addition, the scope of a class member extends to the *class-body* of those derived classes that are included in the accessibility domain (§3.5.2) of the member.
-*  The scope of a member declared by a *struct-member-declaration* (§11.2) is the *struct-body* in which the declaration occurs.
-*  The scope of a member declared by an *enum-member-declaration*  (§14.3) is the *enum-body* in which the declaration occurs.
-*  The scope of a parameter declared in a *method-declaration* (§10.6) is the *method-body* of that *method-declaration*.
-*  The scope of a parameter declared in an *indexer-declaration* (§10.9) is the *accessor-declarations* of that *indexer-declaration*.
-*  The scope of a parameter declared in an *operator-declaration* (§10.10) is the *block* of that *operator-declaration*.
-*  The scope of a parameter declared in a *constructor-declaration* (§10.11) is the *constructor-initializer* and *block* of that *constructor-declaration*.
-*  The scope of a parameter declared in a *lambda-expression* (§7.15) is the *lambda-expression-body* of that *lambda-expression*
-*  The scope of a parameter declared in an *anonymous-method-expression* (§7.15) is the *block* of that *anonymous-method-expression*.
-*  The scope of a label declared in a *labeled-statement* (§8.4) is the *block* in which the declaration occurs.
-*  The scope of a local variable declared in a *local-variable-declaration* (§8.5.1) is the block in which the declaration occurs.
-*  The scope of a local variable declared in a *switch-block* of a `switch` statement (§8.7.2) is the *switch-block*.
-*  The scope of a local variable declared in a *for-initializer* of a `for` statement (§8.8.3) is the *for-initializer*, the *for-condition*, the *for-iterator*, and the contained *statement* of the `for` statement.
-*  The scope of a local constant declared in a *local-constant-declaration* (§8.5.2) is the block in which the declaration occurs. It is a compile-time error to refer to a local constant in a textual position that precedes its *constant-declarator*.
-*  The scope of a variable declared as part of a *foreach-statement*, *using-statement*, *lock-statement* or *query-expression* is determined by the expansion of the given construct.
+*  The scope of a namespace member declared by a *namespace_member_declaration* (§9.5) with no enclosing *namespace_declaration* is the entire program text.
+*  The scope of a namespace member declared by a *namespace_member_declaration* within a *namespace_declaration* whose fully qualified name is `N` is the *namespace_body* of every *namespace_declaration* whose fully qualified name is `N` or starts with `N`, followed by a period.
+*  The scope of name defined by an *extern_alias_directive* extends over the *using_directives*, *global_attributes* and *namespace_member_declarations* of its immediately containing compilation unit or namespace body. An *extern**-alias**-directive* does not contribute any new members to the underlying declaration space. In other words, an *extern_alias_directive* is not transitive, but, rather, affects only the compilation unit or namespace body in which it occurs.
+*  The scope of a name defined or imported by a *using_directive* (§9.4) extends over the *namespace_member_declarations* of the *compilation_unit* or *namespace_body* in which the *using_directive* occurs. A *using_directive* may make zero or more namespace or type names available within a particular *compilation_unit* or *namespace_body*, but does not contribute any new members to the underlying declaration space. In other words, a *using_directive* is not transitive but rather affects only the *compilation_unit* or *namespace_body* in which it occurs.
+*  The scope of a type parameter declared by a *type_parameter_list* on a *class_declaration* (§10.1) is the *class_base*, *type_parameter_constraints_clauses*, and *class_body* of that *class_declaration*.
+*  The scope of a type parameter declared by a *type_parameter_list* on a *struct_declaration* (§11.1) is the *struct_interfaces*, *type_parameter_constraints_clauses*, and *struct_body* of that *struct_declaration*.
+*  The scope of a type parameter declared by a *type_parameter_list* on an *interface_declaration* (§13.1) is the *interface_base*, *type_parameter_constraints_clauses*, and *interface_body* of that *interface_declaration*.
+*  The scope of a type parameter declared by a *type_parameter_list* on a *delegate_declaration* (§15.1) is the *return_type*, *formal_parameter_list*, and *type_parameter_constraints_clauses* of that *delegate_declaration*.
+*  The scope of a member declared by a *class_member_declaration* (§10.1.6) is the *class_body* in which the declaration occurs. In addition, the scope of a class member extends to the *class_body* of those derived classes that are included in the accessibility domain (§3.5.2) of the member.
+*  The scope of a member declared by a *struct_member_declaration* (§11.2) is the *struct_body* in which the declaration occurs.
+*  The scope of a member declared by an *enum_member_declaration*  (§14.3) is the *enum_body* in which the declaration occurs.
+*  The scope of a parameter declared in a *method_declaration* (§10.6) is the *method_body* of that *method_declaration*.
+*  The scope of a parameter declared in an *indexer_declaration* (§10.9) is the *accessor_declarations* of that *indexer_declaration*.
+*  The scope of a parameter declared in an *operator_declaration* (§10.10) is the *block* of that *operator_declaration*.
+*  The scope of a parameter declared in a *constructor_declaration* (§10.11) is the *constructor_initializer* and *block* of that *constructor_declaration*.
+*  The scope of a parameter declared in a *lambda_expression* (§7.15) is the *lambda_expression_body* of that *lambda_expression*
+*  The scope of a parameter declared in an *anonymous_method_expression* (§7.15) is the *block* of that *anonymous_method_expression*.
+*  The scope of a label declared in a *labeled_statement* (§8.4) is the *block* in which the declaration occurs.
+*  The scope of a local variable declared in a *local_variable_declaration* (§8.5.1) is the block in which the declaration occurs.
+*  The scope of a local variable declared in a *switch_block* of a `switch` statement (§8.7.2) is the *switch_block*.
+*  The scope of a local variable declared in a *for_initializer* of a `for` statement (§8.8.3) is the *for_initializer*, the *for_condition*, the *for_iterator*, and the contained *statement* of the `for` statement.
+*  The scope of a local constant declared in a *local_constant_declaration* (§8.5.2) is the block in which the declaration occurs. It is a compile-time error to refer to a local constant in a textual position that precedes its *constant_declarator*.
+*  The scope of a variable declared as part of a *foreach_statement*, *using_statement*, *lock_statement* or *query_expression* is determined by the expansion of the given construct.
 
 Within the scope of a namespace, class, struct, or enumeration member it is possible to refer to the member in a textual position that precedes the declaration of the member. For example
 ```csharp
@@ -489,7 +489,7 @@ class A
 ```
 Here, it is valid for `F` to refer to `i` before it is declared.
 
-Within the scope of a local variable, it is a compile-time error to refer to the local variable in a textual position that precedes the *local-variable-declarator* of the local variable. For example
+Within the scope of a local variable, it is a compile-time error to refer to the local variable in a textual position that precedes the *local_variable_declarator* of the local variable. For example
 ```csharp
 class A
 {
@@ -511,7 +511,7 @@ class A
 }
 ```
 
-In the `F` method above, the first assignment to `i` specifically does not refer to the field declared in the outer scope. Rather, it refers to the local variable and it results in a compile-time error because it textually precedes the declaration of the variable. In the `G` method, the use of `j` in the initializer for the declaration of `j` is valid because the use does not precede the *local-variable-declarator*. In the `H` method, a subsequent *local-variable-declarator* correctly refers to a local variable declared in an earlier *local-variable-declarator* within the same *local-variable-declaration*.
+In the `F` method above, the first assignment to `i` specifically does not refer to the field declared in the outer scope. Rather, it refers to the local variable and it results in a compile-time error because it textually precedes the declaration of the variable. In the `G` method, the use of `j` in the initializer for the declaration of `j` is valid because the use does not precede the *local_variable_declarator*. In the `H` method, a subsequent *local_variable_declarator* correctly refers to a local variable declared in an earlier *local_variable_declarator* within the same *local_variable_declaration*.
 
 The scoping rules for local variables are designed to guarantee that the meaning of a name used in an expression context is always the same within a block. If the scope of a local variable were to extend only from its declaration to the end of the block, then in the example above, the first assignment would assign to the instance variable and the second assignment would assign to the local variable, possibly leading to compile-time errors if the statements of the block were later to be rearranged.
 
@@ -646,7 +646,7 @@ In the example above, the declaration of `F` in `Derived` hides the `F` that was
 
 ## Namespace and type names
 
-Several contexts in a C# program require a *namespace-name* or a *type-name* to be specified.
+Several contexts in a C# program require a *namespace_name* or a *type_name* to be specified.
 
 ```antlr
 namespace_name
@@ -664,48 +664,48 @@ namespace_or_type_name
     ;
 ```
 
-A *namespace-name* is a *namespace-or-type-name* that refers to a namespace. Following resolution as described below, the *namespace-or-type-name* of a *namespace-name* must refer to a namespace, or otherwise a compile-time error occurs. No type arguments (§4.4.1) can be present in a *namespace-name* (only types can have type arguments).
+A *namespace_name* is a *namespace_or_type_name* that refers to a namespace. Following resolution as described below, the *namespace_or_type_name* of a *namespace_name* must refer to a namespace, or otherwise a compile-time error occurs. No type arguments (§4.4.1) can be present in a *namespace_name* (only types can have type arguments).
 
-A *type-name* is a *namespace-or-type-name* that refers to a type. Following resolution as described below, the *namespace-or-type-name* of a *type-name* must refer to a type, or otherwise a compile-time error occurs.
+A *type_name* is a *namespace_or_type_name* that refers to a type. Following resolution as described below, the *namespace_or_type_name* of a *type_name* must refer to a type, or otherwise a compile-time error occurs.
 
-If the *namespace-or-type-name* is a qualified-alias-member its meaning is as described in §9.7. Otherwise, a *namespace-or-type-name* has one of four forms:
+If the *namespace_or_type_name* is a qualified-alias-member its meaning is as described in §9.7. Otherwise, a *namespace_or_type_name* has one of four forms:
 
 *  `I`
 *  `I<A1, ..., Ak>`
 *  `N.I`
 *  `N.I<A1, ..., Ak>`
 
-where `I` is a single identifier, `N` is a *namespace-or-type-name* and `<A1, ..., Ak>` is an optional *type-argument-list*. When no *type-argument-list* is specified, consider `k` to be zero.
+where `I` is a single identifier, `N` is a *namespace_or_type_name* and `<A1, ..., Ak>` is an optional *type_argument_list*. When no *type_argument_list* is specified, consider `k` to be zero.
 
-The meaning of a *namespace-or-type-name* is determined as follows:
+The meaning of a *namespace_or_type_name* is determined as follows:
 
-*   If the *namespace-or-type-name* is of the form `I` or of the form `I<A1, ..., Ak>`:
-    * If `K` is zero and the *namespace-or-type-name* appears within a generic method declaration (§10.6) and if that declaration includes a type parameter (§10.1.3) with name `I`, then the *namespace-or-type-name* refers to that type parameter.
-    * Otherwise, if the *namespace-or-type-name* appears within a type declaration, then for each instance type `T` (§10.3.1), starting with the instance type of that type declaration and continuing with the instance type of each enclosing class or struct declaration (if any):
-        * If `K` is zero and the declaration of `T` includes a type parameter with name `I`, then the *namespace-or-type-name* refers to that type parameter.
-        * Otherwise, if the *namespace-or-type-name* appears within the body of the type declaration, and `T` or any of its base types contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that non-type members (constants, fields, methods, properties, indexers, operators, instance constructors, destructors, and static constructors) and type members with a different number of type parameters are ignored when determining the meaning of the *namespace-or-type-name*.
-    * If the previous steps were unsuccessful then, for each namespace `N`, starting with the namespace in which the *namespace-or-type-name* occurs, continuing with each enclosing namespace (if any), and ending with the global namespace, the following steps are evaluated until an entity is located:
+*   If the *namespace_or_type_name* is of the form `I` or of the form `I<A1, ..., Ak>`:
+    * If `K` is zero and the *namespace_or_type_name* appears within a generic method declaration (§10.6) and if that declaration includes a type parameter (§10.1.3) with name `I`, then the *namespace_or_type_name* refers to that type parameter.
+    * Otherwise, if the *namespace_or_type_name* appears within a type declaration, then for each instance type `T` (§10.3.1), starting with the instance type of that type declaration and continuing with the instance type of each enclosing class or struct declaration (if any):
+        * If `K` is zero and the declaration of `T` includes a type parameter with name `I`, then the *namespace_or_type_name* refers to that type parameter.
+        * Otherwise, if the *namespace_or_type_name* appears within the body of the type declaration, and `T` or any of its base types contain a nested accessible type having name `I` and `K` type parameters, then the *namespace_or_type_name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that non-type members (constants, fields, methods, properties, indexers, operators, instance constructors, destructors, and static constructors) and type members with a different number of type parameters are ignored when determining the meaning of the *namespace_or_type_name*.
+    * If the previous steps were unsuccessful then, for each namespace `N`, starting with the namespace in which the *namespace_or_type_name* occurs, continuing with each enclosing namespace (if any), and ending with the global namespace, the following steps are evaluated until an entity is located:
         * If `K` is zero and `I` is the name of a namespace in `N`, then:
-            * If the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
-            * Otherwise, the *namespace-or-type-name* refers to the namespace named `I` in `N`.
+            * If the location where the *namespace_or_type_name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern_alias_directive* or *using_alias_directive* that associates the name `I` with a namespace or type, then the *namespace_or_type_name* is ambiguous and a compile-time error occurs.
+            * Otherwise, the *namespace_or_type_name* refers to the namespace named `I` in `N`.
         * Otherwise, if `N` contains an accessible type having name `I` and `K` type parameters, then:
-            * If `K` is zero and the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with a namespace or type, then the *namespace-or-type-name* is ambiguous and a compile-time error occurs.
-            * Otherwise, the *namespace-or-type-name* refers to the type constructed with the given type arguments.
-        * Otherwise, if the location where the *namespace-or-type-name* occurs is enclosed by a namespace declaration for `N`:
-            * If `K` is zero and the namespace declaration contains an *extern-alias-directive* or *using-alias-directive* that associates the name `I` with an imported namespace or type, then the *namespace-or-type-name* refers to that namespace or type.
-            * Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain exactly one type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
-            * Otherwise, if the namespaces imported by the *using-namespace-directive*s of the namespace declaration contain more than one type having name `I` and `K` type parameters, then the *namespace-or-type-name* is ambiguous and an error occurs.
-    * Otherwise, the *namespace-or-type-name* is undefined and a compile-time error occurs.
-*  Otherwise, the *namespace-or-type-name* is of the form `N.I` or of the form `N.I<A1, ..., Ak>`. `N` is first resolved as a *namespace-or-type-name*. If the resolution of `N` is not successful, a compile-time error occurs. Otherwise, `N.I` or `N.I<A1, ..., Ak>` is resolved as follows:
-    * If `K` is zero and `N` refers to a namespace and `N` contains a nested namespace with name `I`, then the *namespace-or-type-name* refers to that nested namespace.
-    * Otherwise, if `N` refers to a namespace and `N` contains an accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments.
-    * Otherwise, if `N` refers to a (possibly constructed) class or struct type and `N` or any of its base classes contain a nested accessible type having name `I` and `K` type parameters, then the *namespace-or-type-name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that if the meaning of `N.I` is being determined as part of resolving the base class specification of `N` then the direct base class of `N` is considered to be object (§10.1.4.1).
+            * If `K` is zero and the location where the *namespace_or_type_name* occurs is enclosed by a namespace declaration for `N` and the namespace declaration contains an *extern_alias_directive* or *using_alias_directive* that associates the name `I` with a namespace or type, then the *namespace_or_type_name* is ambiguous and a compile-time error occurs.
+            * Otherwise, the *namespace_or_type_name* refers to the type constructed with the given type arguments.
+        * Otherwise, if the location where the *namespace_or_type_name* occurs is enclosed by a namespace declaration for `N`:
+            * If `K` is zero and the namespace declaration contains an *extern_alias_directive* or *using_alias_directive* that associates the name `I` with an imported namespace or type, then the *namespace_or_type_name* refers to that namespace or type.
+            * Otherwise, if the namespaces imported by the *using_namespace_directive*s of the namespace declaration contain exactly one type having name `I` and `K` type parameters, then the *namespace_or_type_name* refers to that type constructed with the given type arguments.
+            * Otherwise, if the namespaces imported by the *using_namespace_directive*s of the namespace declaration contain more than one type having name `I` and `K` type parameters, then the *namespace_or_type_name* is ambiguous and an error occurs.
+    * Otherwise, the *namespace_or_type_name* is undefined and a compile-time error occurs.
+*  Otherwise, the *namespace_or_type_name* is of the form `N.I` or of the form `N.I<A1, ..., Ak>`. `N` is first resolved as a *namespace_or_type_name*. If the resolution of `N` is not successful, a compile-time error occurs. Otherwise, `N.I` or `N.I<A1, ..., Ak>` is resolved as follows:
+    * If `K` is zero and `N` refers to a namespace and `N` contains a nested namespace with name `I`, then the *namespace_or_type_name* refers to that nested namespace.
+    * Otherwise, if `N` refers to a namespace and `N` contains an accessible type having name `I` and `K` type parameters, then the *namespace_or_type_name* refers to that type constructed with the given type arguments.
+    * Otherwise, if `N` refers to a (possibly constructed) class or struct type and `N` or any of its base classes contain a nested accessible type having name `I` and `K` type parameters, then the *namespace_or_type_name* refers to that type constructed with the given type arguments. If there is more than one such type, the type declared within the more derived type is selected. Note that if the meaning of `N.I` is being determined as part of resolving the base class specification of `N` then the direct base class of `N` is considered to be object (§10.1.4.1).
     * Otherwise, `N.I` is an invalid* namespace-or-type-name*, and a compile-time error occurs.
 
-A *namespace-or-type-name* is permitted to reference a static class (§10.1.1.3) only if
+A *namespace_or_type_name* is permitted to reference a static class (§10.1.1.3) only if
 
-*  The *namespace-or-type-name* is the `T` in a *namespace-or-type-name* of the form `T.I`, or
-*  The *namespace-or-type-name* is the `T` in a *typeof-expression* (§7.5.11) of the form `typeof(T)`.
+*  The *namespace_or_type_name* is the `T` in a *namespace_or_type_name* of the form `T.I`, or
+*  The *namespace_or_type_name* is the `T` in a *typeof_expression* (§7.5.11) of the form `typeof(T)`.
 
 ### Fully qualified names
 

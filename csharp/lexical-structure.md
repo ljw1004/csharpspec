@@ -2,6 +2,10 @@
 
 ## Programs
 
+*hello_world*
+
+*alpha_beta*
+
 A C# ***program*** consists of one or more ***source files***, known formally as ***compilation units*** (§9.1). A source file is an ordered sequence of Unicode characters. Source files typically have a one-to-one correspondence with files in a file system, but this correspondence is not required. For maximal portability, it is recommended that files in a file system be encoded with the UTF-8 encoding.
 
 Conceptually speaking, a program is compiled using three steps:
@@ -28,7 +32,7 @@ Every source file in a C# program must conform to the *input* production of the 
 
 The syntactic grammar of C# is presented in the chapters and appendices that follow this chapter. The terminal symbols of the syntactic grammar are the tokens defined by the lexical grammar, and the syntactic grammar specifies how tokens are combined to form C# programs.
 
-Every source file in a C# program must conform to the *compilation-unit* production of the syntactic grammar (§9.1).
+Every source file in a C# program must conform to the *compilation_unit* production of the syntactic grammar (§9.1).
 
 ## Lexical analysis
 
@@ -309,8 +313,8 @@ defines a class named "`class`" with a static method named "`static`" that takes
 Two identifiers are considered the same if they are identical after the following transformations are applied, in order:
 
 *  The prefix "`@`", if used, is removed.
-*  Each *unicode-escape-sequence* is transformed into its corresponding Unicode character.
-*  Any *formatting-character*s are removed.
+*  Each *unicode_escape_sequence* is transformed into its corresponding Unicode character.
+*  Any *formatting_character*s are removed.
 
 Identifiers containing two consecutive underscore characters (`U+005F`) are reserved for use by the implementation. For example, an implementation might provide extended keywords that begin with two underscores.
 
@@ -367,7 +371,7 @@ boolean_literal
     ;
 ```
 
-The type of a *boolean-literal* is `bool`.
+The type of a *boolean_literal* is `bool`.
 
 #### Integer literals
 
@@ -414,8 +418,8 @@ As a matter of style, it is suggested that "`L`" be used instead of "`l`" when w
 
 To permit the smallest possible `int` and `long` values to be written as decimal integer literals, the following two rules exist:
 
-* When a *decimal-integer-literal* with the value 2147483648 (2^31) and no *integer-type-suffix* appears as the token immediately following a unary minus operator token (§7.7.2), the result is a constant of type `int` with the value -2147483648 (-2^31). In all other situations, such a *decimal-integer-literal* is of type `uint`.
-* When a *decimal-integer-literal* with the value 9223372036854775808 (2^63) and no *integer-type-suffix* or the *integer-type-suffix* `L` or `l` appears as the token immediately following a unary minus operator token (§7.7.2), the result is a constant of type `long` with the value -9223372036854775808 (-2^63). In all other situations, such a *decimal-integer-literal* is of type `ulong`.
+* When a *decimal_integer_literal* with the value 2147483648 (2^31) and no *integer_type_suffix* appears as the token immediately following a unary minus operator token (§7.7.2), the result is a constant of type `int` with the value -2147483648 (-2^31). In all other situations, such a *decimal_integer_literal* is of type `uint`.
+* When a *decimal_integer_literal* with the value 9223372036854775808 (2^63) and no *integer_type_suffix* or the *integer_type_suffix* `L` or `l` appears as the token immediately following a unary minus operator token (§7.7.2), the result is a constant of type `long` with the value -9223372036854775808 (-2^63). In all other situations, such a *decimal_integer_literal* is of type `ulong`.
 
 #### Real literals
 
@@ -444,7 +448,7 @@ real_type_suffix
     ;
 ```
 
-If no *real-type-suffix* is specified, the type of the real literal is `double`. Otherwise, the real type suffix determines the type of the real literal, as follows:
+If no *real_type_suffix* is specified, the type of the real literal is `double`. Otherwise, the real type suffix determines the type of the real literal, as follows:
 
 *  A real literal suffixed by `F` or `f` is of type `float`. For example, the literals `1f`, `1.5f`, `1e10f`, and `123.456F` are all of type `float`.
 *  A real literal suffixed by `D` or `d` is of type `double`. For example, the literals `1d`, `1.5d`, `1e10d`, and `123.456D` are all of type `double`.
@@ -511,7 +515,7 @@ A simple escape sequence represents a Unicode character encoding, as described i
 | `\t`                | Horizontal tab     | `0x0009`             | 
 | `\v`                | Vertical tab       | `0x000B`             | 
 
-The type of a *character-literal* is `char`.
+The type of a *character_literal* is `char`.
 
 #### String literals
 
@@ -519,7 +523,7 @@ C# supports two forms of string literals: ***regular string literals*** and ***v
 
 A regular string literal consists of zero or more characters enclosed in double quotes, as in `"hello"`, and may include both simple escape sequences (such as `\t` for the tab character), and hexadecimal and Unicode escape sequences.
 
-A verbatim string literal consists of an `@` character followed by a double-quote character, zero or more characters, and a closing double-quote character. A simple example is `@"hello"`. In a verbatim string literal, the characters between the delimiters are interpreted verbatim, the only exception being a *quote-escape-sequence*. In particular, simple escape sequences, and hexadecimal and Unicode escape sequences are not processed in verbatim string literals. A verbatim string literal may span multiple lines.
+A verbatim string literal consists of an `@` character followed by a double-quote character, zero or more characters, and a closing double-quote character. A simple example is `@"hello"`. In a verbatim string literal, the characters between the delimiters are interpreted verbatim, the only exception being a *quote_escape_sequence*. In particular, simple escape sequences, and hexadecimal and Unicode escape sequences are not processed in verbatim string literals. A verbatim string literal may span multiple lines.
 
 ```antlr
 string_literal
@@ -560,7 +564,7 @@ quote_escape_sequence
     ;
 ```
 
-A character that follows a backslash character (`\`) in a *regular-string-literal-character* must be one of the following characters: `'`, `"`, `\`, `0`, `a`, `b`, `f`, `n`, `r`, `t`, `u`, `U`, `x`, `v`. Otherwise, a compile-time error occurs.
+A character that follows a backslash character (`\`) in a *regular_string_literal_character* must be one of the following characters: `'`, `"`, `\`, `0`, `a`, `b`, `f`, `n`, `r`, `t`, `u`, `U`, `x`, `v`. Otherwise, a compile-time error occurs.
 
 The example
 ```csharp
@@ -585,7 +589,7 @@ shows a variety of string literals. The last string literal, `j`, is a verbatim 
 
 Since a hexadecimal escape sequence can have a variable number of hex digits, the string literal `"\x123"` contains a single character with hex value 123. To create a string containing the character with hex value 12 followed by the character 3, one could write `"\x00123"` or `"\x12" + "3"` instead.
 
-The type of a *string-literal* is `string`.
+The type of a *string_literal* is `string`.
 
 Each string literal does not necessarily result in a new string instance. When two or more string literals that are equivalent according to the string equality operator (§7.10.7) appear in the same program, these string literals refer to the same string instance. For instance, the output produced by
 ```csharp
@@ -608,7 +612,7 @@ null_literal
     ;
 ```
 
-The  *null-literal* can be implicitly converted to a reference type or nullable type.
+The  *null_literal* can be implicitly converted to a reference type or nullable type.
 
 ### Operators and punctuators
 
@@ -632,7 +636,7 @@ right_shift_assignment
     ;
 ```
 
-The vertical bar in the *right-shift* and *right-shift-assignment* productions are used to indicate that, unlike other productions in the syntactic grammar, no characters of any kind (not even whitespace) are allowed between the tokens. These productions are treated specially in order to enable the correct  handling of *type-parameter-list*s (§10.1.3).
+The vertical bar in the *right_shift* and *right_shift_assignment* productions are used to indicate that, unlike other productions in the syntactic grammar, no characters of any kind (not even whitespace) are allowed between the tokens. These productions are treated specially in order to enable the correct  handling of *type_parameter_list*s (§10.1.3).
 
 ## Pre-processing directives
 
@@ -858,15 +862,15 @@ not_number_sign
 
 As indicated by the syntax, conditional compilation directives must be written as sets consisting of, in order, an `#if` directive, zero or more `#elif` directives, zero or one `#else` directive, and an `#endif` directive. Between the directives are conditional sections of source code. Each section is controlled by the immediately preceding directive. A conditional section may itself contain nested conditional compilation directives provided these directives form complete sets.
 
-A *pp-conditional* selects at most one of the contained *conditional-section*s for normal lexical processing:
+A *pp_conditional* selects at most one of the contained *conditional_section*s for normal lexical processing:
 
-*  The *pp-expression*s of the `#if` and `#elif` directives are evaluated in order until one yields `true`. If an expression yields `true`, the *conditional-section* of the corresponding directive is selected.
-*  If all *pp-expression*s yield `false`, and if an `#else` directive is present, the *conditional-section* of the `#else` directive is selected.
-*  Otherwise, no *conditional-section* is selected.
+*  The *pp_expression*s of the `#if` and `#elif` directives are evaluated in order until one yields `true`. If an expression yields `true`, the *conditional_section* of the corresponding directive is selected.
+*  If all *pp_expression*s yield `false`, and if an `#else` directive is present, the *conditional_section* of the `#else` directive is selected.
+*  Otherwise, no *conditional_section* is selected.
 
-The selected *conditional-section*, if any, is processed as a normal *input-section*: the source code contained in the section must adhere to the lexical grammar; tokens are generated from the source code in the section; and pre-processing directives in the section have the prescribed effects.
+The selected *conditional_section*, if any, is processed as a normal *input_section*: the source code contained in the section must adhere to the lexical grammar; tokens are generated from the source code in the section; and pre-processing directives in the section have the prescribed effects.
 
-The remaining *conditional-section*s, if any, are processed as *skipped-section*s: except for pre-processing directives, the source code in the section need not adhere to the lexical grammar; no tokens are generated from the source code in the section; and pre-processing directives in the section must be lexically correct but are not otherwise processed. Within a *conditional-section* that is being processed as a *skipped-section*, any nested *conditional-section*s (contained in nested `#if`...`#endif` and `#region`...`#endregion` constructs) are also processed as *skipped-section*s.
+The remaining *conditional_section*s, if any, are processed as *skipped_section*s: except for pre-processing directives, the source code in the section need not adhere to the lexical grammar; no tokens are generated from the source code in the section; and pre-processing directives in the section must be lexically correct but are not otherwise processed. Within a *conditional_section* that is being processed as a *skipped_section*, any nested *conditional_section*s (contained in nested `#if`...`#endif` and `#region`...`#endregion` constructs) are also processed as *skipped_section*s.
 
 The following example illustrates how conditional compilation directives can nest:
 ```csharp
@@ -930,7 +934,7 @@ hello,
 #endif
 ```
 
-In peculiar cases, the set of pre-processing directives that is processed might depend on the evaluation of the *pp-expression*. The example:
+In peculiar cases, the set of pre-processing directives that is processed might depend on the evaluation of the *pp_expression*. The example:
 ```csharp
 #if X
     /*
@@ -966,7 +970,7 @@ The example:
 
 class Test {...}
 ```
-always produces a warning ("Code review needed before check-in"), and produces a compile-time error ("A build can't be both debug and retail") if the conditional symbols `Debug` and `Retail` are both defined. Note that a *pp-message* can contain arbitrary text; specifically, it need not contain well-formed tokens, as shown by the single quote in the word `can't`.
+always produces a warning ("Code review needed before check-in"), and produces a compile-time error ("A build can't be both debug and retail") if the conditional symbols `Debug` and `Retail` are both defined. Note that a *pp_message* can contain arbitrary text; specifically, it need not contain well-formed tokens, as shown by the single quote in the word `can't`.
 
 ### Region directives
 
@@ -986,7 +990,7 @@ pp_end_region
     ;
 ```
 
-No semantic meaning is attached to a region; regions are intended for use by the programmer or by automated tools to mark a section of source code. The message specified in a `#region` or `#endregion` directive likewise has no semantic meaning; it merely serves to identify the region. Matching `#region` and `#endregion` directives may have different *pp-message*s.
+No semantic meaning is attached to a region; regions are intended for use by the programmer or by automated tools to mark a section of source code. The message specified in a `#region` or `#endregion` directive likewise has no semantic meaning; it merely serves to identify the region. Matching `#region` and `#endregion` directives may have different *pp_message*s.
 
 The lexical processing of a region:
 ```csharp
@@ -1028,13 +1032,13 @@ file_name_character
     ;
 ```
 
-When no `#line` directives are present, the compiler reports true line numbers and source file names in its output. When processing a `#line` directive that includes a *line-indicator* that is not `default`, the compiler treats the line after the directive as having the given line number (and file name, if specified).
+When no `#line` directives are present, the compiler reports true line numbers and source file names in its output. When processing a `#line` directive that includes a *line_indicator* that is not `default`, the compiler treats the line after the directive as having the given line number (and file name, if specified).
 
 A `#line default` directive reverses the effect of all preceding #line directives. The compiler reports true line information for subsequent lines, precisely as if no `#line` directives had been processed.
 
 A `#line hidden` directive has no effect on the file and line numbers reported in error messages, but does affect source level debugging. When debugging, all lines between a `#line hidden` directive and the subsequent `#line` directive (that is not `#line hidden`) have no line number information. When stepping through code in the debugger, these lines will be skipped entirely.
 
-Note that a *file-name* differs from a regular string literal in that escape characters are not processed; the "`\`" character simply designates an ordinary backslash character within a *file-name*.
+Note that a *file_name* differs from a regular string literal in that escape characters are not processed; the "`\`" character simply designates an ordinary backslash character within a *file_name*.
 
 ### Pragma directives
 

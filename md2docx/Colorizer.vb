@@ -267,28 +267,30 @@ Module Colorizer
             If r Is Nothing Then
                 If token.Parent.KindCS = CSharp.SyntaxKind.EnumDeclaration Then
                     r = Col(token.Text, "UserType")
+                ElseIf token.Parent.KindCS = CSharp.SyntaxKind.GenericName Then
+                    If token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
+                        TryCast(token.Parent, CSharp.Syntax.GenericNameSyntax)?.Identifier = token Then ' e.g. "Box<int>" the word Box
+                        r = Col(token.Text, "UserType")
+                    End If
                 ElseIf token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName Then
                     If token.Parent.Parent.KindCS = CSharp.SyntaxKind.Parameter OrElse
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.Attribute OrElse
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.CatchDeclaration OrElse
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse
-                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> CSharp.SyntaxKind.CloseParenToken) OrElse
-                        (token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken) OrElse
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.MethodDeclaration OrElse
-                        TryCast(token.Parent.Parent, CSharp.Syntax.CastExpressionSyntax)?.Type Is token.Parent OrElse ' e.g. "(Foo)x" the Foo
-                        TryCast(token.Parent.Parent, CSharp.Syntax.TypeConstraintSyntax)?.Type Is token.Parent OrElse ' e.g. "where T:Foo" the Foo
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.BaseList OrElse ' e.g. "public sealed class BuilderRouteHandler  IRouteHandler" IRouteHandler in this case
                         token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeOfExpression OrElse ' e.g. "Type baseBuilderType = TypeOf(BaseBuilder);" BaseBuilder in this case
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private DbProviderFactory dbProviderFactory;" Or "DbConnection connection = dbProviderFactory.CreateConnection();"
-                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeArgumentList OrElse ' e.g. "DbTypes = New Dictionary();" DbType in this case
-                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = CSharp.SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
-                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso Not Char.IsLower(token.Text(0))) Then
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeArgumentList Then ' e.g. "DbTypes = New Dictionary();" DbType in this case
                         r = Col(token.Text, "UserType")
-                    End If
-                ElseIf token.Parent.KindCS = CSharp.SyntaxKind.GenericName Then
-                    If token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
-                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
-                        TryCast(token.Parent, CSharp.Syntax.GenericNameSyntax)?.Identifier = token Then ' e.g. "Box<int>" the word Box
+                    ElseIf TryCast(token.Parent.Parent, CSharp.Syntax.CastExpressionSyntax)?.Type Is token.Parent OrElse ' e.g. "(Foo)x" the Foo
+                        TryCast(token.Parent.Parent, CSharp.Syntax.TypeConstraintSyntax)?.Type Is token.Parent Then ' e.g. "where T:Foo" the Foo
+                        r = Col(token.Text, "UserType")
+                    ElseIf (token.Parent.Parent.KindCS = CSharp.SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> CSharp.SyntaxKind.CloseParenToken) OrElse
+                        (token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken) OrElse
+                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.Parent.Parent.Parent.RawKind = CSharp.SyntaxKind.Argument AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso token.Text.Length > 0 AndAlso Not Char.IsLower(token.Text(0))) OrElse ' // e.g. "DbTypes.Add("int", DbType.Int32);" DbType in this case
+                        (token.Parent.Parent.KindCS = CSharp.SyntaxKind.SimpleMemberAccessExpression AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken AndAlso token.Text.Length > 0 AndAlso Not Char.IsLower(token.Text(0))) Then
                         r = Col(token.Text, "UserType")
                     End If
                 End If
