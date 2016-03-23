@@ -176,7 +176,7 @@ Module Colorizer
 
 
     Private Class CSharpColorizer
-        Inherits SyntaxWalker
+        Inherits CSharp.CSharpSyntaxWalker
         ' This code is based on that of Shiv Kumar at http://www.matlus.com/c-to-html-syntax-highlighter-using-roslyn/
 
 
@@ -218,8 +218,8 @@ Module Colorizer
             MyBase.New(SyntaxWalkerDepth.StructuredTrivia)
         End Sub
 
-        Protected Overrides Sub VisitToken(token As SyntaxToken)
-            VisitTrivia(token.LeadingTrivia)
+        Public Overrides Sub VisitToken(token As SyntaxToken)
+            VisitTriviaList(token.LeadingTrivia)
 
             Dim r As ColorizedWord = Nothing
 
@@ -294,35 +294,32 @@ Module Colorizer
 
             If r IsNot Nothing Then words.AddLast(r)
 
-            VisitTrivia(token.TrailingTrivia)
+            VisitTriviaList(token.TrailingTrivia)
 
         End Sub
 
-        Overloads Sub VisitTrivia(trivias As SyntaxTriviaList)
+        Sub VisitTriviaList(trivias As SyntaxTriviaList)
             For Each trivia In trivias
-                Dim leadingTrivia = If(trivia.HasStructure AndAlso trivia.GetStructure().HasLeadingTrivia, trivia.GetStructure().GetLeadingTrivia(), Nothing)
-                Dim trailingTrivia = If(trivia.HasStructure AndAlso trivia.GetStructure().HasTrailingTrivia, trivia.GetStructure().GetTrailingTrivia(), Nothing)
+                If trivia.KindCS = CSharp.SyntaxKind.EndOfLineTrivia Then words.AddLast(CType(Nothing, ColorizedWord)) : Continue For
 
-                VisitTrivia(leadingTrivia)
+                Dim isFirstText = True
+                For Each txt In trivia.ToFullString.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+                    If isFirstText Then isFirstText = False Else words.AddLast(CType(Nothing, ColorizedWord))
+                    If txt = "" Then Continue For
 
-                Dim text = trivia.ToFullString
-                If trivia.KindCS = CSharp.SyntaxKind.EndOfLineTrivia Then
-                    words.AddLast(CType(Nothing, ColorizedWord))
-                ElseIf trivia.KindCS = CSharp.SyntaxKind.MultiLineCommentTrivia OrElse
-                trivia.RawKind = CSharp.SyntaxKind.SingleLineCommentTrivia OrElse
-                trivia.RawKind = CSharp.SyntaxKind.MultiLineDocumentationCommentTrivia OrElse
-                trivia.RawKind = CSharp.SyntaxKind.SingleLineDocumentationCommentTrivia Then
-                    words.AddLast(Col(text, "Comment"))
-                ElseIf trivia.KindCS = CSharp.SyntaxKind.DisabledTextTrivia Then
-                    words.AddLast(Col(text, "ExcludedCode"))
-                ElseIf trivia.KindCS = CSharp.SyntaxKind.RegionDirectiveTrivia OrElse
-                    trivia.RawKind = CSharp.SyntaxKind.EndRegionDirectiveTrivia Then
-                    words.AddLast(Col(text, "Region"))
-                Else
-                    words.AddLast(Col(text, "PlainText"))
-                End If
-
-                VisitTrivia(trailingTrivia)
+                    If trivia.KindCS = CSharp.SyntaxKind.MultiLineCommentTrivia OrElse
+                            trivia.RawKind = CSharp.SyntaxKind.SingleLineCommentTrivia OrElse
+                            trivia.RawKind = CSharp.SyntaxKind.MultiLineDocumentationCommentTrivia OrElse
+                            trivia.RawKind = CSharp.SyntaxKind.SingleLineDocumentationCommentTrivia Then
+                        words.AddLast(Col(txt, "Comment"))
+                    ElseIf trivia.KindCS = CSharp.SyntaxKind.DisabledTextTrivia Then
+                        words.AddLast(Col(txt, "ExcludedCode"))
+                    ElseIf trivia.IsDirective Then
+                        words.AddLast(Col(txt, "Preprocessor"))
+                    Else
+                        words.AddLast(Col(txt, "PlainText"))
+                    End If
+                Next
             Next
         End Sub
 
@@ -334,7 +331,7 @@ Module Colorizer
                 Case "StringLiteral" : Return New ColorizedWord With {.Text = token, .Red = 163, .Green = 21, .Blue = 21}
                 Case "Comment" : Return New ColorizedWord With {.Text = token, .Red = 0, .Green = 128, .Blue = 0}
                 Case "ExcludedCode" : Return New ColorizedWord With {.Text = token, .Red = 128, .Green = 128, .Blue = 128}
-                Case "Region" : Return New ColorizedWord With {.Text = token, .Red = 224, .Green = 224, .Blue = 224}
+                Case "Preprocessor" : Return New ColorizedWord With {.Text = token, .Red = 224, .Green = 224, .Blue = 224}
                 Case Else : Throw New Exception("bad color name")
             End Select
         End Function

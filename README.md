@@ -105,6 +105,111 @@ The following is [link2](README.md#experiments-and-stuff)
 
 -------------------------------------------------------------
 
+I wonder how GitHub colorizes preprocessor directives?
+```csharp
+#define A
+#undef B
+
+class C
+{
+#if A
+    void F() {}
+#else
+    void G() {}
+#endif
+
+#if B
+    void H() {}
+#else
+    void I() {}
+#endif
+}
+```
+
+```csharp
+#define Enterprise
+
+#if Professional || Enterprise
+    #define Advanced
+#endif
+
+namespace Megacorp.Data
+{
+    #if Advanced
+    class PivotTable {...}
+    #endif
+}
+```
+
+```csharp
+class @class
+{
+    public static void @static(bool @bool) {
+        if (@bool)
+            System.Console.WriteLine("true");
+        else
+            System.Console.WriteLine("false");
+    }    
+}
+
+class Class1
+{
+    static void M() {
+        cl\u0061ss.st\u0061tic(true);
+    }
+}
+```
+
+```csharp
+#define Enterprise
+
+#if Professional || Enterprise
+    #define Advanced
+#endif
+
+namespace Megacorp.Data
+{
+    #if Advanced
+    class PivotTable {...}
+    #endif
+}
+```
+
+```csharp
+#warning Code review needed before check-in
+
+#if Debug &amp;&amp; Retail
+    #error A build can't be both debug and retail
+#endif
+
+class Test {...}
+```
+
+```csharp
+#region NameOfRegion
+void f() {}
+#endregion
+```
+
+```csharp
+using System;
+
+class Program
+{
+    [Obsolete]
+    static void Foo() {}
+
+    static void Main() {
+#pragma warning disable 612
+    Foo();
+#pragma warning restore 612
+    }
+}
+```
+
+
+-------------------------------------------------------------
+
 The following experiment is about languages for codeblocks. I was hoping to use the CommonMark notion of "info-string" to provide additional context for the code block. But it turns out that GitHub doesn't recognize info-strings at all, so I can't.
 
 This first example renders fine in GitHub:
