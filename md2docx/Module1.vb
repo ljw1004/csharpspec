@@ -37,24 +37,14 @@ Module Module1
         If files.Count = 0 Then files = {ifn}
         'Dim md = MarkdownSpec.ReadFiles(files)
 
-        Dim md = MarkdownSpec.ReadString("
-A `from` clause that explicitly specifies a range variable type
-```csharp
-from T x in e
-```
-is translated into
-```csharp
-from x in ( e ) . Cast < T > ( )
-```
+        ' TODO: figure out how to colorize transparent identifiers
+        Dim md = MarkdownSpec.ReadString("```csharp
+from * in ( e1 ) . SelectMany( x1 => e2 , ( x1 , x2 ) => new { x1 , x2 } )
 
-A `join` clause that explicitly specifies a range variable type
-```csharp
-join T x in e on k1 equals k2
-```
-is translated into
-```csharp
-join x in ( e ) . Cast < T > ( ) on k1 equals k2
-```
+from * in customers.
+    SelectMany(c => c.Orders, (c,o) => new { c, o })
+orderby o.Total descending
+select new { c.Name, o.Total }
 ")
 
 

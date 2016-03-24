@@ -1109,7 +1109,8 @@ A *parenthesized-expression* is evaluated by evaluating the *expression* within 
 
 A *member-access* consists of a *primary-expression*, a *predefined-type*, or a *qualified-alias-member*, followed by a "`.`" token, followed by an *identifier*, optionally followed by a *type-argument-list*.
 
-```member_access
+```antlr
+member_access
     : primary_expression '.' identifier type_argument_list?
     | predefined_type '.' identifier type_argument_list?
     | qualified_alias_member '.' identifier
@@ -1123,7 +1124,7 @@ predefined_type
 
 The *qualified-alias-member* production is defined in §9.7.
 
-A *member-access* is either of the form `E.I` or of the form `E.I<A1``,` ...`,``Ak``>`, where `E` is a primary-expression, `I` is a single identifier and `<A1``,` ...`,``Ak``>` is an optional *type-argument-list*. When no *type-argument-list* is specified, consider `K` to be zero.
+A *member-access* is either of the form `E.I` or of the form `E.I<A1, ..., Ak>`, where `E` is a primary-expression, `I` is a single identifier and `<A1, ..., Ak>` is an optional *type-argument-list*. When no *type-argument-list* is specified, consider `K` to be zero.
 
 A *member-access* with a *primary-expression* of type `dynamic` is dynamically bound (§7.2.2). In this case the compiler classifies the member access as a property access of type `dynamic`. The rules below to determine the meaning of the *member-access* are then applied at run-time, using the run-time type instead of the compile-time type of the *primary-expression*. If this run-time classification leads to a method group, then the member access must be the *primary-expression* of an *invocation-expression*.
 
