@@ -37,16 +37,16 @@ Module Module1
         If files.Count = 0 Then files = {ifn}
         'Dim md = MarkdownSpec.ReadFiles(files)
 
-        ' Oh dear. I've stumbled upon another markdown-parsing bug https://github.com/tpetricek/FSharp.Formatting/issues/390
-        ' Need to figure out a workaround.
+
+        ' Oh dear. Here's another bug, https://github.com/tpetricek/FSharp.Formatting/issues/347
+        ' I think I'll work around it by inserting "ceci-n'est-pas-une-indent"
+        ' and making FlattenList recognize a paragraph whose spans start with a literal span
+        ' which starts with this string, and respond by decreasing its indent level. Ugh.
         Dim md = MarkdownSpec.ReadString("
-*   This is a code-block
+*   Alpha
+    *   Beta
 
-    ```csharp
-    *   hello
-    ```
-
-    It doesn't contain any sub-bullets
+        ceci-n'est-pas-une-indentGamma
 ")
 
 

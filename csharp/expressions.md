@@ -307,34 +307,21 @@ Member lookup considers not only the name of a member but also the number of typ
 A member lookup of a name `N` with `K` type parameters in a type `T` is processed as follows:
 
 *  First, a set of accessible members named `N` is determined:
-
-If `T` is a type parameter, then the set is the union of the sets of accessible members named `N` in each of the types specified as a primary constraint or secondary constraint (§10.1.5) for `T`, along with the set of accessible members named `N` in `object`.
-
-Otherwise, the set consists of all accessible (§3.5) members named `N` in `T`, including inherited members and the accessible members named `N` in `object`. If `T` is a constructed type, the set of members is obtained by substituting type arguments as described in §10.3.2. Members that include an `override` modifier are excluded from the set.
-
+    * If `T` is a type parameter, then the set is the union of the sets of accessible members named `N` in each of the types specified as a primary constraint or secondary constraint (§10.1.5) for `T`, along with the set of accessible members named `N` in `object`.
+    * Otherwise, the set consists of all accessible (§3.5) members named `N` in `T`, including inherited members and the accessible members named `N` in `object`. If `T` is a constructed type, the set of members is obtained by substituting type arguments as described in §10.3.2. Members that include an `override` modifier are excluded from the set.
 *  Next, if `K` is zero, all nested types whose declarations include type parameters are removed. If `K` is not zero, all members with a different number of type parameters are removed. Note that when `K` is zero, methods having type parameters are not removed, since the type inference process (§7.5.2) might be able to infer the type arguments.
-*  Next, if the member is invoked*, all non-*invocable *members are removed from the set.*
+*  Next, if the member is *invoked*, all non-*invocable* members are removed from the set.
 *  Next, members that are hidden by other members are removed from the set. For every member `S.M` in the set, where `S` is the type in which the member `M` is declared, the following rules are applied:
-
-If `M` is a constant, field, property, event, or enumeration member, then all members declared in a base type of `S` are removed from the set.
-
-If `M` is a type declaration, then all non-types declared in a base type of `S` are removed from the set, and all type declarations with the same number of type parameters as `M` declared in a base type of `S` are removed from the set.
-
-If `M` is a method, then all non-method members declared in a base type of `S` are removed from the set.
-
+    * If `M` is a constant, field, property, event, or enumeration member, then all members declared in a base type of `S` are removed from the set.
+    * If `M` is a type declaration, then all non-types declared in a base type of `S` are removed from the set, and all type declarations with the same number of type parameters as `M` declared in a base type of `S` are removed from the set.
+    * If `M` is a method, then all non-method members declared in a base type of `S` are removed from the set.
 *  Next, interface members that are hidden by class members are removed from the set. This step only has an effect if `T` is a type parameter and `T` has both an effective base class other than `object` and a non-empty effective interface set (§10.1.5). For every member `S.M` in the set, where `S` is the type in which the member `M` is declared, the following rules are applied if `S` is a class declaration other than `object`:
-
-If `M` is a constant, field, property, event, enumeration member, or type declaration, then all members declared in an interface declaration are removed from the set.
-
-If `M` is a method, then all non-method members declared in an interface declaration are removed from the set, and all methods with the same signature as `M` declared in an interface declaration are removed from the set.
-
+    * If `M` is a constant, field, property, event, enumeration member, or type declaration, then all members declared in an interface declaration are removed from the set.
+    * If `M` is a method, then all non-method members declared in an interface declaration are removed from the set, and all methods with the same signature as `M` declared in an interface declaration are removed from the set.
 *  Finally, having removed hidden members, the result of the lookup is determined:
-
-If the set consists of a single member that is not a method, then this member is the result of the lookup.
-
-Otherwise, if the set contains only methods, then this group of methods is the result of the lookup.
-
-Otherwise, the lookup is ambiguous, and a binding-time error occurs.
+    * If the set consists of a single member that is not a method, then this member is the result of the lookup.
+    * Otherwise, if the set contains only methods, then this group of methods is the result of the lookup.
+    * Otherwise, the lookup is ambiguous, and a binding-time error occurs.
 
 For member lookups in types other than type parameters and interfaces, and member lookups in interfaces that are strictly single-inheritance (each interface in the inheritance chain has exactly zero or one direct base interface), the effect of the lookup rules is simply that derived members hide base members with the same name or signature. Such single-inheritance lookups are never ambiguous. The ambiguities that can possibly arise from member lookups in multiple-inheritance interfaces are described in §13.2.5.
 
@@ -376,27 +363,28 @@ Once a particular function member has been identified at binding-time, possibly 
 The following table summarizes the processing that takes place in constructs involving the six categories of function members that can be explicitly invoked. In the table, `e`, `x`, `y`, and `value` indicate expressions classified as variables or values, `T` indicates an expression classified as a type, `F` is the simple name of a method, and `P` is the simple name of a property.
 
 
-| __Construct__ | __Example__ | __Description__ | 
-| Method invocation | `F(x,``y)` | Overload resolution is applied to select the best method `F` in the containing class or struct. The method is invoked with the argument list `(x,``y)`. If the method is not `static`, the instance expression is `this`. | 
-|  | `T.F(x,``y)` | Overload resolution is applied to select the best method `F` in the class or struct `T`. A binding-time error occurs if the method is not `static`. The method is invoked with the argument list `(x,``y)`. | 
-|  | `e.F(x,``y)` | Overload resolution is applied to select the best method F in the class, struct, or interface given by the type of `e`. A binding-time error occurs if the method is `static`. The method is invoked with the instance expression `e` and the argument list `(x,``y)`. | 
-| Property access | `P` | The `get` accessor of the property `P` in the containing class or struct is invoked. A compile-time error occurs if `P` is write-only. If `P` is not `static`, the instance expression is `this`. | 
-|  | `P``=``value` | The `set` accessor of the property `P` in the containing class or struct is invoked with the argument list `(value)`. A compile-time error occurs if `P` is read-only. If `P` is not `static`, the instance expression is `this`. | 
-|  | `T.P` | The `get` accessor of the property `P` in the class or struct `T` is invoked. A compile-time error occurs if `P` is not `static` or if `P` is write-only. | 
-|  | `T.P``=``value` | The `set` accessor of the property `P` in the class or struct `T` is invoked with the argument list `(value)`. A compile-time error occurs if `P` is not `static` or if `P` is read-only. | 
-|  | `e.P` | The `get` accessor of the property `P` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `P` is `static` or if `P` is write-only. | 
-|  | `e.P``=``value` | The `set` accessor of the property `P` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e` and the argument list `(value)`. A binding-time error occurs if `P` is `static` or if `P` is read-only. | 
-| Event access | `E += value` | The `add` accessor of the event `E` in the containing class or struct is invoked. If `E` is not static, the instance expression is `this`. | 
-|  | `E -= value` | The `remove` accessor of the event `E` in the containing class or struct is invoked. If `E` is not static, the instance expression is `this`. | 
-|  | `T.E += value` | The `add` accessor of the event `E` in the class or struct `T` is invoked. A binding-time error occurs if `E` is not static. | 
-|  | `T.E -= value` | The `remove` accessor of the event `E` in the class or struct `T` is invoked. A binding-time error occurs if `E` is not static. | 
-|  | `e.E += value` | The `add` accessor of the event `E` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `E` is static. | 
-|  | `e.E -= value` | The `remove` accessor of the event `E` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `E` is static. | 
-| Indexer access | `e[x,``y]` | Overload resolution is applied to select the best indexer in the class, struct, or interface given by the type of e. The `get` accessor of the indexer is invoked with the instance expression `e` and the argument list `(x,``y)`. A binding-time error occurs if the indexer is write-only. | 
-|  | `e[x,``y]``=``value` | Overload resolution is applied to select the best indexer in the class, struct, or interface given by the type of `e`. The `set` accessor of the indexer is invoked with the instance expression `e` and the argument list `(x,``y,``value)`. A binding-time error occurs if the indexer is read-only. | 
-| Operator invocation | `-x` | Overload resolution is applied to select the best unary operator in the class or struct given by the type of `x`. The selected operator is invoked with the argument list `(x)`. | 
-|  | `x``+``y` | Overload resolution is applied to select the best binary operator in the classes or structs given by the types of x and y. The selected operator is invoked with the argument list `(x,``y)`. | 
-| Instance constructor invocation | `new``T(x,``y)` | Overload resolution is applied to select the best instance constructor in the class or struct `T`. The instance constructor is invoked with the argument list `(x,``y)`. | 
+| __Construct__     | __Example__    | __Description__ |
+|-------------------|----------------|-----------------|
+| Method invocation | `F(x,y)`       | Overload resolution is applied to select the best method `F` in the containing class or struct. The method is invoked with the argument list `(x,y)`. If the method is not `static`, the instance expression is `this`. | 
+|                   | `T.F(x,y)`     | Overload resolution is applied to select the best method `F` in the class or struct `T`. A binding-time error occurs if the method is not `static`. The method is invoked with the argument list `(x,y)`. | 
+|                   | `e.F(x,y)`     | Overload resolution is applied to select the best method F in the class, struct, or interface given by the type of `e`. A binding-time error occurs if the method is `static`. The method is invoked with the instance expression `e` and the argument list `(x,y)`. | 
+| Property access   | `P`            | The `get` accessor of the property `P` in the containing class or struct is invoked. A compile-time error occurs if `P` is write-only. If `P` is not `static`, the instance expression is `this`. | 
+|                   | `P = value`    | The `set` accessor of the property `P` in the containing class or struct is invoked with the argument list `(value)`. A compile-time error occurs if `P` is read-only. If `P` is not `static`, the instance expression is `this`. | 
+|                   | `T.P`          | The `get` accessor of the property `P` in the class or struct `T` is invoked. A compile-time error occurs if `P` is not `static` or if `P` is write-only. | 
+|                   | `T.P = value`  | The `set` accessor of the property `P` in the class or struct `T` is invoked with the argument list `(value)`. A compile-time error occurs if `P` is not `static` or if `P` is read-only. | 
+|                   | `e.P`          | The `get` accessor of the property `P` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `P` is `static` or if `P` is write-only. | 
+|                   | `e.P = value`  | The `set` accessor of the property `P` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e` and the argument list `(value)`. A binding-time error occurs if `P` is `static` or if `P` is read-only. | 
+| Event access      | `E += value`   | The `add` accessor of the event `E` in the containing class or struct is invoked. If `E` is not static, the instance expression is `this`. | 
+|                   | `E -= value`   | The `remove` accessor of the event `E` in the containing class or struct is invoked. If `E` is not static, the instance expression is `this`. | 
+|                   | `T.E += value` | The `add` accessor of the event `E` in the class or struct `T` is invoked. A binding-time error occurs if `E` is not static. | 
+|                   | `T.E -= value` | The `remove` accessor of the event `E` in the class or struct `T` is invoked. A binding-time error occurs if `E` is not static. | 
+|                   | `e.E += value` | The `add` accessor of the event `E` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `E` is static. | 
+|                   | `e.E -= value` | The `remove` accessor of the event `E` in the class, struct, or interface given by the type of `e` is invoked with the instance expression `e`. A binding-time error occurs if `E` is static. | 
+| Indexer access    | `e[x,y]`       | Overload resolution is applied to select the best indexer in the class, struct, or interface given by the type of e. The `get` accessor of the indexer is invoked with the instance expression `e` and the argument list `(x,y)`. A binding-time error occurs if the indexer is write-only. | 
+|                   | `e[x,y] = value` | Overload resolution is applied to select the best indexer in the class, struct, or interface given by the type of `e`. The `set` accessor of the indexer is invoked with the instance expression `e` and the argument list `(x,y,value)`. A binding-time error occurs if the indexer is read-only. | 
+| Operator invocation | `-x`         | Overload resolution is applied to select the best unary operator in the class or struct given by the type of `x`. The selected operator is invoked with the argument list `(x)`. | 
+|                     | `x + y`      | Overload resolution is applied to select the best binary operator in the classes or structs given by the types of `x` and `y`. The selected operator is invoked with the argument list `(x,y)`. | 
+| Instance constructor invocation | `new T(x,y)` | Overload resolution is applied to select the best instance constructor in the class or struct `T`. The instance constructor is invoked with the argument list `(x,y)`. | 
 
 ### Argument lists
 
@@ -411,20 +399,25 @@ The arguments of properties (§10.7), events (§10.8), and user-defined operator
 
 The arguments of an instance constructor, method, indexer or delegate invocation are specified as an *argument-list*:
 
-<pre>argument-list:
+```antlr
+argument_list
+    : argument
+    | argument_list ',' argument;
+
 argument
-argument-list   <b>,</b>   argument</pre>
+    : argument_name? argument_value
+    ;
 
-<pre>argument:
-argument-name<sub>opt</sub>   argument-value</pre>
+argument_name
+    : identifier ':'
+    ;
 
-<pre>argument-name:
-identifier   <b>:</b></pre>
-
-<pre>argument-value:
-expression
-<b>ref</b>   variable-reference
-<b>out</b>   variable-reference</pre>
+argument_value
+    : expression
+    | 'ref' variable_reference
+    | 'out' variable_reference
+    ;
+```
 
 An *argument-list* consists of one or more *argument*s, separated by commas. Each argument consists of an optional  *argument-name* followed by an *argument-value*. An *argument* with an *argument-name* is referred to as a ***named argument***, whereas an *argument* without an *argument-name* is a ***positional argument***. It is an error for a positional argument to appear after a named argument in an *argument-list*.
 
@@ -449,17 +442,11 @@ The position of an argument or parameter is defined as the number of arguments o
 The corresponding parameters for function member arguments are established as follows:
 
 *  Arguments in the *argument-list* of instance constructors, methods, indexers and delegates:
-
-A positional argument where a fixed parameter occurs at the same position in the parameter list corresponds to that parameter.
-
-A positional argument of a function member with a parameter array invoked in its normal form corresponds to the parameter  array, which must occur at the same position in the parameter list.
-
-A positional argument of a function member with a parameter array invoked in its expanded form, where no fixed parameter occurs at the same position in the parameter list, corresponds to an element in the parameter array.
-
-A named argument corresponds to the parameter of the same name in the parameter list.
-
-For indexers, when invoking the `set` accessor, the expression specified as the right operand of the assignment operator corresponds to the implicit `value` parameter of the `set` accessor declaration.
-
+    * A positional argument where a fixed parameter occurs at the same position in the parameter list corresponds to that parameter.
+    * A positional argument of a function member with a parameter array invoked in its normal form corresponds to the parameter  array, which must occur at the same position in the parameter list.
+    * A positional argument of a function member with a parameter array invoked in its expanded form, where no fixed parameter occurs at the same position in the parameter list, corresponds to an element in the parameter array.
+    * A named argument corresponds to the parameter of the same name in the parameter list.
+    * For indexers, when invoking the `set` accessor, the expression specified as the right operand of the assignment operator corresponds to the implicit `value` parameter of the `set` accessor declaration.
 *  For properties, when invoking the `get` accessor there are no arguments. When invoking the `set` accessor, the expression specified as the right operand of the assignment operator corresponds to the implicit `value` parameter of the `set` accessor declaration.
 *  For user-defined unary operators (including conversions), the single operand corresponds to the single parameter of the operator declaration.
 *  For user-defined binary operators, the left operand corresponds to the first parameter, and the right operand corresponds to the second parameter of the operator declaration.
@@ -477,7 +464,6 @@ Methods, indexers, and instance constructors may declare their right-most parame
 *  When a function member with a parameter array is invoked in its expanded form, the invocation must specify zero or more positional arguments for the parameter array, where each argument is an expression that is implicitly convertible (§6.1) to the element type of the parameter array. In this case, the invocation creates an instance of the parameter array type with a length corresponding to the number of arguments, initializes the elements of the array instance with the given argument values, and uses the newly created array instance as the actual argument.
 
 The expressions of an argument list are always evaluated in the order they are written. Thus, the example
-
 ```csharp
 class Test
 {
@@ -492,16 +478,13 @@ class Test
     }
 }
 ```
-
 produces the output
-
-```csharp
+```
 x = 0, y = 1, z = 2
 x = 4, y = -1, z = 3
 ```
 
 The array co-variance rules (§12.5) permit a value of an array type `A[]` to be a reference to an instance of an array type `B[]`, provided an implicit reference conversion exists from `B` to `A`. Because of these rules, when an array element of a *reference-type* is passed as a reference or output parameter, a run-time check is required to ensure that the actual element type of the array is identical to that of the parameter. In the example
-
 ```csharp
 class Test
 {
@@ -515,25 +498,19 @@ class Test
     }
 }
 ```
-
 the second invocation of `F` causes a `System.ArrayTypeMismatchException` to be thrown because the actual element type of `b` is `string` and not `object`.
 
 When a function member with a parameter array is invoked in its expanded form, the invocation is processed exactly as if an array creation expression with an array initializer (§7.6.10.4) was inserted around the expanded parameters. For example, given the declaration
-
 ```csharp
 void F(int x, int y, params object[] args);
 ```
-
 the following invocations of the expanded form of the method
-
 ```csharp
 F(10, 20);
 F(10, 20, 30, 40);
 F(10, 20, 1, "hello", 3.0);
 ```
-
 correspond exactly to
-
 ```csharp
 F(10, 20, new object[] {});
 F(10, 20, new object[] {30, 40});
@@ -547,7 +524,6 @@ When arguments are omitted from a function member with corresponding optional pa
 ### Type inference
 
 When a generic method is called without specifying type arguments, a ***type inference*** process attempts to infer type arguments for the call. The presence of type inference allows a more convenient syntax to be used for calling a generic method, and allows the programmer to avoid specifying redundant type information. For example, given the method declaration:
-
 ```csharp
 class Chooser
 {
@@ -558,11 +534,9 @@ class Chooser
     }
 }
 ```
-
 it is possible to invoke the `Choose` method without explicitly specifying a type argument:
-
 ```csharp
-int i = Chooser.Choose(5, 213);                    // Calls Choose<int>
+int i = Chooser.Choose(5, 213);                 // Calls Choose<int>
 
 string s = Chooser.Choose("foo", "bar");        // Calls Choose<string>
 ```
@@ -572,14 +546,13 @@ Through type inference, the type arguments `int` and `string` are determined fro
 Type inference occurs as part of the binding-time processing of a method invocation (§7.6.5.1) and takes place before the overload resolution step of the invocation. When a particular method group is specified in a method invocation, and no type arguments are specified as part of the method invocation, type inference is applied to each generic method in the method group. If type inference succeeds, then the inferred type arguments are used to determine the types of arguments for subsequent overload resolution. If overload resolution chooses a generic method as the one to invoke, then the inferred type arguments are used as the actual type arguments for the invocation. If type inference for a particular method fails, that method does not participate in overload resolution. The failure of type inference, in and of itself, does not cause a binding-time error. However, it often leads to a binding-time error when overload resolution then fails to find any applicable methods.
 
 If the supplied number of arguments is different than the number of parameters in the method, then inference immediately fails. Otherwise, assume that the generic method has the following signature:
-
 ```csharp
-T<sub>r</sub> M<X<sub>1</sub>…X<sub>n</sub>>(T<sub>1</sub> x<sub>1</sub> … T<sub>m</sub> x<sub>m</sub>)
+Tr M<X1...Xn>(T1 x1 ... Tm xm)
 ```
 
-With a method call of the form `M(``E1`` …``E`<sub>m</sub>`)` the task of type inference is to find unique type arguments `S1``…S`<sub>n</sub> for each of the type parameters `X1``…X`<sub>n</sub> so that the call `M<S1``…S`<sub>n</sub>`>(``E1``…``E`<sub>m</sub>`)`becomes valid.
+With a method call of the form `M(E1 ... Em)` the task of type inference is to find unique type arguments `S1...Sn` for each of the type parameters `X1...Xn` so that the call `M<S1...Sn>(E1...Em)` becomes valid.
 
-During the process of inference each type parameter `X`<sub>i</sub> is either *fixed* to a particular type `S`<sub>i</sub> or *unfixed* with an associated set of *bounds.* Each of the bounds is some type `T`. Initially each type variable `X`<sub>i</sub> is unfixed with an empty set of bounds.
+During the process of inference each type parameter `Xi` is either *fixed* to a particular type `Si` or *unfixed* with an associated set of *bounds.* Each of the bounds is some type `T`. Initially each type variable `Xi` is unfixed with an empty set of bounds.
 
 Type inference takes place in phases. Each phase will try to infer type arguments for more type variables based on the findings of the previous phase. The first phase makes some initial inferences of bounds, whereas the second phase fixes type variables to specific types and infers further bounds. The second phase may have to be repeated a number of times.
 
@@ -587,66 +560,84 @@ Type inference takes place in phases. Each phase will try to infer type argument
 
 #### The first phase
 
-For each of the method arguments `E`<sub>i</sub>:
+For each of the method arguments `Ei`:
 
-<i:listitem level="0" type="9" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">If `E`<sub>i</sub> is an anonymous function, an explicit parameter type inference (§7.5.2.7) is made from `E`<sub>i</sub> to `T`<sub>i</sub></i:listitem><i:listitem level="0" type="9" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Otherwise, if `E`<sub>i</sub> has a type `U` and `x`<sub>i</sub> is a value parameter then a *lower-bound inference* is made from `U` to `T`<sub>i</sub>.</i:listitem><i:listitem level="0" type="9" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Otherwise, if `E`<sub>i</sub> has a type `U` and `x`<sub>i</sub> is a `ref` or `out` parameter then an exact inference is made from `U` to `T`<sub>i</sub>.</i:listitem><i:listitem level="0" type="9" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Otherwise, no inference is made for this argument.</i:listitem>#### The second phase
+*   If `Ei` is an anonymous function, an *explicit parameter type inference* (§7.5.2.7) is made from `Ei` to `Ti`
+*   Otherwise, if `Ei` has a type `U` and `xi` is a value parameter then a *lower-bound inference* is made *from* `U` *to* `Ti`.
+*   Otherwise, if `Ei` has a type `U` and `xi` is a `ref` or `out` parameter then an *exact inference* is made *from* `U` *to* `Ti`.
+*   Otherwise, no inference is made for this argument.
+
+
+#### The second phase
 
 The second phase proceeds as follows:
 
-<i:listitem level="0" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">All unfixed type variables `X`<sub>i</sub> which do not depend on (§7.5.2.5) any `X`<sub>j</sub> are fixed (§7.5.2.10).</i:listitem><i:listitem level="0" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">If no such type variables exist, all unfixed type variables `X`<sub>i</sub> are fixed for which all of the following hold:</i:listitem><i:listitem level="1" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">There is at least one type variable `X`<sub>j</sub>``that depends on `X`<sub>i</sub></i:listitem><i:listitem level="1" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">`X`<sub>i</sub> has a non-empty set of bounds</i:listitem><i:listitem level="0" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">If no such type variables exist and there are still unfixed type variables, type inference fails.</i:listitem><i:listitem level="0" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Otherwise, if no further unfixed type variables exist, type inference succeeds.</i:listitem><i:listitem level="0" type="15" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Otherwise, for all arguments `E`<sub>i</sub> with corresponding parameter type `T`<sub>i</sub> where the output types (§7.5.2.4) contain unfixed type variables `X`<sub>j</sub> but the input types (§7.5.2.3) do not, an output type inference (§7.5.2.6) is made from `E`<sub>i</sub> to `T`<sub>i</sub>. Then the second phase is repeated.</i:listitem>#### Input types
+*   All *unfixed* type variables `Xi` which do not *depend on* (§7.5.2.5) any `Xj` are fixed (§7.5.2.10).
+*   If no such type variables exist, all *unfixed* type variables `Xi` are *fixed* for which all of the following hold:
+    *   There is at least one type variable `Xj` that depends on `Xi`
+    *   `Xi` has a non-empty set of bounds
+*   If no such type variables exist and there are still *unfixed* type variables, type inference fails.
+*   Otherwise, if no further *unfixed* type variables exist, type inference succeeds.
+*   Otherwise, for all arguments `Ei` with corresponding parameter type `Ti` where the *output types* (§7.5.2.4) contain *unfixed* type variables `Xj` but the *input types* (§7.5.2.3) do not, an *output type inference* (§7.5.2.6) is made *from* `Ei` *to* `Ti`. Then the second phase is repeated.
 
-If `E` is a method group or implicitly typed anonymous function and `T` is a delegate type or expression tree type then all the parameter types of `T` are *input types* of `E` with type `T`.
+#### Input types
+
+If `E` is a method group or implicitly typed anonymous function and `T` is a delegate type or expression tree type then all the parameter types of `T` are *input types* of `E` *with type* `T`.
 
 ####  Output types
 
-If `E` is a method group or an anonymous function and `T` is a delegate type or expression tree type then the return type of `T` is an *output type**of*`E`*with type*`T`.
+If `E` is a method group or an anonymous function and `T` is a delegate type or expression tree type then the return type of `T` is an *output type of* `E` *with type* `T`.
 
 #### Dependence
 
-An unfixed type variable `X`<sub>i</sub>*depends directly on* an unfixed type variable `X`<sub>j</sub> if for some argument `E`<sub>k</sub> with type `T`<sub>k</sub>`X`<sub>j</sub> occurs in an input type of `E`<sub>k</sub> with type `T`<sub>k</sub> and `X`<sub>i</sub> occurs in an output type of `E`<sub>k</sub> with type `T`<sub>k</sub>.
+An *unfixed* type variable `Xi` *depends directly on* an unfixed type variable `Xj` if for some argument `Ek` with type `Tk` `Xj` occurs in an *input type* of `Ek` with type `Tk` and `Xi` occurs in an *output type* of `Ek` with type `Tk`.
 
-`X`<sub>j</sub>*depends on*`X`<sub>i</sub> if `X`<sub>j</sub> depends directly on `X`<sub>i</sub> or if `X`<sub>i</sub> depends directly on `X`<sub>k</sub> and `X`<sub>k</sub> depends on `X`<sub>j</sub>. Thus "depends on" is the transitive but not reflexive closure of "depends directly on".
+`Xj` *depends on* `Xi` if `Xj` *depends directly on* `Xi` or if `Xi` *depends directly on* `Xk` and `Xk` *depends on* `Xj`. Thus "depends on" is the transitive but not reflexive closure of "depends directly on".
 
 #### Output type inferences
 
-An output type inference is made from an expression `E` to a type `T` in the following way:
+An *output type inference* is made *from* an expression `E` *to* a type `T` in the following way:
 
-*  If `E` is an anonymous function with inferred return type  `U` (§7.5.2.12) and `T` is a delegate type or expression tree type with return type `T`<sub>b</sub>, then a lower-bound inference (§7.5.2.9) is made from `U` to `T`<sub>b</sub>.
-*  Otherwise, if `E` is a method group and `T` is a delegate type or expression tree type with parameter types `T1``…T`<sub>k</sub> and return type `T`<sub>b</sub>, and overload resolution of `E` with the types `T1``…T`<sub>k</sub> yields a single method with return type `U`, then a lower-bound inference is made from `U` to `T`<sub>b</sub>.
-*  Otherwise, if `E` is an expression with type `U`, then a lower-bound inference is made from `U` to `T`.
+*  If `E` is an anonymous function with inferred return type  `U` (§7.5.2.12) and `T` is a delegate type or expression tree type with return type `Tb`, then a *lower-bound inference* (§7.5.2.9) is made *from* `U` *to* `Tb`.
+*  Otherwise, if `E` is a method group and `T` is a delegate type or expression tree type with parameter types `T1...Tk` and return type `Tb`, and overload resolution of `E` with the types `T1...Tk` yields a single method with return type `U`, then a *lower-bound inference* is made *from* `U` *to* `Tb`.
+*  Otherwise, if `E` is an expression with type `U`, then a *lower-bound inference* is made *from* `U` *to* `T`.
 *  Otherwise, no inferences are made.
 
 #### Explicit parameter type inferences
 
-An explicit parameter type inference is made from an expression `E` to a type `T` in the following way:
+An *explicit parameter type inference* is made *from* an expression `E` *to* a type `T` in the following way:
 
-*  If `E` is an explicitly typed anonymous function with parameter types `U1``…U`<sub>k</sub> and `T` is a delegate type or expression tree type with parameter types `V1``…V`<sub>k</sub> then for each `U`<sub>i</sub> an exact inference (§7.5.2.8) is made from `U`<sub>i</sub> to the corresponding `V`<sub>i</sub>.
+*  If `E` is an explicitly typed anonymous function with parameter types `U1...Uk` and `T` is a delegate type or expression tree type with parameter types `V1...Vk` then for each `Ui` an *exact inference* (§7.5.2.8) is made *from* `Ui` *to* the corresponding `Vi`.
 
 #### Exact inferences
 
-An exact inference from a type `U` to a type `V` is made as follows:
+An *exact inference* *from* a type `U` *to* a type `V` is made as follows:
 
-*  If `V` is one of the unfixed `X`<sub>i</sub> then `U` is added to the set of exact bounds for `X`<sub>i</sub>.
-*  Otherwise, sets `V1``…V`<sub>k</sub><sub />and `U1``…U`<sub>k</sub>``are determined by checking if any of the following cases apply:
-*  `V` is an array type `V1``[…]```and```U` is an array type `U1``[…]`  of the same rank
-*  `V` is the type```V1``?` and `U` is the type `U1``?`
-*  `V` is a constructed type `C<V1``…V`<sub>k</sub>`>``and ``U` is a constructed type `C<U1``…U`<sub>k</sub>`>```
-*  If any of these cases apply then an exact inference is made *from* each `U`<sub>i</sub>*to* the corresponding `V`<sub>i</sub>.
+*   If `V` is one of the *unfixed* `Xi` then `U` is added to the set of exact bounds for `Xi`.
+
+*   Otherwise, sets `V1...Vk` and `U1...Uk` are determined by checking if any of the following cases apply:
+
+    *  `V` is an array type `V1[...]` and `U` is an array type `U1[...]`  of the same rank
+    *  `V` is the type `V1?` and `U` is the type `U1?`
+    *  `V` is a constructed type `C<V1...Vk>`and `U` is a constructed type `C<U1...Uk>`
+
+    If any of these cases apply then an *exact inference* is made *from* each `Ui` *to* the corresponding `Vi`.
+
 *  Otherwise no inferences are made.
 
 #### Lower-bound inferences
 
 A lower-bound inference from a type `U` to a type `V` is made as follows:
 
-*  If `V` is one of the unfixed `X`<sub>i</sub> then `U` is added to the set of lower bounds for `X`<sub>i</sub>.
+*  If `V` is one of the unfixed `Xi` then `U` is added to the set of lower bounds for `Xi`.
 *  Otherwise, if `V` is the type `V1``?```and `U` is the type `U1``?` then a lower bound inference is made from `U1` to `V1`.
 *  Otherwise, sets `U1``…U`<sub>k</sub>``and `V1``…V`<sub>k</sub><sub />are determined by checking if any of the following cases apply:
 *  `V` is an array type `V1``[…]`and `U` is an array type `U1``[…]` (or a type parameter whose effective base type is `U1``[…]`) of the same rank
 *  `V` is one of `IEnumerable<V1``>`, `ICollection<V1``>` or `IList<V1``>` and `U` is a one-dimensional array type `U1``[]`(or a type parameter whose effective base type is `U1``[``]`)
 *  `V` is a constructed class, struct, interface or delegate type `C<V1``…V`<sub>k</sub>`>` and there is a unique type `C<``U1``…``U`<sub>k</sub>`>```such that `U` (or, if `U` is a type parameter, its effective base class or any member of its effective interface set) is identical to, inherits from (directly or indirectly), or implements (directly or indirectly) `C<``U1``…``U`<sub>k</sub>`>``.`
 *  (The "uniqueness" restriction means that in the case interface C<T>{} class U: C<X>, C<Y>{}, then no inference is made when inferring from `U` to C<T> because `U1` could be X or Y.)
-*  If any of these cases apply then an inference is made *from* each `U`<sub>i</sub>*to* the corresponding `V`<sub>i</sub> as follows:
-*          If  `U`<sub>i</sub><sub />is not known to be a reference type then an *exact inference* is made
+*  If any of these cases apply then an inference is made *from* each `Ui`*to* the corresponding `Vi` as follows:
+*          If  `Ui`<sub />is not known to be a reference type then an *exact inference* is made
 *          Otherwise, if `U` is an array type then a *lower-bound inference* is made
 *          Otherwise, if `V` is `C<V1``…V`<sub>k</sub>`>` then inference depends on the i-th type parameter of `C`:
 *          If it is covariant then a *lower-bound inference* is made.
@@ -658,15 +649,15 @@ A lower-bound inference from a type `U` to a type `V` is made as follows:
 
 An upper-bound inference from a type `U` to a type `V` is made as follows:
 
-*  If `V` is one of the unfixed `X`<sub>i</sub> then `U` is added to the set of upper bounds for `X`<sub>i</sub>.
+*  If `V` is one of the unfixed `Xi` then `U` is added to the set of upper bounds for `Xi`.
 *  Otherwise, sets `V1``…V`<sub>k</sub><sub />and```U1``…U`<sub>k</sub> are determined by checking if any of the following cases apply:
 *  `U` is an array type `U1``[…]`and `V` is an array type `V1``[…]`of the same rank
 *  `U` is one of `IEnumerable<U`<sub>e</sub>`>`, `ICollection<U`<sub>e</sub>`>` or `IList<U`<sub>e</sub>`>` and `V` is a one-dimensional array type `V`<sub>e</sub>`[]`
 *  `U` is the type `U1``?` and `V` is the type```V1``?`
 *  `U` is constructed class, struct, interface or delegate type `C<U1``…U`<sub>k</sub>`>` and `V` is a class, struct, interface or delegate type which is identical to, inherits from (directly or indirectly), or implements (directly or indirectly) a unique type `C<V1``…V`<sub>k</sub>`>`
 *  (The "uniqueness" restriction means that if we have interface C<T>{} class V<Z>: C<X<Z>>, C<Y<Z>>{}, then no inference is made when inferring from `C<U1``>` to V<Q>. Inferences are not made from `U1` to either X<Q> or Y<Q>.)
-*  If any of these cases apply then an inference is made *from* each `U`<sub>i</sub>*to* the corresponding `V`<sub>i</sub> as follows:
-*          If  `U`<sub>i</sub><sub />is not known to be a reference type then an *exact inference* is made
+*  If any of these cases apply then an inference is made *from* each `Ui`*to* the corresponding `Vi` as follows:
+*          If  `Ui`<sub />is not known to be a reference type then an *exact inference* is made
 *          Otherwise, if `V` is an array type then an *upper-bound inference* is made
 *          Otherwise, if `U` is `C<``U1``…``U`<sub>k</sub>`>` then inference depends on the i-th type parameter of `C`:
 *          If it is covariant then an *upper-bound inference* is made.
@@ -676,11 +667,11 @@ An upper-bound inference from a type `U` to a type `V` is made as follows:
 
 #### Fixing
 
-An unfixed type variable `X`<sub>i</sub> with a set of bounds is fixed as follows:
+An unfixed type variable `Xi` with a set of bounds is fixed as follows:
 
-*  The set of *candidate types*`U`<sub>j</sub> starts out as the set of all types in the set of bounds for `X`<sub>i</sub>.
-*  We then examine each bound for `X`<sub>i</sub> in turn: For each exact bound `U` of `X`<sub>i</sub> all types `U`<sub>j</sub> which are not identical to `U` are removed from the candidate set. For each lower bound `U` of `X`<sub>i</sub> all types `U`<sub>j</sub> to which there is *not* an implicit conversion from `U` are removed from the candidate set. For each upper bound `U` of `X`<sub>i</sub> all types `U`<sub>j</sub> from which there is *not* an implicit conversion to `U` are removed from the candidate set.
-*  If among the remaining candidate types `U`<sub>j</sub> there is a unique type `V` from which there is an implicit conversion to all the other candidate types, then `X`<sub>i</sub> is fixed to `V`.
+*  The set of *candidate types*`Uj` starts out as the set of all types in the set of bounds for `Xi`.
+*  We then examine each bound for `Xi` in turn: For each exact bound `U` of `Xi` all types `Uj` which are not identical to `U` are removed from the candidate set. For each lower bound `U` of `Xi` all types `Uj` to which there is *not* an implicit conversion from `U` are removed from the candidate set. For each upper bound `U` of `Xi` all types `Uj` from which there is *not* an implicit conversion to `U` are removed from the candidate set.
+*  If among the remaining candidate types `Uj` there is a unique type `V` from which there is an implicit conversion to all the other candidate types, then `Xi` is fixed to `V`.
 *  Otherwise, type inference fails.
 
 #### Inferred return type
@@ -772,7 +763,7 @@ becomes compatible (§15.1) with `D`.
 
 Unlike the type inference algorithm for generic method calls, in this case there are only argument types, no argument expressions. In particular, there are no anonymous functions and hence no need for multiple phases of inference.
 
-Instead, all `X`<sub>i</sub> are considered unfixed, and a lower-bound inference is made from each argument type `U`<sub>j</sub> of `D` to the corresponding parameter type `T`<sub>j</sub> of `M`. If for any of the `X`<sub>i</sub> no bounds were found, type inference fails. Otherwise, all `X`<sub>i</sub> are fixed to corresponding `S`<sub>i</sub>, which are the result of type inference.
+Instead, all `Xi` are considered unfixed, and a lower-bound inference is made from each argument type `Uj` of `D` to the corresponding parameter type `Tj` of `M`. If for any of the `Xi` no bounds were found, type inference fails. Otherwise, all `Xi` are fixed to corresponding `Si`, which are the result of type inference.
 
 #### Finding the best common type of a set of expressions
 
@@ -784,9 +775,9 @@ Intuitively, given a set of expressions `E1``…``E`<sub>m</sub> this inference 
 T<sub>r</sub> M<X>(X x<sub>1</sub> … X x<sub>m</sub>)
 ```
 
-with the `E`<sub>i</sub> as arguments.
+with the `Ei` as arguments.
 
-More precisely, the inference starts out with an unfixed type variable `X`. Output type inferences are then made from each `E`<sub>i</sub> to `X`. Finally, `X` is fixed and, if successful, the resulting type `S` is the resulting best common type for the expressions. If no such `S` exists, the expressions have no best common type.
+More precisely, the inference starts out with an unfixed type variable `X`. Output type inferences are then made from each `Ei` to `X`. Finally, `X` is fixed and, if successful, the resulting type `S` is the resulting best common type for the expressions. If no such `S` exists, the expressions have no best common type.
 
 ### Overload resolution
 
@@ -842,7 +833,7 @@ Given an argument list `A` with a set of argument expressions { `E1`, `E`<sub>2<
 
 When performing this evaluation, if `M`<sub>P</sub> or `M`<sub>Q</sub> is applicable in its expanded form, then `P`<sub>X</sub> or `Q`<sub>X</sub> refers to a parameter in the expanded form of the parameter list.
 
-In case the parameter type sequences `{``P1`, `P`<sub>2</sub>, …, `P`<sub>N</sub>`}` and `{``Q1`, `Q`<sub>2</sub>, …, `Q`<sub>N</sub>`}` are equivalent (i.e. each `P`<sub>i</sub> has an identity conversion to the corresponding `Q`<sub>i</sub>), the following tie-breaking rules are applied, in order, to determine the better function member.
+In case the parameter type sequences `{``P1`, `P`<sub>2</sub>, …, `P`<sub>N</sub>`}` and `{``Q1`, `Q`<sub>2</sub>, …, `Q`<sub>N</sub>`}` are equivalent (i.e. each `Pi` has an identity conversion to the corresponding `Qi`), the following tie-breaking rules are applied, in order, to determine the better function member.
 
 *  If `M`<sub>P</sub> is a non-generic method and `M`<sub>Q</sub> is a generic method, then `M`<sub>P</sub> is better than `M`<sub>Q</sub>.
 *  Otherwise, if `M`<sub>P</sub> is applicable in its normal form and `M`<sub>Q</sub> has a `params` array and is applicable only in its expanded form, then `M`<sub>P</sub> is better than `M`<sub>Q</sub>.
@@ -1400,20 +1391,20 @@ C . *identif**i**er* < *typeargs* > ( *expr* )
 C . *identifier* < *typeargs* > ( *expr* , *args* )
 ```
 
-An extension method `C`<sub>i</sub>`.``M`<sub>j</sub> is ***eligible*** if:
+An extension method `Ci``.``Mj` is ***eligible*** if:
 
-*  `C`<sub>i</sub> is a non-generic, non-nested class
-*  The name of `M`<sub>j</sub> is *identifier*
-*  `M`<sub>j</sub> is accessible and applicable when applied to the arguments as a static method as shown above
-*  An implicit identity, reference or boxing conversion exists from *expr* to the type of the first parameter of `M`<sub>j</sub>`.`
+*  `Ci` is a non-generic, non-nested class
+*  The name of `Mj` is *identifier*
+*  `Mj` is accessible and applicable when applied to the arguments as a static method as shown above
+*  An implicit identity, reference or boxing conversion exists from *expr* to the type of the first parameter of `Mj``.`
 
 The search for `C` proceeds as follows:
 
 *  Starting with the closest enclosing namespace declaration, continuing with each enclosing namespace declaration, and ending with the containing compilation unit, successive attempts are made to find a candidate set of extension methods:
 
-If the given namespace or compilation unit directly contains non-generic type declarations `C`<sub>i</sub> with eligible extension methods `M`<sub>j</sub>, then the set of those extension methods is the candidate set.
+If the given namespace or compilation unit directly contains non-generic type declarations `Ci` with eligible extension methods `Mj`, then the set of those extension methods is the candidate set.
 
-If namespaces imported by using namespace directives in the given namespace or compilation unit directly contain non-generic type declarations `C`<sub>i</sub> with eligible extension methods `M`<sub>j</sub>, then the set of those extension methods is the candidate set.
+If namespaces imported by using namespace directives in the given namespace or compilation unit directly contain non-generic type declarations `Ci` with eligible extension methods `Mj`, then the set of those extension methods is the candidate set.
 
 *  If no candidate set is found in any enclosing namespace declaration or compilation unit, a compile-time error occurs.
 *  Otherwise, overload resolution is applied to the candidate set as described in (§7.5.3). If no single best method is found, a compile-time error occurs.
@@ -4714,7 +4705,7 @@ The assignment operators are right-associative, meaning that operations are grou
 
 The `=` operator is called the simple assignment operator.
 
-If the left operand of a simple assignment is of the form `E.P` or `E[E`<sub>i</sub>`]` where `E` has the compile-time type `dynamic`, then the assignment is dynamically bound (§7.2.2). In this case the compile-time type of the assignment expression is `dynamic`, and the resolution described below will take place at run-time based on the run-time type of `E`.
+If the left operand of a simple assignment is of the form `E.P` or `E[Ei``]` where `E` has the compile-time type `dynamic`, then the assignment is dynamically bound (§7.2.2). In this case the compile-time type of the assignment expression is `dynamic`, and the resolution described below will take place at run-time based on the run-time type of `E`.
 
 In a simple assignment, the right operand must be an expression that is implicitly convertible to the type of the left operand. The operation assigns the value of the right operand to the variable, property, or indexer element given by the left operand.
 
@@ -4826,7 +4817,7 @@ the assignments are all invalid, since `r.A` and `r.B` are not variables.
 
 ### Compound assignment
 
-If the left operand of a compound assignment is of the form `E.P` or `E[E`<sub>i</sub>`]` where `E` has the compile-time type `dynamic`, then the assignment is dynamically bound (§7.2.2). In this case the compile-time type of the assignment expression is `dynamic`, and the resolution described below will take place at run-time based on the run-time type of `E`.
+If the left operand of a compound assignment is of the form `E.P` or `E[Ei``]` where `E` has the compile-time type `dynamic`, then the assignment is dynamically bound (§7.2.2). In this case the compile-time type of the assignment expression is `dynamic`, and the resolution described below will take place at run-time based on the run-time type of `E`.
 
 An operation of the form `x`*op*`=``y` is processed by applying binary operator overload resolution (§7.3.4) as if the operation was written `x`*op*`y`. Then,
 

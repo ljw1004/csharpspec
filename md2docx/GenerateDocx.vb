@@ -93,19 +93,25 @@ Class MarkdownSpec
     End Sub
 
     Private Iterator Function Sources() As IEnumerable(Of Tuple(Of String, String))
-        If s IsNot Nothing Then Yield Tuple.Create("", PipeBugEncode(s))
+        If s IsNot Nothing Then Yield Tuple.Create("", BugWorkaroundEncode(s))
         If files IsNot Nothing Then
             For Each fn In files
-                Yield Tuple.Create(fn, PipeBugEncode(File.ReadAllText(fn)))
+                Yield Tuple.Create(fn, BugWorkaroundEncode(File.ReadAllText(fn)))
             Next
         End If
     End Function
 
-    Private Shared Function PipeBugEncode(src As String) As String
+    Private Shared Function BugWorkaroundEncode(src As String) As String
         ' https://github.com/tpetricek/FSharp.Formatting/issues/388
         ' The markdown parser doesn't recognize | inside inlinecode inside table
         ' To work around that, we'll encode this |, then decode it later
+
+        ' https://github.com/tpetricek/FSharp.Formatting/issues/390
+        ' The markdown parser doesn't recognize bullet-chars inside codeblocks inside lists
+        ' To work around that, we'll prepend the line with stuff, and remove it later
+
         Dim lines = src.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+
         For li = 0 To lines.Length - 1
             If Not lines(li).StartsWith("|") Then Continue For
             Dim codes = lines(li).Split("`"c)
@@ -115,11 +121,24 @@ Class MarkdownSpec
             lines(li) = String.Join("`", codes)
         Next
         Dim dst = String.Join(vbCrLf, lines)
-        Return dst
+
+        Dim codeblocks = dst.Split({vbCrLf & "    ```"}, StringSplitOptions.None)
+        For cbi = 1 To codeblocks.Length - 1 Step 2
+            Dim s = codeblocks(cbi)
+            s = s.Replace(vbCrLf & "    *", vbCrLf & "    ceci_n'est_pas_une_*")
+            s = s.Replace(vbCrLf & "    +", vbCrLf & "    ceci_n'est_pas_une_+")
+            s = s.Replace(vbCrLf & "    -", vbCrLf & "    ceci_n'est_pas_une_-")
+            codeblocks(cbi) = s
+        Next
+
+        Return String.Join(vbCrLf & "    ```", codeblocks)
     End Function
 
-    Private Shared Function PipeBugDecode(s As String) As String
-        Return s.Replace("ceci_n'est_pas_une_pipe", "|")
+    Private Shared Function BugWorkaroundDecode(s As String) As String
+        ' This function should be alled on all inline-code and code blocks
+        s = s.Replace("ceci_n'est_pas_une_pipe", "|")
+        s = s.Replace("ceci_n'est_pas_une_", "")
+        Return s
     End Function
 
 
@@ -346,6 +365,7 @@ Class MarkdownSpec
 
             ElseIf md.IsCodeBlock Then
                 Dim mdc = CType(md, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
+                code = BugWorkaroundDecode(code)
                 Dim runs As New List(Of Run), onFirstLine = True
                 Dim lines = Colorize(code, lang)
                 For Each line In lines
@@ -514,14 +534,14 @@ Class MarkdownSpec
                         isFirstParagraph = False
                     ElseIf mdp.IsQuotedBlock OrElse mdp.IsCodeBlock Then
                         Yield New FlatItem With {.Level = level, .HasBullet = False, .IsBulletOrdered = isOrdered, .Paragraph = mdp}
-                        isFirstParagraph = False
-                    ElseIf mdp.IsListBlock Then
-                        For Each subitem In FlattenList(CType(mdp, MarkdownParagraph.ListBlock), level + 1)
-                            Yield subitem
-                        Next
-                        isFirstParagraph = False
-                    Else
-                        Throw New NotImplementedException("Nothing fancy allowed in lists")
+                            isFirstParagraph = False
+                        ElseIf mdp.IsListBlock Then
+                            For Each subitem In FlattenList(CType(mdp, MarkdownParagraph.ListBlock), level + 1)
+                                Yield subitem
+                            Next
+                            isFirstParagraph = False
+                        Else
+                            Throw New NotImplementedException("Nothing fancy allowed in lists")
                     End If
                 Next
             Next
@@ -555,18 +575,18 @@ Class MarkdownSpec
                                                                End Function)
 
                 For Each e In Spans2Elements(spans)
-                        Dim style = If(md.IsStrong, CType(New Bold, OpenXmlElement), New Italic)
-                        Dim run = CType(e, Run)
-                        If run IsNot Nothing Then run.InsertAt(New RunProperties(style), 0)
-                        Yield e
-                    Next
-                    Return
+                    Dim style = If(md.IsStrong, CType(New Bold, OpenXmlElement), New Italic)
+                    Dim run = CType(e, Run)
+                    If run IsNot Nothing Then run.InsertAt(New RunProperties(style), 0)
+                    Yield e
+                Next
+                Return
 
-                ElseIf md.IsInlineCode Then
-                    Dim mdi = CType(md, MarkdownSpan.InlineCode), code = mdi.Item
+            ElseIf md.IsInlineCode Then
+                Dim mdi = CType(md, MarkdownSpan.InlineCode), code = mdi.Item
 
-                    Dim txt As New Text(PipeBugDecode(code)) With {.Space = SpaceProcessingModeValues.Preserve}
-                    Dim props As New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})
+                Dim txt As New Text(BugWorkaroundDecode(code)) With {.Space = SpaceProcessingModeValues.Preserve}
+                Dim props As New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})
                     Dim run As New Run(txt) With {.RunProperties = props}
                     Yield run
                     Return
