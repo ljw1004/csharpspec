@@ -102,16 +102,11 @@ Class MarkdownSpec
     End Function
 
     Private Shared Function BugWorkaroundEncode(src As String) As String
+        Dim lines = src.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
+
         ' https://github.com/tpetricek/FSharp.Formatting/issues/388
         ' The markdown parser doesn't recognize | inside inlinecode inside table
         ' To work around that, we'll encode this |, then decode it later
-
-        ' https://github.com/tpetricek/FSharp.Formatting/issues/390
-        ' The markdown parser doesn't recognize bullet-chars inside codeblocks inside lists
-        ' To work around that, we'll prepend the line with stuff, and remove it later
-
-        Dim lines = src.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None)
-
         For li = 0 To lines.Length - 1
             If Not lines(li).StartsWith("|") Then Continue For
             Dim codes = lines(li).Split("`"c)
@@ -120,13 +115,40 @@ Class MarkdownSpec
             Next
             lines(li) = String.Join("`", codes)
         Next
-        Dim dst = String.Join(vbCrLf, lines)
 
-        Dim codeblocks = dst.Split({vbCrLf & "    ```"}, StringSplitOptions.None)
+        ' https://github.com/tpetricek/FSharp.Formatting/issues/347
+        ' The markdown parser overly indents a level1 paragraph if it follows a level2 bullet
+        ' To work around that, we'll call out now, then unindent it later
+        Dim state = 0 ' 1=found.level1, 2=found.level2
+        For li = 0 To lines.Length - 2
+            If lines(li).StartsWith("*  ") Then
+                state = 1
+                If String.IsNullOrWhiteSpace(lines(li + 1)) Then li += 1
+            ElseIf (state = 1 OrElse state = 2) AndAlso lines(li).StartsWith("   * ") Then
+                state = 2
+                If String.IsNullOrWhiteSpace(lines(li + 1)) Then li += 1
+            ElseIf state = 2 AndAlso lines(li).StartsWith("      ") AndAlso lines(li).Length > 6 AndAlso lines(li)(6) <> " "c Then
+                state = 2
+                If String.IsNullOrWhiteSpace(lines(li + 1)) Then li += 1
+            ElseIf state = 2 AndAlso lines(li).StartsWith("   ") AndAlso lines(li).Length > 3 AndAlso lines(li)(3) <> " "c Then
+                lines(li) = "   ceci-n'est-pas-une-indent" & lines(li).Substring(3)
+                state = 0
+            Else
+                state = 0
+            End If
+        Next
+
+
+        src = String.Join(vbCrLf, lines)
+
+        ' https://github.com/tpetricek/FSharp.Formatting/issues/390
+        ' The markdown parser doesn't recognize bullet-chars inside codeblocks inside lists
+        ' To work around that, we'll prepend the line with stuff, and remove it later
+        Dim codeblocks = src.Split({vbCrLf & "    ```"}, StringSplitOptions.None)
         For cbi = 1 To codeblocks.Length - 1 Step 2
             Dim s = codeblocks(cbi)
             s = s.Replace(vbCrLf & "    *", vbCrLf & "    ceci_n'est_pas_une_*")
-            s = s.Replace(vbCrLf & "    +", vbCrLf & "    ceci_n'est_pas_une_+")
+                s = s.Replace(vbCrLf & "    +", vbCrLf & "    ceci_n'est_pas_une_+")
             s = s.Replace(vbCrLf & "    -", vbCrLf & "    ceci_n'est_pas_une_-")
             codeblocks(cbi) = s
         Next
@@ -141,6 +163,20 @@ Class MarkdownSpec
         Return s
     End Function
 
+    Private Shared Function BugWorkaroundIndent(ByRef mdp As MarkdownParagraph, level As Integer) As Integer
+        If Not mdp.IsParagraph Then Return level
+        Dim p = CType(mdp, MarkdownParagraph.Paragraph)
+        Dim spans = p.Item
+        If spans.Count = 0 OrElse Not spans(0).IsLiteral Then Return level
+        Dim literal = CType(spans(0), MarkdownSpan.Literal)
+        If Not literal.Item.StartsWith("ceci-n'est-pas-une-indent") Then Return level
+        '
+        Dim literal2 = MarkdownSpan.NewLiteral(literal.Item.Substring(25))
+        Dim spans2 = Microsoft.FSharp.Collections.FSharpList(Of MarkdownSpan).Cons(literal2, spans.Tail)
+        Dim p2 = MarkdownParagraph.NewParagraph(spans2)
+        mdp = p2
+        Return 0
+    End Function
 
     Function FindToc(body As Body, ByRef iFirst As Integer, ByRef iLast As Integer, ByRef instr As String, ByRef secBreak As Paragraph) As Boolean
         iFirst = -1 : iLast = -1 : instr = Nothing : secBreak = Nothing
@@ -360,6 +396,18 @@ Class MarkdownSpec
                         For Each p In Paragraph2Paragraphs(content)
                             Yield p
                         Next
+                    ElseIf content.IsTableBlock Then
+                        For Each p In Paragraph2Paragraphs(content)
+                            Dim table = TryCast(p, Table)
+                            If table Is Nothing Then Yield p : Continue For
+                            Dim tprops = table.GetFirstChild(Of TableProperties)
+                            Dim tindent = tprops?.GetFirstChild(Of TableIndentation)
+                            If tindent Is Nothing Then Throw New Exception("Ooops! Table is missing indentation")
+                            tindent.Width = CInt(calcIndent(item.Level))
+                            Yield table
+                        Next
+                    Else
+                        Throw New Exception("Unexpected item in list")
                     End If
                 Next
 
@@ -518,7 +566,6 @@ Class MarkdownSpec
                 Dim level = item.Level, isItemOrdered = item.IsBulletOrdered, content = item.Paragraph
                 If isOrdered.ContainsKey(level) AndAlso isOrdered(level) <> isItemOrdered Then Throw New NotImplementedException("List can't mix ordered and unordered items at same level")
                 If Not isOrdered.ContainsKey(level) Then isOrdered(level) = isItemOrdered
-                If Not content.IsParagraph AndAlso Not content.IsSpan AndAlso Not content.IsQuotedBlock AndAlso Not content.IsCodeBlock Then Throw New NotImplementedException("List can only have text, quoted-blocks and code-blocks")
                 If level > 3 Then Throw New Exception("Can't have more than 4 levels in a list")
             Next
             Return flat
@@ -530,18 +577,22 @@ Class MarkdownSpec
                 Dim isFirstParagraph = True
                 For Each mdp In mdpars
                     If mdp.IsParagraph OrElse mdp.IsSpan Then
-                        Yield New FlatItem With {.Level = level, .HasBullet = isFirstParagraph, .IsBulletOrdered = isOrdered, .Paragraph = mdp}
+                        Dim buglevel = BugWorkaroundIndent(mdp, level)
+                        Yield New FlatItem With {.Level = buglevel, .HasBullet = isFirstParagraph, .IsBulletOrdered = isOrdered, .Paragraph = mdp}
                         isFirstParagraph = False
                     ElseIf mdp.IsQuotedBlock OrElse mdp.IsCodeBlock Then
                         Yield New FlatItem With {.Level = level, .HasBullet = False, .IsBulletOrdered = isOrdered, .Paragraph = mdp}
-                            isFirstParagraph = False
-                        ElseIf mdp.IsListBlock Then
-                            For Each subitem In FlattenList(CType(mdp, MarkdownParagraph.ListBlock), level + 1)
-                                Yield subitem
-                            Next
-                            isFirstParagraph = False
-                        Else
-                            Throw New NotImplementedException("Nothing fancy allowed in lists")
+                        isFirstParagraph = False
+                    ElseIf mdp.IsListBlock Then
+                        For Each subitem In FlattenList(CType(mdp, MarkdownParagraph.ListBlock), level + 1)
+                            Yield subitem
+                        Next
+                        isFirstParagraph = False
+                    ElseIf mdp.IsTableBlock Then
+                        Yield New FlatItem With {.Level = level, .HasBullet = isFirstParagraph, .IsBulletOrdered = isOrdered, .Paragraph = mdp}
+                        isFirstParagraph = False
+                    Else
+                        Throw New NotImplementedException("Nothing fancy allowed in lists")
                     End If
                 Next
             Next

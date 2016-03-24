@@ -669,11 +669,6 @@ element_access
     : primary_no_array_creation_expression '[' expression_list ']'
     ;
 
-expression_list
-    : expression
-    | expression_list ',' expression
-    ;
-
 this_access
     : 'this'
     ;
@@ -733,6 +728,11 @@ element_initializer_list
 element_initializer
     : non_assignment_expression
     | '{' expression_list '}'
+    ;
+
+expression_list
+    : expression
+    | expression_list ',' expression
     ;
 
 array_creation_expression

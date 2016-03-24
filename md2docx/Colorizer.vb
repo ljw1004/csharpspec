@@ -186,7 +186,9 @@ Module Colorizer
         ' This code is based on that of Shiv Kumar at http://www.matlus.com/c-to-html-syntax-highlighter-using-roslyn/
 
 
-        Public Shared Function Colorize(code As String) As IEnumerable(Of ColorizedWord)
+        Public Shared Iterator Function Colorize(code As String) As IEnumerable(Of ColorizedWord)
+            code = code.Replace("...", "___threedots___") ' because ... is unusually hard to parse
+            '
             Dim ref_mscorlib = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
             Dim ref_system = MetadataReference.CreateFromFile(GetType(Uri).Assembly.Location)
             Dim ref_systemcore = MetadataReference.CreateFromFile(GetType(Enumerable).Assembly.Location)
@@ -200,7 +202,13 @@ Module Colorizer
             Dim semanticModel = compilation.GetSemanticModel(syntaxTree, True)
             Dim w As New CSharpColorizer With {.sm = semanticModel}
             w.Visit(syntaxTree.GetRoot)
-            Return w.words
+            '
+            For Each word In w.words
+                If word Is Nothing Then Yield word : Continue For
+                If word.Text = "___threedots___" Then Yield New ColorizedWord With {.Text = "..."} : Continue For
+                If word.Text.Contains("___threedots___") Then word.Text = word.Text.Replace("___threedots___", "...") : Yield word : Continue For
+                Yield word
+            Next
         End Function
 
         Private words As New List(Of ColorizedWord)
@@ -246,6 +254,8 @@ Module Colorizer
                     r = Col(token.Text, "PlainText")
                 ElseIf name.Identifier.Text = "var" Then
                     r = Col(token.Text, "Keyword")
+                ElseIf {"C", "T", "U", "V"}.contains(name.Identifier.Text) Then
+                    r = Col(token.Text, "UserType")
                 End If
             ElseIf token.KindCS = CSharp.SyntaxKind.IdentifierToken AndAlso TypeOf token.Parent Is CSharp.Syntax.TypeDeclarationSyntax Then
                 Dim name = CType(token.Parent, CSharp.Syntax.TypeDeclarationSyntax)
@@ -258,10 +268,16 @@ Module Colorizer
             If r Is Nothing Then
                 If token.Parent.KindCS = CSharp.SyntaxKind.EnumDeclaration Then
                     r = Col(token.Text, "UserType")
+                ElseIf TryCast(token.Parent, CSharp.Syntax.GenericNameSyntax)?.Identifier = token Then
+                    If TryCast(token.Parent.Parent, CSharp.Syntax.InvocationExpressionSyntax)?.Expression Is token.Parent OrElse ' e.g. "G<X>(1)"
+                            TryCast(token.Parent.Parent.Parent, CSharp.Syntax.InvocationExpressionSyntax)?.Expression Is token.Parent.Parent Then ' e.g. e.G<X>(1)
+                        r = Col(token.Text, "PlainText")
+                    Else ' all other G<A> will assume that G is a type
+                        r = Col(token.Text, "UserType")
+                    End If
                 ElseIf token.Parent.KindCS = CSharp.SyntaxKind.GenericName Then
                     If token.Parent.Parent.KindCS = CSharp.SyntaxKind.VariableDeclaration OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the first HashSet in this case
-                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression OrElse ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
-                        TryCast(token.Parent, CSharp.Syntax.GenericNameSyntax)?.Identifier = token Then ' e.g. "Box<int>" the word Box
+                        token.Parent.Parent.KindCS = CSharp.SyntaxKind.ObjectCreationExpression Then ' e.g. "private static readonly HashSet patternHashSet = New HashSet();" the second HashSet in this case
                         r = Col(token.Text, "UserType")
                     End If
                 ElseIf token.Parent.KindCS = CSharp.SyntaxKind.IdentifierName Then
