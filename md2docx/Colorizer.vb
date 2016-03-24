@@ -188,6 +188,7 @@ Module Colorizer
 
         Public Shared Iterator Function Colorize(code As String) As IEnumerable(Of ColorizedWord)
             code = code.Replace("...", "___threedots___") ' because ... is unusually hard to parse
+            code = code.Replace("from *", "from ___linq_transparent_asterisk___") ' transparent identifier doesn't parse
             '
             Dim ref_mscorlib = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
             Dim ref_system = MetadataReference.CreateFromFile(GetType(Uri).Assembly.Location)
@@ -205,8 +206,10 @@ Module Colorizer
             '
             For Each word In w.words
                 If word Is Nothing Then Yield word : Continue For
+                If word.Text = "___linq_transparent_asterisk___" Then Yield New ColorizedWord With {.Text = "*"} : Continue For
                 If word.Text = "___threedots___" Then Yield New ColorizedWord With {.Text = "..."} : Continue For
-                If word.Text.Contains("___threedots___") Then word.Text = word.Text.Replace("___threedots___", "...") : Yield word : Continue For
+                word.Text = word.Text.Replace("___linq_transparent_asterisk___", "*")
+                word.Text = word.Text.Replace("___threedots___", "...")
                 Yield word
             Next
         End Function

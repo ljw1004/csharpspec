@@ -35,17 +35,9 @@ Module Module1
                      Where IO.File.Exists(url) ' TODO: remove this
                      Select url).ToList.Distinct
         If files.Count = 0 Then files = {ifn}
-        'Dim md = MarkdownSpec.ReadFiles(files)
+        Dim md = MarkdownSpec.ReadFiles(files)
 
-        ' TODO: figure out how to colorize transparent identifiers
-        Dim md = MarkdownSpec.ReadString("```csharp
-from * in ( e1 ) . SelectMany( x1 => e2 , ( x1 , x2 ) => new { x1 , x2 } )
-
-from * in customers.
-    SelectMany(c => c.Orders, (c,o) => new { c, o })
-orderby o.Total descending
-select new { c.Name, o.Total }
-")
+        'Dim md = MarkdownSpec.ReadString("")
 
 
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has
