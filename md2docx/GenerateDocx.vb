@@ -394,6 +394,11 @@ Class MarkdownSpec
                         End If
                     ElseIf content.IsQuotedBlock OrElse content.IsCodeBlock Then
                         For Each p In Paragraph2Paragraphs(content)
+                            Dim props = p.GetFirstChild(Of ParagraphProperties)
+                            If props Is Nothing Then props = New ParagraphProperties : p.InsertAt(props, 0)
+                            Dim indent = props?.GetFirstChild(Of Indentation)
+                            If indent Is Nothing Then indent = New Indentation : props.Append(indent)
+                            indent.Left = calcIndent(item.Level)
                             Yield p
                         Next
                     ElseIf content.IsTableBlock Then

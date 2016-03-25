@@ -807,6 +807,7 @@ unary_expression
     | pre_increment_expression
     | pre_decrement_expression
     | cast_expression
+    | await_expression
     | unary_expression_unsafe
     ;
 
@@ -820,6 +821,10 @@ pre_decrement_expression
 
 cast_expression
     : '(' type ')' unary_expression
+    ;
+
+await_expression
+    : 'await' unary_expression
     ;
 
 multiplicative_expression
@@ -1059,8 +1064,6 @@ boolean_expression
 
 // Statements
 
-// TODO
-
 statement
     : labeled_statement
     | declaration_statement
@@ -1088,8 +1091,7 @@ block
     ;
 
 statement_list
-    : statement
-    | statement_list statement
+    : statement+
     ;
 
 empty_statement
@@ -1163,21 +1165,11 @@ switch_statement
     ;
 
 switch_block
-    : '{' switch_sections? '}'
-    ;
-
-switch_sections
-    : switch_section
-    | switch_sections switch_section
+    : '{' switch_section* '}'
     ;
 
 switch_section
-    : switch_labels statement_list
-    ;
-
-switch_labels
-    : switch_label
-    | switch_labels switch_label
+    : switch_label+ statement_list
     ;
 
 switch_label
@@ -1263,13 +1255,8 @@ try_statement
     ;
 
 catch_clauses
-    : specific_catch_clauses general_catch_clause?
-    | specific_catch_clauses? general_catch_clause
-    ;
-
-specific_catch_clauses
-    : specific_catch_clause
-    | specific_catch_clauses specific_catch_clause
+    : specific_catch_clause+ general_catch_clause?
+    | specific_catch_clause* general_catch_clause
     ;
 
 specific_catch_clause
@@ -1312,8 +1299,9 @@ yield_statement
 
 
 
-//B.2.6 Namespaces
-    ;
+// Namespaces
+
+// TODO
 
 compilation_unit
     : extern_alias_directives? using_directives? global_attributes? namespace_member_declarations?
@@ -1384,7 +1372,6 @@ qualified_alias_member
 
 
 //B.2.7 Classes
-    ;
 
 class_declaration
     : attributes? class_modifiers? 'partial'? 'class' identifier type_parameter_list? class_base? type_parameter_constraints_clauses? class_body ';'?
