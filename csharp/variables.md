@@ -1,8 +1,8 @@
-# Variables
+﻿# Variables
 
 Variables represent storage locations. Every variable has a type that determines what values can be stored in the variable. C# is a type-safe language, and the C# compiler guarantees that values stored in variables are always of the appropriate type. The value of a variable can be changed through assignment or through use of the `++` and `--` operators.
 
-A variable must be ***definitely assigned*** (§5.3) before its value can be obtained.
+A variable must be ***definitely assigned*** ([Definite assignment](variables.md#definite-assignment)) before its value can be obtained.
 
 As described in the following sections, variables are either ***initially assigned*** or ***initially unassigned***. An initially assigned variable has a well-defined initial value and is always considered definitely assigned. An initially unassigned variable has no initial value. For an initially unassigned variable to be considered definitely assigned at a certain location, an assignment to the variable must occur in every possible execution path leading to that location.
 
@@ -27,9 +27,9 @@ class A
 
 ### Static variables
 
-A field declared with the `static` modifier is called a ***static variable***. A static variable comes into existence before execution of the static constructor (§10.12) for its containing type, and ceases to exist when the associated application domain ceases to exist.
+A field declared with the `static` modifier is called a ***static variable***. A static variable comes into existence before execution of the static constructor ([Static constructors](classes.md#static-constructors)) for its containing type, and ceases to exist when the associated application domain ceases to exist.
 
-The initial value of a static variable is the default value (§5.2) of the variable's type.
+The initial value of a static variable is the default value ([Default values](variables.md#default-values)) of the variable's type.
 
 For purposes of definite assignment checking, a static variable is considered initially assigned.
 
@@ -41,7 +41,7 @@ A field declared without the `static` modifier is called an ***instance variable
 
 An instance variable of a class comes into existence when a new instance of that class is created, and ceases to exist when there are no references to that instance and the instance's destructor (if any) has executed.
 
-The initial value of an instance variable of a class is the default value (§5.2) of the variable's type.
+The initial value of an instance variable of a class is the default value ([Default values](variables.md#default-values)) of the variable's type.
 
 For the purpose of definite assignment checking, an instance variable of a class is considered initially assigned.
 
@@ -55,7 +55,7 @@ The initial assignment state of an instance variable of a struct is the same as 
 
 The elements of an array come into existence when an array instance is created, and cease to exist when there are no references to that array instance.
 
-The initial value of each of the elements of an array is the default value (§5.2) of the type of the array elements.
+The initial value of each of the elements of an array is the default value ([Default values](variables.md#default-values)) of the type of the array elements.
 
 For the purpose of definite assignment checking, an array element is considered initially assigned.
 
@@ -63,7 +63,7 @@ For the purpose of definite assignment checking, an array element is considered 
 
 A parameter declared without a `ref` or `out` modifier is a ***value parameter***.
 
-A value parameter comes into existence upon invocation of the function member (method, instance constructor, accessor, or operator) or anonymous function to which the parameter belongs, and is initialized with the value of the argument given in the invocation. A value parameter normally ceases to exist upon return of the function member or anonymous function. However, if the value parameter is captured by an anonymous function (§7.15), its life time extends at least until the delegate or expression tree created from that anonymous function is eligible for garbage collection.
+A value parameter comes into existence upon invocation of the function member (method, instance constructor, accessor, or operator) or anonymous function to which the parameter belongs, and is initialized with the value of the argument given in the invocation. A value parameter normally ceases to exist upon return of the function member or anonymous function. However, if the value parameter is captured by an anonymous function ([Anonymous function expressions](expressions.md#anonymous-function-expressions)), its life time extends at least until the delegate or expression tree created from that anonymous function is eligible for garbage collection.
 
 For the purpose of definite assignment checking, a value parameter is considered initially assigned.
 
@@ -73,12 +73,12 @@ A parameter declared with a `ref` modifier is a ***reference parameter***.
 
 A reference parameter does not create a new storage location. Instead, a reference parameter represents the same storage location as the variable given as the argument in the function member or anonymous function invocation. Thus, the value of a reference parameter is always the same as the underlying variable.
 
-The following definite assignment rules apply to reference parameters. Note the different rules for output parameters described in §5.1.6.
+The following definite assignment rules apply to reference parameters. Note the different rules for output parameters described in [Output parameters](variables.md#output-parameters).
 
-*  A variable must be definitely assigned (§5.3) before it can be passed as a reference parameter in a function member or delegate invocation.
+*  A variable must be definitely assigned ([Definite assignment](variables.md#definite-assignment)) before it can be passed as a reference parameter in a function member or delegate invocation.
 *  Within a function member or anonymous function, a reference parameter is considered initially assigned.
 
-Within an instance method or instance accessor of a struct type, the `this` keyword behaves exactly as a reference parameter of the struct type (§7.6.7).
+Within an instance method or instance accessor of a struct type, the `this` keyword behaves exactly as a reference parameter of the struct type ([This access](expressions.md#this-access)).
 
 ### Output parameters
 
@@ -86,32 +86,32 @@ A parameter declared with an `out` modifier is an ***output parameter***.
 
 An output parameter does not create a new storage location. Instead, an output parameter represents the same storage location as the variable given as the argument in the function member or delegate invocation. Thus, the value of an output parameter is always the same as the underlying variable.
 
-The following definite assignment rules apply to output parameters. Note the different rules for reference parameters described in §5.1.5.
+The following definite assignment rules apply to output parameters. Note the different rules for reference parameters described in [Reference parameters](variables.md#reference-parameters).
 
 *  A variable need not be definitely assigned before it can be passed as an output parameter in a function member or delegate invocation.
 *  Following the normal completion of a function member or delegate invocation, each variable that was passed as an output parameter is considered assigned in that execution path.
 *  Within a function member or anonymous function, an output parameter is considered initially unassigned.
-*  Every output parameter of a function member or anonymous function must be definitely assigned (§5.3) before the function member or anonymous function returns normally.
+*  Every output parameter of a function member or anonymous function must be definitely assigned ([Definite assignment](variables.md#definite-assignment)) before the function member or anonymous function returns normally.
 
-Within an instance constructor of a struct type, the `this` keyword behaves exactly as an output parameter of the struct type (§7.6.7).
+Within an instance constructor of a struct type, the `this` keyword behaves exactly as an output parameter of the struct type ([This access](expressions.md#this-access)).
 
 ### Local variables
 
 A ***local variable*** is declared by a *local_variable_declaration*, which may occur in a *block*, a *for_statement*, a *switch_statement* or a *using_statement*; or by a *foreach_statement* or a *specific_catch_clause* for a *try_statement*.
 
-The lifetime of a local variable is the portion of program execution during which storage is guaranteed to be reserved for it. This lifetime extends at least from entry into the *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause* with which it is associated, until execution of that *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause* ends in any way. (Entering an enclosed *block* or calling a method suspends, but does not end, execution of the current *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause*.) If the local variable is captured by an anonymous function (§7.15.5.1), its lifetime extends at least until the delegate or expression tree created from the anonymous function, along with any other objects that come to reference the captured variable, are eligible for garbage collection.
+The lifetime of a local variable is the portion of program execution during which storage is guaranteed to be reserved for it. This lifetime extends at least from entry into the *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause* with which it is associated, until execution of that *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause* ends in any way. (Entering an enclosed *block* or calling a method suspends, but does not end, execution of the current *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause*.) If the local variable is captured by an anonymous function ([Captured outer variables](expressions.md#captured-outer-variables)), its lifetime extends at least until the delegate or expression tree created from the anonymous function, along with any other objects that come to reference the captured variable, are eligible for garbage collection.
 
 If the parent *block*, *for_statement*, *switch_statement*, *using_statement*, *foreach_statement*, or *specific_catch_clause* is entered recursively, a new instance of the local variable is created each time, and its *local_variable_initializer*, if any, is evaluated each time.
 
-A local variable introduced by a *local_variable_declaration* is not automatically initialized and thus has no default value. For the purpose of definite assignment checking, a local variable introduced by a *local_variable_declaration* is considered initially unassigned. A *local_variable_declaration* may include a *local_variable_initializer*, in which case the variable is considered definitely assigned only after the initializing expression (§5.3.3.4).
+A local variable introduced by a *local_variable_declaration* is not automatically initialized and thus has no default value. For the purpose of definite assignment checking, a local variable introduced by a *local_variable_declaration* is considered initially unassigned. A *local_variable_declaration* may include a *local_variable_initializer*, in which case the variable is considered definitely assigned only after the initializing expression ([Declaration statements](variables.md#declaration-statements)).
 
-Within the scope of a local variableintroduced by a *local_variable_declaration*, it is a compile-time error to refer to that local variable in a textual position that precedes its *local_variable_declarator*. If the local variable declaration is implicit (§8.5.1), it is also an error to refer to the variable within its *local_variable_declarator*.
+Within the scope of a local variableintroduced by a *local_variable_declaration*, it is a compile-time error to refer to that local variable in a textual position that precedes its *local_variable_declarator*. If the local variable declaration is implicit ([Local variable declarations](statements.md#local-variable-declarations)), it is also an error to refer to the variable within its *local_variable_declarator*.
 
 A local variable introduced by a *foreach_statement* or a *specific_catch_clause* is considered definitely assigned in its entire scope.
 
 The actual lifetime of a local variable is implementation-dependent. For example, a compiler might statically determine that a local variable in a block is only used for a small portion of that block. Using this analysis, the compiler could generate code that results in the variable's storage having a shorter lifetime than its containing block.
 
-The storage referred to by a local reference variable is reclaimed independently of the lifetime of that local reference variable (§3.9).
+The storage referred to by a local reference variable is reclaimed independently of the lifetime of that local reference variable ([Automatic memory management](basic-concepts.md#automatic-memory-management)).
 
 ## Default values
 
@@ -123,22 +123,22 @@ The following categories of variables are automatically initialized to their def
 
 The default value of a variable depends on the type of the variable and is determined as follows:
 
-*  For a variable of a *value_type*, the default value is the same as the value computed by the *value_type*'s default constructor (§4.1.2).
+*  For a variable of a *value_type*, the default value is the same as the value computed by the *value_type*'s default constructor ([Default constructors](types.md#default-constructors)).
 *  For a variable of a *reference_type*, the default value is `null`.
 
 Initialization to default values is typically done by having the memory manager or garbage collector initialize memory to all-bits-zero before it is allocated for use. For this reason, it is convenient to use all-bits-zero to represent the null reference.
 
 ## Definite assignment
 
-At a given location in the executable code of a function member, a variable is said to be ***definitely assigned*** if the compiler can prove, by a particular static flow analysis (§5.3.3), that the variable has been automatically initialized or has been the target of at least one assignment. Informally stated, the rules of definite assignment are:
+At a given location in the executable code of a function member, a variable is said to be ***definitely assigned*** if the compiler can prove, by a particular static flow analysis ([Precise rules for determining definite assignment](variables.md#precise-rules-for-determining-definite-assignment)), that the variable has been automatically initialized or has been the target of at least one assignment. Informally stated, the rules of definite assignment are:
 
-*  An initially assigned variable (§5.3.1) is always considered definitely assigned.
-*  An initially unassigned variable (§5.3.2) is considered definitely assigned at a given location if all possible execution paths leading to that location contain at least one of the following:
-    * A simple assignment (§7.17.1) in which the variable is the left operand.
-    * An invocation expression (§7.6.5) or object creation expression (§7.6.10.1) that passes the variable as an output parameter.
-    * For a local variable, a local variable declaration (§8.5.1) that includes a variable initializer.
+*  An initially assigned variable ([Initially assigned variables](variables.md#initially-assigned-variables)) is always considered definitely assigned.
+*  An initially unassigned variable ([Initially unassigned variables](variables.md#initially-unassigned-variables)) is considered definitely assigned at a given location if all possible execution paths leading to that location contain at least one of the following:
+    * A simple assignment ([Simple assignment](expressions.md#simple-assignment)) in which the variable is the left operand.
+    * An invocation expression ([Invocation expressions](expressions.md#invocation-expressions)) or object creation expression ([Object creation expressions](expressions.md#object-creation-expressions)) that passes the variable as an output parameter.
+    * For a local variable, a local variable declaration ([Local variable declarations](statements.md#local-variable-declarations)) that includes a variable initializer.
 
-The formal specification underlying the above informal rules is described in §5.3.1, §5.3.2, and §5.3.3.
+The formal specification underlying the above informal rules is described in [Initially assigned variables](variables.md#initially-assigned-variables), [Initially unassigned variables](variables.md#initially-unassigned-variables), and [Precise rules for determining definite assignment](variables.md#precise-rules-for-determining-definite-assignment).
 
 The definite assignment states of instance variables of a *struct_type* variable are tracked individually as well as collectively. In additional to the rules above, the following rules apply to *struct_type* variables and their instance variables:
 
@@ -182,7 +182,7 @@ In order to determine that each used variable is definitely assigned, the compil
 The compiler processes the body of each function member that has one or more initially unassigned variables. For each initially unassigned variable *v*, the compiler determines a ***definite assignment state*** for *v* at each of the following points in the function member:
 
 *  At the beginning of each statement
-*  At the end point (§8.1) of each statement
+*  At the end point ([End points and reachability](statements.md#end-points-and-reachability)) of each statement
 *  On each arc which transfers control to another statement or to the end point of a statement
 *  At the beginning of each expression
 *  At the end of each expression
@@ -200,8 +200,8 @@ The following rules govern how the state of a variable *v* is determined at each
 
 *  *v* is not definitely assigned at the beginning of a function member body.
 *  *v* is definitely assigned at the beginning of any unreachable statement.
-*  The definite assignment state of *v* at the beginning of any other statement is determined by checking the definite assignment state of *v* on all control flow transfers that target the beginning of that statement. If (and only if) *v* is definitely assigned on all such control flow transfers, then *v* is definitely assigned at the beginning of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability (§8.1).
-*  The definite assignment state of *v* at the end point of a block, `checked`, `unchecked`, `if`, `while`, `do`, `for`, `foreach`, `lock`, `using`, or `switch` statement is determined by checking the definite assignment state of *v* on all control flow transfers that target the end point of that statement. If *v* is definitely assigned on all such control flow transfers, then *v* is definitely assigned at the end point of the statement. Otherwise; *v* is not definitely assigned at the end point of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability (§8.1).
+*  The definite assignment state of *v* at the beginning of any other statement is determined by checking the definite assignment state of *v* on all control flow transfers that target the beginning of that statement. If (and only if) *v* is definitely assigned on all such control flow transfers, then *v* is definitely assigned at the beginning of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability ([End points and reachability](statements.md#end-points-and-reachability)).
+*  The definite assignment state of *v* at the end point of a block, `checked`, `unchecked`, `if`, `while`, `do`, `for`, `foreach`, `lock`, `using`, or `switch` statement is determined by checking the definite assignment state of *v* on all control flow transfers that target the end point of that statement. If *v* is definitely assigned on all such control flow transfers, then *v* is definitely assigned at the end point of the statement. Otherwise; *v* is not definitely assigned at the end point of the statement. The set of possible control flow transfers is determined in the same way as for checking statement reachability ([End points and reachability](statements.md#end-points-and-reachability)).
 
 #### Block statements, checked, and unchecked statements
 
@@ -366,7 +366,7 @@ try {
 finally finally_block
 ```
 
-The following example demonstrates how the different blocks of a `try` statement (§8.10) affect definite assignment.
+The following example demonstrates how the different blocks of a `try` statement ([The try statement](statements.md#the-try-statement)) affect definite assignment.
 ```csharp
 class A
 {
@@ -441,13 +441,13 @@ yield return expr ;
 
 #### General rules for simple expressions
 
-The following rule applies to these kinds of expressions: literals (§7.6.1), simple names (§7.6.2), member access expressions (§7.6.4), non-indexed base access expressions (§7.6.8), `typeof` expressions (§7.6.11), and default value expressions (§7.6.13).
+The following rule applies to these kinds of expressions: literals ([Literals](expressions.md#literals)), simple names ([Simple names](expressions.md#simple-names)), member access expressions ([Member access](expressions.md#member-access)), non-indexed base access expressions ([Base access](expressions.md#base-access)), `typeof` expressions ([The typeof operator](expressions.md#the-typeof-operator)), and default value expressions ([Default value expressions](expressions.md#default-value-expressions)).
 
 *  The definite assignment state of *v* at the end of such an expression is the same as the definite assignment state of *v* at the beginning of the expression.
 
 #### General rules for expressions with embedded expressions
 
-The following rules apply to these kinds of expressions: parenthesized expressions (§7.6.3), element access expressions (§7.6.6), base access expressions with indexing (§7.6.8), increment and decrement expressions (§7.6.9, §7.7.5), cast expressions (§7.7.6), unary `+`, `-`, `~`, `*` expressions, binary `+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `is`, `as`, `&`, `|`, `^` expressions (§7.8, §7.9, §7.10, §7.11), compound assignment expressions (§7.17.2), `checked` and `unchecked` expressions (§7.6.12), plus array and delegate creation expressions (§7.6.10).
+The following rules apply to these kinds of expressions: parenthesized expressions ([Parenthesized expressions](expressions.md#parenthesized-expressions)), element access expressions ([Element access](expressions.md#element-access)), base access expressions with indexing ([Base access](expressions.md#base-access)), increment and decrement expressions ([Postfix increment and decrement operators](expressions.md#postfix-increment-and-decrement-operators), [Prefix increment and decrement operators](expressions.md#prefix-increment-and-decrement-operators)), cast expressions ([Cast expressions](expressions.md#cast-expressions)), unary `+`, `-`, `~`, `*` expressions, binary `+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `is`, `as`, `&`, `|`, `^` expressions ([Arithmetic operators](expressions.md#arithmetic-operators), [Shift operators](expressions.md#shift-operators), [Relational and type-testing operators](expressions.md#relational-and-type-testing-operators), [Logical operators](expressions.md#logical-operators)), compound assignment expressions ([Compound assignment](expressions.md#compound-assignment)), `checked` and `unchecked` expressions ([The checked and unchecked operators](expressions.md#the-checked-and-unchecked-operators)), plus array and delegate creation expressions ([The new operator](expressions.md#the-new-operator)).
 
 Each of these expressions has one or more sub-expressions that are unconditionally evaluated in a fixed order. For example, the binary `%` operator evaluates the left hand side of the operator, then the right hand side. An indexing operation evaluates the indexed expression, and then evaluates each of the index expressions, in order from left to right. For an expression *expr*, which has sub-expressions *e1, e2, ..., eN*, evaluated in that order:
 
@@ -472,7 +472,7 @@ new type ( arg1 , arg2 , ... , argN )
 *  For each argument *argi*, the definite assignment state of *v* after *argi* is determined by the normal expression rules, ignoring any `ref` or `out` modifiers.
 *  For each argument *argi* for any *i* greater than one, the definite assignment state of *v* before *argi* is the same as the state of *v* after the previous *arg*.
 *  If the variable *v* is passed as an `out` argument (i.e., an argument of the form `out v`) in any of the arguments, then the state of *v* after *expr* is definitely assigned. Otherwise; the state of *v* after *expr* is the same as the state of *v* after *argN*.
-*  For array initializers (§7.6.10.4), object initializers (§7.6.10.2), collection initializers (§7.6.10.3) and anonymous object initializers (§7.6.10.6), the definite assignment state is determined by the expansion that these constructs are defined in terms of.
+*  For array initializers ([Array creation expressions](expressions.md#array-creation-expressions)), object initializers ([Object initializers](expressions.md#object-initializers)), collection initializers ([Collection initializers](expressions.md#collection-initializers)) and anonymous object initializers ([Anonymous object creation expressions](expressions.md#anonymous-object-creation-expressions)), the definite assignment state is determined by the expansion that these constructs are defined in terms of.
 
 #### Simple assignment expressions
 
@@ -563,7 +563,7 @@ For an expression *expr* of the form `expr_first ?? expr_second`:
 *  The definite assignment state of *v* before *expr_first* is the same as the definite assignment state of *v* before *expr*.
 *  The definite assignment state of *v* before *expr_second* is the same as the definite assignment state of *v* after *expr_first*.
 *  The definite assignment statement of *v* after *expr* is determined by:
-    * If *expr_first* is a constant expression (§7.19) with value null, then the the state of *v* after *expr* is the same as the state of *v* after *expr_second*.
+    * If *expr_first* is a constant expression ([Constant expressions](expressions.md#constant-expressions)) with value null, then the the state of *v* after *expr* is the same as the state of *v* after *expr_second*.
 *  Otherwise, the state of *v* after *expr* is the same as the definite assignment state of *v* after *expr_first*.
 
 #### ?: (conditional) expressions
@@ -578,8 +578,8 @@ For an expression *expr* of the form `expr_cond ? expr_true : expr_false`:
     * *expr_cond* is a constant expression with the value `true`
 *  the state of *v* after *expr_cond* is definitely assigned or "definitely assigned after false expression".
 *  The definite assignment state of *v* after *expr* is determined by:
-    * If *expr_cond* is a constant expression (§7.19) with value `true` then the state of *v* after *expr* is the same as the state of *v* after *expr_true*.
-    * Otherwise, if *expr_cond* is a constant expression (§7.19) with value `false` then the state of *v* after *expr* is the same as the state of *v* after *expr_false*.
+    * If *expr_cond* is a constant expression ([Constant expressions](expressions.md#constant-expressions)) with value `true` then the state of *v* after *expr* is the same as the state of *v* after *expr_true*.
+    * Otherwise, if *expr_cond* is a constant expression ([Constant expressions](expressions.md#constant-expressions)) with value `false` then the state of *v* after *expr* is the same as the state of *v* after *expr_false*.
     * Otherwise, if the state of *v* after *expr_true* is definitely assigned and the state of *v* after *expr_false* is definitely assigned, then the state of *v* after *expr* is definitely assigned.
     * Otherwise, the state of *v* after *expr* is not definitely assigned.
 

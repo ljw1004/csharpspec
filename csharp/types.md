@@ -1,4 +1,4 @@
-# Types
+﻿# Types
 
 The types of the C# language are divided into two main categories: ***value types*** and ***reference types***. Both value types and reference types may be ***generic types***, which take one or more ***type parameters***. Type parameters can designate both value types and reference types.
 
@@ -11,11 +11,11 @@ type
     ;
 ```
 
-The final category of types, pointers, is available only in unsafe code. This is discussed further in §18.2.
+The final category of types, pointers, is available only in unsafe code. This is discussed further in [Pointer types](unsafe-code.md#pointer-types).
 
 Value types differ from reference types in that variables of the value types directly contain their data, whereas variables of the reference types store ***references*** to their data, the latter being known as ***objects***. With reference types, it is possible for two variables to reference the same object, and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other.
 
-C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the `object` class type, and `object` is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type `object`. Values of value types are treated as objects by performing boxing and unboxing operations (§4.3).
+C#'s type system is unified such that a value of any type can be treated as an object. Every type in C# directly or indirectly derives from the `object` class type, and `object` is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type `object`. Values of value types are treated as objects by performing boxing and unboxing operations ([Boxing and unboxing](types.md#boxing-and-unboxing)).
 
 ## Value types
 
@@ -80,7 +80,7 @@ Assignment to a variable of a value type creates a copy of the value being assig
 
 ### The System.ValueType type
 
-All value types implicitly inherit from the class `System.ValueType`, which, in turn, inherits from class `object`. It is not possible for any type to derive from a value type, and value types are thus implicitly sealed (§10.1.1.2).
+All value types implicitly inherit from the class `System.ValueType`, which, in turn, inherits from class `object`. It is not possible for any type to derive from a value type, and value types are thus implicitly sealed ([Sealed classes](classes.md#sealed-classes)).
 
 Note that `System.ValueType` is not itself a *value_type*. Rather, it is a *class_type* from which all *value_type*s are automatically derived.
 
@@ -111,11 +111,11 @@ class A
 }
 ```
 
-Because every value type implicitly has a public parameterless instance constructor, it is not possible for a struct type to contain an explicit declaration of a parameterless constructor. A struct type is however permitted to declare parameterized instance constructors (§11.3.8).
+Because every value type implicitly has a public parameterless instance constructor, it is not possible for a struct type to contain an explicit declaration of a parameterless constructor. A struct type is however permitted to declare parameterized instance constructors ([Constructors](structs.md#constructors)).
 
 ### Struct types
 
-A struct type is a value type that can declare constants, fields, methods, properties, indexers, operators, instance constructors, static constructors, and nested types. The declaration of struct types is described in §11.1.
+A struct type is a value type that can declare constants, fields, methods, properties, indexers, operators, instance constructors, static constructors, and nested types. The declaration of struct types is described in [Struct declarations](structs.md#struct-declarations).
 
 ### Simple types
 
@@ -148,10 +148,10 @@ string t = 123.ToString();      // System.Int32.ToString() instance method
 
 The simple types differ from other struct types in that they permit certain additional operations:
 
-*  Most simple types permit values to be created by writing *literals* (§2.4.4). For example, `123` is a literal of type `int` and `'a'` is a literal of type `char`. C# makes no provision for literals of struct types in general, and non-default values of other struct types are ultimately always created through instance constructors of those struct types.
-*  When the operands of an expression are all simple type constants, it is possible for the compiler to evaluate the expression at compile-time. Such an expression is known as a *constant_expression* (§7.19). Expressions involving operators defined by other struct types are not considered to be constant expressions.
-*  Through `const` declarations it is possible to declare constants of the simple types (§10.4). It is not possible to have constants of other struct types, but a similar effect is provided by `static readonly` fields.
-*  Conversions involving simple types can participate in evaluation of conversion operators defined by other struct types, but a user-defined conversion operator can never participate in evaluation of another user-defined operator (§6.4.3).
+*  Most simple types permit values to be created by writing *literals* ([Literals](lexical-structure.md#literals)). For example, `123` is a literal of type `int` and `'a'` is a literal of type `char`. C# makes no provision for literals of struct types in general, and non-default values of other struct types are ultimately always created through instance constructors of those struct types.
+*  When the operands of an expression are all simple type constants, it is possible for the compiler to evaluate the expression at compile-time. Such an expression is known as a *constant_expression* ([Constant expressions](expressions.md#constant-expressions)). Expressions involving operators defined by other struct types are not considered to be constant expressions.
+*  Through `const` declarations it is possible to declare constants of the simple types ([Constants](classes.md#constants)). It is not possible to have constants of other struct types, but a similar effect is provided by `static readonly` fields.
+*  Conversions involving simple types can participate in evaluation of conversion operators defined by other struct types, but a user-defined conversion operator can never participate in evaluation of another user-defined operator ([Evaluation of user-defined conversions](conversions.md#evaluation-of-user-defined-conversions)).
 
 ### Integral types
 
@@ -179,13 +179,13 @@ The `char` type is classified as an integral type, but it differs from the other
 *  There are no implicit conversions from other types to the `char` type. In particular, even though the `sbyte`, `byte`, and `ushort` types have ranges of values that are fully representable using the `char` type, implicit conversions from `sbyte`, `byte`, or `ushort` to `char` do not exist.
 *  Constants of the `char` type must be written as *character_literal*s or as *integer_literal*s in combination with a cast to type `char`. For example, `(char)10` is the same as `'\x000A'`.
 
-The `checked` and `unchecked` operators and statements are used to control overflow checking for integral-type arithmetic operations and conversions (§7.6.12). In a `checked` context, an overflow produces a compile-time error or causes a `System.OverflowException` to be thrown. In an `unchecked` context, overflows are ignored and any high-order bits that do not fit in the destination type are discarded.
+The `checked` and `unchecked` operators and statements are used to control overflow checking for integral-type arithmetic operations and conversions ([The checked and unchecked operators](expressions.md#the-checked-and-unchecked-operators)). In a `checked` context, an overflow produces a compile-time error or causes a `System.OverflowException` to be thrown. In an `unchecked` context, overflows are ignored and any high-order bits that do not fit in the destination type are discarded.
 
 ### Floating point types
 
 C# supports two floating point types: `float` and `double`. The `float` and `double` types are represented using the 32-bit single-precision and 64-bit double-precision IEEE 754 formats, which provide the following sets of values:
 
-*  Positive zero and negative zero. In most situations, positive zero and negative zero behave identically as the simple value zero, but certain operations distinguish between the two (§7.8.2).
+*  Positive zero and negative zero. In most situations, positive zero and negative zero behave identically as the simple value zero, but certain operations distinguish between the two ([Division operator](expressions.md#division-operator)).
 *  Positive infinity and negative infinity. Infinities are produced by such operations as dividing a non-zero number by zero. For example, `1.0 / 0.0` yields positive infinity, and `–1.0 / 0.0` yields negative infinity.
 *  The ***Not-a-Number*** value, often abbreviated NaN. NaNs are produced by invalid floating-point operations, such as dividing zero by zero.
 *  The finite set of non-zero values of the form `s * m * 2^e`, where `s` is 1 or -1, and `m` and `e` are determined by the particular floating-point type: For `float`, `0 < m < 2^24` and `-149 <= e <= 104`, and for `double`, `0 < m < 2^53` and `1075 <= e <= 970`. Denormalized floating-point numbers are considered valid non-zero values.
@@ -233,13 +233,13 @@ In the C and C++ languages, a zero integral or floating-point value, or a null p
 
 ### Enumeration types
 
-An enumeration type is a distinct type with named constants. Every enumeration type has an underlying type, which must be `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long` or `ulong`. The set of values of the enumeration type is the same as the set of values of the underlying type. Values of the enumeration type are not restricted to the values of the named constants. Enumeration types are defined through enumeration declarations (§14.1).
+An enumeration type is a distinct type with named constants. Every enumeration type has an underlying type, which must be `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long` or `ulong`. The set of values of the enumeration type is the same as the set of values of the underlying type. Values of the enumeration type are not restricted to the values of the named constants. Enumeration types are defined through enumeration declarations ([Enum declarations](enums.md#enum-declarations)).
 
 ### Nullable types
 
 A nullable type can represent all values of its ***underlying type*** plus an additional null value. A nullable type is written `T?`, where `T` is the underlying type. This syntax is shorthand for `System.Nullable<T>`, and the two forms can be used interchangeably.
 
-A ***non-nullable value type*** conversely is any value type other than `System.Nullable<T>` and its shorthand `T?` (for any `T`), plus any type parameter that is constrained to be a non-nullable value type (that is, any type parameter with a `struct` constraint). The `System.Nullable<T>` type specifies the value type constraint for `T` (§10.1.5), which means that the underlying type of a nullable type can be any non-nullable value type. The underlying type of a nullable type cannot be a nullable type or a reference type. For example, `int??` and `string?` are invalid types.
+A ***non-nullable value type*** conversely is any value type other than `System.Nullable<T>` and its shorthand `T?` (for any `T`), plus any type parameter that is constrained to be a non-nullable value type (that is, any type parameter with a `struct` constraint). The `System.Nullable<T>` type specifies the value type constraint for `T` ([Type parameter constraints](classes.md#type-parameter-constraints)), which means that the underlying type of a nullable type can be any non-nullable value type. The underlying type of a nullable type cannot be a nullable type or a reference type. For example, `int??` and `string?` are invalid types.
 
 An instance of a nullable type `T?` has two public read-only properties:
 
@@ -257,7 +257,7 @@ new T?(x)
 ```
 creates a non-null instance of `T?` for which the `Value` property is `x`. The process of creating a non-null instance of a nullable type for a given value is referred to as ***wrapping***.
 
-Implicit conversions are available from the `null` literal to `T?` (§6.1.5) and from `T` to `T?` (§6.1.4).
+Implicit conversions are available from the `null` literal to `T?` ([Null literal conversions](conversions.md#null-literal-conversions)) and from `T` to `T?` ([Implicit nullable conversions](conversions.md#implicit-nullable-conversions)).
 
 ## Reference types
 
@@ -306,22 +306,22 @@ A reference type value is a reference to an ***instance*** of the type, the latt
 
 ### Class types
 
-A class type defines a data structure that contains data members (constants and fields), function members (methods, properties, events, indexers, operators, instance constructors, destructors and static constructors), and nested types. Class types support inheritance, a mechanism whereby derived classes can extend and specialize base classes. Instances of class types are created using *object_creation_expressions* (§7.6.10.1).
+A class type defines a data structure that contains data members (constants and fields), function members (methods, properties, events, indexers, operators, instance constructors, destructors and static constructors), and nested types. Class types support inheritance, a mechanism whereby derived classes can extend and specialize base classes. Instances of class types are created using *object_creation_expressions* ([Object creation expressions](expressions.md#object-creation-expressions)).
 
-Class types are described in §10.
+Class types are described in [Classes](classes.md#classes).
 
 Certain predefined class types have special meaning in the C# language, as described in the table below.
 
 
 | __Class type__     | __Description__                                         |
 |--------------------|---------------------------------------------------------|
-| `System.Object`    | The ultimate base class of all other types. See §4.2.2. | 
-| `System.String`    | The string type of the C# language. See §4.2.4.         |
-| `System.ValueType` | The base class of all value types. See §4.1.1.          |
-| `System.Enum`      | The base class of all enum types. See §14.              |
-| `System.Array`     | The base class of all array types. See §12.             |
-| `System.Delegate`  | The base class of all delegate types. See §15.          |
-| `System.Exception` | The base class of all exception types. See §16.         |
+| `System.Object`    | The ultimate base class of all other types. See [The object type](types.md#the-object-type). | 
+| `System.String`    | The string type of the C# language. See [The string type](types.md#the-string-type).         |
+| `System.ValueType` | The base class of all value types. See [The System.ValueType type](types.md#the-systemvaluetype-type).          |
+| `System.Enum`      | The base class of all enum types. See [Enums](enums.md#enums).              |
+| `System.Array`     | The base class of all array types. See [Arrays](arrays.md#arrays).             |
+| `System.Delegate`  | The base class of all delegate types. See [Delegates](delegates.md#delegates).          |
+| `System.Exception` | The base class of all exception types. See [Exceptions](exceptions.md#exceptions).         |
 
 ### The object type
 
@@ -333,12 +333,12 @@ The keyword `object` is simply an alias for the predefined class `System.Object`
 
 The `dynamic` type, like `object`, can reference any object. When operators are applied to expressions of type `dynamic`, their resolution is deferred until the program is run. Thus, if the operator cannot legally be applied to the referenced object, no error is given during compilation. Instead an exception will be thrown when resolution of the operator fails at run-time.
 
-Its purpose is to allow dynamic binding, which is described in detail in §7.2.2.
+Its purpose is to allow dynamic binding, which is described in detail in [Dynamic binding](expressions.md#dynamic-binding).
 
 `dynamic` is considered identical to `object` except in the following respects:
 
-*  Operations on expressions of type `dynamic` can be dynamically bound (§7.2.2).
-*  Type inference (§7.5.2) will prefer `dynamic` over `object` if both are candidates.
+*  Operations on expressions of type `dynamic` can be dynamically bound ([Dynamic binding](expressions.md#dynamic-binding)).
+*  Type inference ([Type inference](expressions.md#type-inference)) will prefer `dynamic` over `object` if both are candidates.
 
 Because of this equivalence, the following holds:
 
@@ -352,7 +352,7 @@ Because of this equivalence, the following holds:
 
 The `string` type is a sealed class type that inherits directly from `object`. Instances of the `string` class represent Unicode character strings.
 
-Values of the `string` type can be written as string literals (§2.4.4.5).
+Values of the `string` type can be written as string literals ([String literals](lexical-structure.md#string-literals)).
 
 The keyword `string` is simply an alias for the predefined class `System.String`.
 
@@ -360,13 +360,13 @@ The keyword `string` is simply an alias for the predefined class `System.String`
 
 An interface defines a contract. A class or struct that implements an interface must adhere to its contract. An interface may inherit from multiple base interfaces, and a class or struct may implement multiple interfaces.
 
-Interface types are described in §13.
+Interface types are described in [Interfaces](interfaces.md#interfaces).
 
 ### Array types
 
 An array is a data structure that contains zero or more variables which are accessed through computed indices. The variables contained in an array, also called the elements of the array, are all of the same type, and this type is called the element type of the array.
 
-Array types are described in §12.
+Array types are described in [Arrays](arrays.md#arrays).
 
 ### Delegate types
 
@@ -374,7 +374,7 @@ A delegate is a data structure that refers to one or more methods. For instance 
 
 The closest equivalent of a delegate in C or C++ is a function pointer, but whereas a function pointer can only reference static functions, a delegate can reference both static and instance methods. In the latter case, the delegate stores not only a reference to the method's entry point, but also a reference to the object instance on which to invoke the method.
 
-Delegate types are described in §15.
+Delegate types are described in [Delegates](delegates.md#delegates).
 
 ## Boxing and unboxing
 
@@ -390,7 +390,7 @@ A boxing conversion permits a *value_type* to be implicitly converted to a *refe
 *  From any *nullable_type* to any *interface_type* implemented by the underlying type of the *nullable_type.*
 *  From any *enum_type* to the type `System.Enum`.
 *  From any *nullable_type* with an underlying *enum_type* to the type `System.Enum`.
-*  Note that an implicit conversion from a type parameter will be executed as a boxing conversion if at run-time it ends up converting from a value type to a reference type (§6.1.10).
+*  Note that an implicit conversion from a type parameter will be executed as a boxing conversion if at run-time it ends up converting from a value type to a reference type ([Implicit conversions involving type parameters](conversions.md#implicit-conversions-involving-type-parameters)).
 
 Boxing a value of a *non_nullable_value_type* consists of allocating an object instance and copying the *non_nullable_value_type* value into that instance.
 
@@ -461,7 +461,7 @@ An unboxing conversion permits a *reference_type* to be explicitly converted to 
 *  From any *interface_type* to any *nullable_type* whose underlying type implements the *interface_type*.
 *  From the type `System.Enum` to any *enum_type*.
 *  From the type `System.Enum` to any *nullable_type* with an underlying *enum_type*.
-*  Note that an explicit conversion to a type parameter will be executed as an unboxing conversion if at run-time it ends up converting from a reference type to a value type (§6.2.6).
+*  Note that an explicit conversion to a type parameter will be executed as an unboxing conversion if at run-time it ends up converting from a reference type to a value type ([Explicit dynamic conversions](conversions.md#explicit-dynamic-conversions)).
 
 An unboxing operation to a *non_nullable_value_type* consists of first checking that the object instance is a boxed value of the given *non_nullable_value_type*, and then copying the value out of the instance.
 
@@ -484,9 +484,9 @@ For an unboxing conversion to a given *nullable_type* to succeed at run-time, th
 
 ## Constructed types
 
-A generic type declaration, by itself, denotes an ***unbound generic type*** that is used as a "blueprint" to form many different types, by way of applying ***type arguments***. The type arguments are written within angle brackets (`<` and `>`) immediately following the name of the generic type. A type that includes at least one type argument is called a ***constructed type***. A constructed type can be used in most places in the language in which a type name can appear. An unbound generic type can only be used within a *typeof_expression* (§7.6.11).
+A generic type declaration, by itself, denotes an ***unbound generic type*** that is used as a "blueprint" to form many different types, by way of applying ***type arguments***. The type arguments are written within angle brackets (`<` and `>`) immediately following the name of the generic type. A type that includes at least one type argument is called a ***constructed type***. A constructed type can be used in most places in the language in which a type name can appear. An unbound generic type can only be used within a *typeof_expression* ([The typeof operator](expressions.md#the-typeof-operator)).
 
-Constructed types can also be used in expressions as simple names (§7.6.2) or when accessing a member (§7.6.4).
+Constructed types can also be used in expressions as simple names ([Simple names](expressions.md#simple-names)) or when accessing a member ([Member access](expressions.md#member-access)).
 
 When a *namespace_or_type_name* is evaluated, only generic types with the correct number of type parameters are considered. Thus, it is possible to use the same identifier to identify different types, as long as the types have different numbers of type parameters. This is useful when mixing generic and non-generic classes in the same program:
 
@@ -509,7 +509,7 @@ namespace MyApplication
 }
 ```
 
-A *type_name* might identify a constructed type even though it doesn't specify type parameters directly. This can occur where a type is nested within a generic class declaration, and the instance type of the containing declaration is implicitly used for name lookup (§10.3.8.6):
+A *type_name* might identify a constructed type even though it doesn't specify type parameters directly. This can occur where a type is nested within a generic class declaration, and the instance type of the containing declaration is implicitly used for name lookup ([Nested types in generic classes](classes.md#nested-types-in-generic-classes)):
 
 ```csharp
 class Outer<T>
@@ -520,7 +520,7 @@ class Outer<T>
 }
 ```
 
-In unsafe code, a constructed type cannot be used as an *unmanaged_type* (§18.2).
+In unsafe code, a constructed type cannot be used as an *unmanaged_type* ([Pointer types](unsafe-code.md#pointer-types)).
 
 ### Type arguments
 
@@ -541,7 +541,7 @@ type_argument
     ;
 ```
 
-In unsafe code (§18), a *type_argument* may not be a pointer type. Each type argument must satisfy any constraints on the corresponding type parameter (§10.1.5).
+In unsafe code ([Unsafe code](unsafe-code.md#unsafe-code)), a *type_argument* may not be a pointer type. Each type argument must satisfy any constraints on the corresponding type parameter ([Type parameter constraints](classes.md#type-parameter-constraints)).
 
 ### Open and closed types
 
@@ -561,29 +561,29 @@ Each closed constructed type has its own set of static variables, which are not 
 
 The term ***unbound type*** refers to a non-generic type or an unbound generic type. The term ***bound type*** refers to a non-generic type or a constructed type.
 
-An unbound type refers to the entity declared by a type declaration. An unbound generic type is not itself a type, and cannot be used as the type of a variable, argument or return value, or as a base type. The only construct in which an unbound generic type can be referenced is the `typeof` expression (§7.6.11).
+An unbound type refers to the entity declared by a type declaration. An unbound generic type is not itself a type, and cannot be used as the type of a variable, argument or return value, or as a base type. The only construct in which an unbound generic type can be referenced is the `typeof` expression ([The typeof operator](expressions.md#the-typeof-operator)).
 
 ### Satisfying constraints
 
-Whenever a constructed type or generic method is referenced, the supplied type arguments are checked against the type parameter constraints declared on the generic type or method (§10.1.5). For each `where` clause, the type argument `A` that corresponds to the named type parameter is checked against each constraint as follows:
+Whenever a constructed type or generic method is referenced, the supplied type arguments are checked against the type parameter constraints declared on the generic type or method ([Type parameter constraints](classes.md#type-parameter-constraints)). For each `where` clause, the type argument `A` that corresponds to the named type parameter is checked against each constraint as follows:
 
 *  If the constraint is a class type, an interface type, or a type parameter, let `C` represent that constraint with the supplied type arguments substituted for any type parameters that appear in the constraint. To satisfy the constraint, it must be the case that type `A` is convertible to type `C` by one of the following:
-    * An identity conversion (§6.1.1)
-    * An implicit reference conversion (§6.1.6)
-    * A boxing conversion (§6.1.7), provided that type A is a non-nullable value type.
+    * An identity conversion ([Identity conversion](conversions.md#identity-conversion))
+    * An implicit reference conversion ([Implicit reference conversions](conversions.md#implicit-reference-conversions))
+    * A boxing conversion ([Boxing conversions](conversions.md#boxing-conversions)), provided that type A is a non-nullable value type.
     * An implicit reference, boxing or type parameter conversion from a type parameter `A` to `C`.
 *  If the constraint is the reference type constraint (`class`), the type `A` must satisfy one of the following:
     * `A` is an interface type, class type, delegate type or array type. Note that `System.ValueType` and `System.Enum` are reference types that satisfy this constraint.
-    * `A` is a type parameter that is known to be a reference type (§10.1.5).
+    * `A` is a type parameter that is known to be a reference type ([Type parameter constraints](classes.md#type-parameter-constraints)).
 *  If the constraint is the value type constraint (`struct`), the type `A` must satisfy one of the following:
     * `A` is a struct type or enum type, but not a nullable type. Note that `System.ValueType` and `System.Enum` are reference types that do not satisfy this constraint.
-    * `A` is a type parameter having the value type constraint (§10.1.5).
+    * `A` is a type parameter having the value type constraint ([Type parameter constraints](classes.md#type-parameter-constraints)).
 *  If the constraint is the constructor constraint `new()`, the type `A` must not be `abstract` and must have a public parameterless constructor. This is satisfied if one of the following is true:
-    * `A` is a value type, since all value types have a public default constructor (§4.1.2).
-    * `A` is a type parameter having the constructor constraint (§10.1.5).
-    * `A` is a type parameter having the value type constraint (§10.1.5).
+    * `A` is a value type, since all value types have a public default constructor ([Default constructors](types.md#default-constructors)).
+    * `A` is a type parameter having the constructor constraint ([Type parameter constraints](classes.md#type-parameter-constraints)).
+    * `A` is a type parameter having the value type constraint ([Type parameter constraints](classes.md#type-parameter-constraints)).
     * `A` is a class that is not `abstract` and contains an explicitly declared `public` constructor with no parameters.
-    * `A` is not `abstract` and has a default constructor (§10.11.4).
+    * `A` is not `abstract` and has a default constructor ([Default constructors](classes.md#default-constructors)).
 
 A compile-time error occurs if one or more of a type parameter's constraints are not satisfied by the given type arguments.
 
@@ -609,16 +609,16 @@ type_parameter
 
 Since a type parameter can be instantiated with many different actual type arguments, type parameters have slightly different operations and restrictions than other types. These include:
 
-*  A type parameter cannot be used directly to declare a base class (§10.2.4) or interface (§13.1.3).
-*  The rules for member lookup on type parameters depend on the constraints, if any, applied to the type parameter. They are detailed in §7.4.
-*  The available conversions for a type parameter depend on the constraints, if any, applied to the type parameter. They are detailed in §6.1.10 and §6.2.6.
-*  The literal `null` cannot be converted to a type given by a type parameter, except if the type parameter is known to be a reference type (§6.1.10). However, a `default` expression (§7.6.13) can be used instead. In addition, a value with a type given by a type parameter can be compared with `null` using `==` and `!=` (§7.10.6) unless the type parameter has the value type constraint.
-*  A `new` expression (§7.6.10.1) can only be used with a type parameter if the type parameter is constrained by a *constructor_constraint* or the value type constraint (§10.1.5).
+*  A type parameter cannot be used directly to declare a base class ([Base class](classes.md#base-class)) or interface ([Variant type parameter lists](interfaces.md#variant-type-parameter-lists)).
+*  The rules for member lookup on type parameters depend on the constraints, if any, applied to the type parameter. They are detailed in [Member lookup](expressions.md#member-lookup).
+*  The available conversions for a type parameter depend on the constraints, if any, applied to the type parameter. They are detailed in [Implicit conversions involving type parameters](conversions.md#implicit-conversions-involving-type-parameters) and [Explicit dynamic conversions](conversions.md#explicit-dynamic-conversions).
+*  The literal `null` cannot be converted to a type given by a type parameter, except if the type parameter is known to be a reference type ([Implicit conversions involving type parameters](conversions.md#implicit-conversions-involving-type-parameters)). However, a `default` expression ([Default value expressions](expressions.md#default-value-expressions)) can be used instead. In addition, a value with a type given by a type parameter can be compared with `null` using `==` and `!=` ([Reference type equality operators](expressions.md#reference-type-equality-operators)) unless the type parameter has the value type constraint.
+*  A `new` expression ([Object creation expressions](expressions.md#object-creation-expressions)) can only be used with a type parameter if the type parameter is constrained by a *constructor_constraint* or the value type constraint ([Type parameter constraints](classes.md#type-parameter-constraints)).
 *  A type parameter cannot be used anywhere within an attribute.
-*  A type parameter cannot be used in a member access (§7.6.4) or type name (§3.8) to identify a static member or a nested type.
-*  In unsafe code, a type parameter cannot be used as an *unmanaged_type* (§18.2).
+*  A type parameter cannot be used in a member access ([Member access](expressions.md#member-access)) or type name ([Namespace and type names](basic-concepts.md#namespace-and-type-names)) to identify a static member or a nested type.
+*  In unsafe code, a type parameter cannot be used as an *unmanaged_type* ([Pointer types](unsafe-code.md#pointer-types)).
 
-As a type, type parameters are purely a compile-time construct. At run-time, each type parameter is bound to a run-time type that was specified by supplying a type argument to the generic type declaration. Thus, the type of a variable declared with a type parameter will, at run-time, be a closed constructed type (§4.4.2). The run-time execution of all statements and expressions involving type parameters uses the actual type that was supplied as the type argument for that parameter.
+As a type, type parameters are purely a compile-time construct. At run-time, each type parameter is bound to a run-time type that was specified by supplying a type argument to the generic type declaration. Thus, the type of a variable declared with a type parameter will, at run-time, be a closed constructed type ([Open and closed types](types.md#open-and-closed-types)). The run-time execution of all statements and expressions involving type parameters uses the actual type that was supplied as the type argument for that parameter.
 
 ## Expression tree types
 
@@ -644,7 +644,7 @@ The exact definition of the generic type `Expression<D>` as well as the precise 
 
 Two things are important to make explicit:
 
-*  Not all lambda expressions can be converted to expression trees. For instance, lambda expressions with statement bodies, and lambda expressions containing assignment expressions cannot be represented. In these cases, a conversion still exists, but will fail at compile-time. These exceptions are detailed in §6.5.
+*  Not all lambda expressions can be converted to expression trees. For instance, lambda expressions with statement bodies, and lambda expressions containing assignment expressions cannot be represented. In these cases, a conversion still exists, but will fail at compile-time. These exceptions are detailed in [Anonymous function conversions](conversions.md#anonymous-function-conversions).
 *   `Expression<D>` offers an instance method `Compile` which produces a delegate of type `D`:
 
     ```csharp

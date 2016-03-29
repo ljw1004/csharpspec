@@ -1,14 +1,14 @@
-# Structs
+﻿# Structs
 
 Structs are similar to classes in that they represent data structures that can contain data members and function members. However, unlike classes, structs are value types and do not require heap allocation. A variable of a struct type directly contains the data of the struct, whereas a variable of a class type contains a reference to the data, the latter known as an object.
 
 Structs are particularly useful for small data structures that have value semantics. Complex numbers, points in a coordinate system, or key-value pairs in a dictionary are all good examples of structs. Key to these data structures is that they have few data members, that they do not require use of inheritance or referential identity, and that they can be conveniently implemented using value semantics where assignment copies the value instead of the reference.
 
-As described in §4.1.4, the simple types provided by C#, such as `int`, `double`, and `bool`, are in fact all struct types. Just as these predefined types are structs, it is also possible to use structs and operator overloading to implement new "primitive" types in the C# language. Two examples of such types are given at the end of this chapter (§11.4).
+As described in [Simple types](types.md#simple-types), the simple types provided by C#, such as `int`, `double`, and `bool`, are in fact all struct types. Just as these predefined types are structs, it is also possible to use structs and operator overloading to implement new "primitive" types in the C# language. Two examples of such types are given at the end of this chapter ([Struct examples](structs.md#struct-examples)).
 
 ## Struct declarations
 
-A *struct_declaration* is a *type_declaration* (§9.6) that declares a new struct:
+A *struct_declaration* is a *type_declaration* ([Type declarations](namespaces.md#type-declarations)) that declares a new struct:
 
 ```antlr
 struct_declaration
@@ -17,7 +17,7 @@ struct_declaration
     ;
 ```
 
-A *struct_declaration* consists of an optional set of *attributes* (§17), followed by an optional set of *struct_modifiers* (§11.1.1), followed by an optional `partial` modifier, followed by the keyword `struct` and an *identifier* that names the struct, followed by an optional *type_parameter_list* specification (§10.1.3), followed by an optional *struct_interfaces* specification (§11.1.2) ), followed by an optional *type_parameters_constraints_clauses* specification (§10.1.5), followed by a *struct_body* (§11.1.4), optionally followed by a semicolon.
+A *struct_declaration* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), followed by an optional set of *struct_modifiers* ([Struct modifiers](structs.md#struct-modifiers)), followed by an optional `partial` modifier, followed by the keyword `struct` and an *identifier* that names the struct, followed by an optional *type_parameter_list* specification ([Type parameters](classes.md#type-parameters)), followed by an optional *struct_interfaces* specification ([Partial modifier](structs.md#partial-modifier)) ), followed by an optional *type_parameters_constraints_clauses* specification ([Type parameter constraints](classes.md#type-parameter-constraints)), followed by a *struct_body* ([Struct body](structs.md#struct-body)), optionally followed by a semicolon.
 
 ### Struct modifiers
 
@@ -36,11 +36,11 @@ struct_modifier
 
 It is a compile-time error for the same modifier to appear multiple times in a struct declaration.
 
-The modifiers of a struct declaration have the same meaning as those of a class declaration (§10.1).
+The modifiers of a struct declaration have the same meaning as those of a class declaration ([Class declarations](classes.md#class-declarations)).
 
 ### Partial modifier
 
-The `partial` modifier indicates that this *struct_declaration* is a partial type declaration. Multiple partial struct declarations with the same name within an enclosing namespace or type declaration combine to form one struct declaration, following the rules specified in §10.2.
+The `partial` modifier indicates that this *struct_declaration* is a partial type declaration. Multiple partial struct declarations with the same name within an enclosing namespace or type declaration combine to form one struct declaration, following the rules specified in [Partial types](classes.md#partial-types).
 
 ### Struct interfaces
 
@@ -52,7 +52,7 @@ struct_interfaces
     ;
 ```
 
-Interface implementations are discussed further in §13.4.
+Interface implementations are discussed further in [Interface implementations](interfaces.md#interface-implementations).
 
 ### Struct body
 
@@ -84,25 +84,25 @@ struct_member_declaration
     ;
 ```
 
-Except for the differences noted in §11.3, the descriptions of class members provided in §10.3 through §10.14 apply to struct members as well.
+Except for the differences noted in [Class and struct differences](structs.md#class-and-struct-differences), the descriptions of class members provided in [Class members](classes.md#class-members) through [Iterators](classes.md#iterators) apply to struct members as well.
 
 ## Class and struct differences
 
 Structs differ from classes in several important ways:
 
-*  Structs are value types (§11.3.1).
-*  All struct types implicitly inherit from the class `System.ValueType` (§11.3.2).
-*  Assignment to a variable of a struct type creates a copy of the value being assigned (§11.3.3).
-*  The default value of a struct is the value produced by setting all value type fields to their default value and all reference type fields to `null` (§11.3.4).
-*  Boxing and unboxing operations are used to convert between a struct type and `object` (§11.3.5).
-*  The meaning of `this` is different for structs (§7.6.7).
-*  Instance field declarations for a struct are not permitted to include variable initializers (§11.3.7).
-*  A struct is not permitted to declare a parameterless instance constructor (§11.3.8).
-*  A struct is not permitted to declare a destructor (§11.3.9).
+*  Structs are value types ([Value semantics](structs.md#value-semantics)).
+*  All struct types implicitly inherit from the class `System.ValueType` ([Inheritance](structs.md#inheritance)).
+*  Assignment to a variable of a struct type creates a copy of the value being assigned ([Assignment](structs.md#assignment)).
+*  The default value of a struct is the value produced by setting all value type fields to their default value and all reference type fields to `null` ([Default values](structs.md#default-values)).
+*  Boxing and unboxing operations are used to convert between a struct type and `object` ([Boxing and unboxing](structs.md#boxing-and-unboxing)).
+*  The meaning of `this` is different for structs ([This access](expressions.md#this-access)).
+*  Instance field declarations for a struct are not permitted to include variable initializers ([Field initializers](structs.md#field-initializers)).
+*  A struct is not permitted to declare a parameterless instance constructor ([Constructors](structs.md#constructors)).
+*  A struct is not permitted to declare a destructor ([Destructors](structs.md#destructors)).
 
 ### Value semantics
 
-Structs are value types (§4.1) and are said to have value semantics. Classes, on the other hand, are reference types (§4.2) and are said to have reference semantics.
+Structs are value types ([Value types](types.md#value-types)) and are said to have value semantics. Classes, on the other hand, are reference types ([Reference types](types.md#reference-types)) and are said to have reference semantics.
 
 A variable of a struct type directly contains the data of the struct, whereas a variable of a class type contains a reference to the data, the latter known as an object. When a struct `B` contains an instance field of type `A` and `A` is a struct type, it is a compile-time error for `A` to depend on `B` or a type constructed from `B`. A struct `X` ***directly depends on*** a struct `Y` if `X` contains an instance field of type `Y`. Given this definition, the complete set of structs upon which a struct depends is the transitive closure of the ***directly depends on*** relationship.  For example
 ```csharp
@@ -161,11 +161,11 @@ Assignment to a variable of a struct type creates a copy of the value being assi
 
 Similar to an assignment, when a struct is passed as a value parameter or returned as the result of a function member, a copy of the struct is created. A struct may be passed by reference to a function member using a `ref` or `out` parameter.
 
-When a property or indexer of a struct is the target of an assignment, the instance expression associated with the property or indexer access must be classified as a variable. If the instance expression is classified as a value, a compile-time error occurs. This is described in further detail in §7.17.1.
+When a property or indexer of a struct is the target of an assignment, the instance expression associated with the property or indexer access must be classified as a variable. If the instance expression is classified as a value, a compile-time error occurs. This is described in further detail in [Simple assignment](expressions.md#simple-assignment).
 
 ### Default values
 
-As described in §5.2, several kinds of variables are automatically initialized to their default value when they are created. For variables of class types and other reference types, this default value is `null`. However, since structs are value types that cannot be `null`, the default value of a struct is the value produced by setting all value type fields to their default value and all reference type fields to `null`.
+As described in [Default values](variables.md#default-values), several kinds of variables are automatically initialized to their default value when they are created. For variables of class types and other reference types, this default value is `null`. However, since structs are value types that cannot be `null`, the default value of a struct is the value produced by setting all value type fields to their default value and all reference type fields to `null`.
 
 Referring to the `Point` struct declared above, the example
 ```csharp
@@ -173,7 +173,7 @@ Point[] a = new Point[100];
 ```
 initializes each `Point` in the array to the value produced by setting the `x` and `y` fields to zero.
 
-The default value of a struct corresponds to the value returned by the default constructor of the struct (§4.1.2). Unlike a class, a struct is not permitted to declare a parameterless instance constructor. Instead, every struct implicitly has a parameterless instance constructor which always returns the value that results from setting all value type fields to their default value and all reference type fields to `null`.
+The default value of a struct corresponds to the value returned by the default constructor of the struct ([Default constructors](types.md#default-constructors)). Unlike a class, a struct is not permitted to declare a parameterless instance constructor. Instead, every struct implicitly has a parameterless instance constructor which always returns the value that results from setting all value type fields to their default value and all reference type fields to `null`.
 
 Structs should be designed to consider the default initialization state a valid state. In the example
 ```csharp
@@ -284,7 +284,7 @@ The first call to `Increment` modifies the value in the variable `x`. This is no
 1
 ```
 
-For further details on boxing and unboxing, see §4.3.
+For further details on boxing and unboxing, see [Boxing and unboxing](types.md#boxing-and-unboxing).
 
 ### Meaning of this
 
@@ -294,7 +294,7 @@ Within an instance constructor of a struct, `this` corresponds to an `out` param
 
 ### Field initializers
 
-As described in §11.3.4, the default value of a struct consists of the value that results from setting all value type fields to their default value and all reference type fields to `null`. For this reason, a struct does not permit instance field declarations to include variable initializers. This restriction applies only to instance fields. Static fields of a struct are permitted to include variable initializers.
+As described in [Default values](structs.md#default-values), the default value of a struct consists of the value that results from setting all value type fields to their default value and all reference type fields to `null`. For this reason, a struct does not permit instance field declarations to include variable initializers. This restriction applies only to instance fields. Static fields of a struct are permitted to include variable initializers.
 
 The example
 ```csharp
@@ -308,7 +308,7 @@ is in error because the instance field declarations include variable initializer
 
 ### Constructors
 
-Unlike a class, a struct is not permitted to declare a parameterless instance constructor. Instead, every struct implicitly has a parameterless instance constructor which always returns the value that results from setting all value type fields to their default value and all reference type fields to null (§4.1.2). A struct can declare instance constructors having parameters. For example
+Unlike a class, a struct is not permitted to declare a parameterless instance constructor. Instead, every struct implicitly has a parameterless instance constructor which always returns the value that results from setting all value type fields to their default value and all reference type fields to null ([Default constructors](types.md#default-constructors)). A struct can declare instance constructors having parameters. For example
 ```csharp
 struct Point
 {
@@ -330,7 +330,7 @@ both create a `Point` with `x` and `y` initialized to zero.
 
 A struct instance constructor is not permitted to include a constructor initializer of the form `base(...)`.
 
-If the struct instance constructor doesn't specify a constructor initializer, the `this` variable corresponds to an `out` parameter of the struct type, and similar to an `out` parameter, `this` must be definitely assigned (§5.3) at every location where the constructor returns. If the struct instance constructor specifies a constructor initializer, the `this` variable corresponds to a `ref` parameter of the struct type, and similar to a `ref` parameter, `this` is considered definitely assigned on entry to the constructor body. Consider the instance constructor implementation below:
+If the struct instance constructor doesn't specify a constructor initializer, the `this` variable corresponds to an `out` parameter of the struct type, and similar to an `out` parameter, `this` must be definitely assigned ([Definite assignment](variables.md#definite-assignment)) at every location where the constructor returns. If the struct instance constructor specifies a constructor initializer, the `this` variable corresponds to a `ref` parameter of the struct type, and similar to a `ref` parameter, `this` is considered definitely assigned on entry to the constructor body. Consider the instance constructor implementation below:
 ```csharp
 struct Point
 {
@@ -364,7 +364,7 @@ Static constructors for structs follow most of the same rules as for classes. Th
 *  A static member of the struct type is referenced.
 *  An explicitly declared constructor of the struct type is called.
 
-The creation of default values (§11.3.4) of struct types does not trigger the static constructor. (An example of this is the initial value of elements in an array.)
+The creation of default values ([Default values](structs.md#default-values)) of struct types does not trigger the static constructor. (An example of this is the initial value of elements in an array.)
 
 ## Struct examples
 

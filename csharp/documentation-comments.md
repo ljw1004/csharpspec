@@ -1,4 +1,4 @@
-# Documentation comments
+﻿# Documentation comments
 
 C# provides a mechanism for programmers to document their code using a special comment syntax that contains XML text. In source code files, comments having a certain form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Comments using such syntax are called ***documentation comments***. They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method). The XML generation tool is called the ***documentation generator***. (This generator could be, but need not be, the C# compiler itself.) The output produced by the documentation generator is called the ***documentation file***. A documentation file is used as input to a ***documentation viewer***; a tool intended to produce some sort of visual display of type information and its associated documentation.
 
@@ -6,7 +6,7 @@ This specification suggests a set of tags to be used in documentation comments, 
 
 ## Introduction
 
-Comments having a special form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Such comments are single-line comments that start with three slashes (`///`), or delimited comments that start with a slash and two stars (`/**`). They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method) that they annotate. Attribute sections (§17.2) are considered part of declarations, so documentation comments must precede attributes applied to a type or member.
+Comments having a special form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Such comments are single-line comments that start with three slashes (`///`), or delimited comments that start with a slash and two stars (`/**`). They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method) that they annotate. Attribute sections ([Attribute specification](attributes.md#attribute-specification)) are considered part of declarations, so documentation comments must precede attributes applied to a type or member.
 
 __Syntax:__
 
@@ -39,7 +39,7 @@ public class Point
 
 The text within documentation comments must be well formed according to the rules of XML (http://www.w3.org/TR/REC-xml). If the XML is ill formed, a warning is generated and the documentation file will contain a comment saying that an error was encountered.
 
-Although developers are free to create their own set of tags, a recommended set is defined in §19.2. Some of the recommended tags have special meanings:
+Although developers are free to create their own set of tags, a recommended set is defined in [Recommended tags](documentation-comments.md#recommended-tags). Some of the recommended tags have special meanings:
 
 *  The `<param>` tag is used to describe parameters. If such a tag is used, the documentation generator must verify that the specified parameter exists and that all parameters are described in documentation comments. If such verification fails, the documentation generator issues a warning.
 *  The `cref` attribute can be attached to any tag to provide a reference to a code element. The documentation generator must verify that this code element exists. If the verification fails, the documentation generator issues a warning. When looking for a name described in a `cref` attribute, the documentation generator must respect namespace visibility according to `using` statements appearing within the source code. For code elements that are generic, the normal generic syntax (ie "`List<T>`") cannot be used because it produces invalid XML. Braces can be used instead of brackets (ie "`List{T}`"), or the XML escape syntax can be used (ie "`List&lt;T&gt;`").
@@ -76,7 +76,7 @@ The documentation generator must accept and process any tag that is valid accord
 
 ### `<c>`
 
-This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` (§19.2.2).
+This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` ([<code>](documentation-comments.md#code)).
 
 __Syntax:__
 
@@ -98,7 +98,7 @@ public class Point
 
 ### `<code>`
 
-This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` (§19.2.1).
+This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` ([<c>](documentation-comments.md#c)).
 
 __Syntax:__
 
@@ -128,7 +128,7 @@ public void Translate(int xor, int yor) {
 
 ### `<example>`
 
-This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` (§19.2.2) as well.
+This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` ([<code>](documentation-comments.md#code)) as well.
 
 __Syntax:__
 
@@ -138,7 +138,7 @@ __Syntax:__
 
 __Example:__
 
-See `<code>` (§19.2.2) for an example.
+See `<code>` ([<code>](documentation-comments.md#code)) for an example.
 
 ### `<exception>`
 
@@ -277,7 +277,7 @@ public class MyClass
 
 ### `<para>`
 
-This tag is for use inside other tags, such as `<summary>` (§19.2.11) or `<returns>` (§19.2.12), and permits structure to be added to text.
+This tag is for use inside other tags, such as `<summary>` ([<remark>](documentation-comments.md#remark)) or `<returns>` ([<returns>](documentation-comments.md#returns)), and permits structure to be added to text.
 
 __Syntax:__
 
@@ -381,7 +381,7 @@ public static void Test() {
 
 ### `<remark>`
 
-This tag is used to specify extra information about a type. (Use `<summary>` (§19.2.15) to describe the type itself and the members of a type.)
+This tag is used to specify extra information about a type. (Use `<summary>` ([<summary>](documentation-comments.md#summary)) to describe the type itself and the members of a type.)
 
 __Syntax:__
 
@@ -428,7 +428,7 @@ public override string ToString() {
 
 ### `<see>`
 
-This tag allows a link to be specified within text. Use `<seealso>` (§19.2.14) to indicate text that is to appear in a See Also section.
+This tag allows a link to be specified within text. Use `<seealso>` ([<seealso>](documentation-comments.md#seealso)) to indicate text that is to appear in a See Also section.
 
 __Syntax:__
 
@@ -461,7 +461,7 @@ public void Translate(int xor, int yor) {
 
 ### `<seealso>`
 
-This tag allows an entry to be generated for the See Also section. Use `<see>` (§19.2.13) to specify a link from within text.
+This tag allows an entry to be generated for the See Also section. Use `<see>` ([<see>](documentation-comments.md#see)) to specify a link from within text.
 
 __Syntax:__
 
@@ -485,7 +485,7 @@ public override bool Equals(object o) {
 
 ### `<summary>`
 
-This tag can be used to describe a type or a member of a type. Use `<remark>` (§19.2.11) to describe the type itself.
+This tag can be used to describe a type or a member of a type. Use `<remark>` ([<remark>](documentation-comments.md#remark)) to describe the type itself.
 
 __Syntax:__
 

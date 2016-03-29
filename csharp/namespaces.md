@@ -1,8 +1,8 @@
-# Namespaces
+﻿# Namespaces
 
 C# programs are organized using namespaces. Namespaces are used both as an "internal" organization system for a program, and as an "external" organization system—a way of presenting program elements that are exposed to other programs.
 
-Using directives (§9.4) are provided to facilitate the use of namespaces.
+Using directives ([Using directives](namespaces.md#using-directives)) are provided to facilitate the use of namespaces.
 
 ## Compilation units
 
@@ -18,7 +18,7 @@ A C# program consists of one or more compilation units, each contained in a sepa
 
 The *using_directives* of a compilation unit affect the *global_attributes* and *namespace_member_declarations* of that compilation unit, but have no effect on other compilation units.
 
-The *global_attributes* (§17) of a compilation unit permit the specification of attributes for the target assembly and module. Assemblies and modules act as physical containers for types. An assembly may consist of several physically separate modules.
+The *global_attributes* ([Attributes](attributes.md#attributes)) of a compilation unit permit the specification of attributes for the target assembly and module. Assemblies and modules act as physical containers for types. An assembly may consist of several physically separate modules.
 
 The *namespace_member_declarations* of each compilation unit of a program contribute members to a single declaration space called the global namespace. For example:
 
@@ -82,7 +82,7 @@ namespace N1
 }
 ```
 
-Namespaces are open-ended, and two namespace declarations with the same fully qualified name contribute to the same declaration space (§3.3). In the example
+Namespaces are open-ended, and two namespace declarations with the same fully qualified name contribute to the same declaration space ([Declarations](basic-concepts.md#declarations)). In the example
 ```csharp
 namespace N1.N2
 {
@@ -134,7 +134,7 @@ The program declares the existence of the extern aliases `X` and `Y`, but the ac
 
 ## Using directives
 
-***Using directives*** facilitate the use of namespaces and types defined in other namespaces. Using directives impact the name resolution process of *namespace_or_type_name*s (§3.8) and *simple_name*s (§7.6.2), but unlike declarations, using directives do not contribute new members to the underlying declaration spaces of the compilation units or namespaces within which they are used.
+***Using directives*** facilitate the use of namespaces and types defined in other namespaces. Using directives impact the name resolution process of *namespace_or_type_name*s ([Namespace and type names](basic-concepts.md#namespace-and-type-names)) and *simple_name*s ([Simple names](expressions.md#simple-names)), but unlike declarations, using directives do not contribute new members to the underlying declaration spaces of the compilation units or namespaces within which they are used.
 
 ```antlr
 using_directives
@@ -147,9 +147,9 @@ using_directive
     ;
 ```
 
-A *using_alias_directive* (§9.4.1) introduces an alias for a namespace or type.
+A *using_alias_directive* ([Using alias directives](namespaces.md#using-alias-directives)) introduces an alias for a namespace or type.
 
-A *using_namespace_directive* (§9.4.2) imports the type members of a namespace.
+A *using_namespace_directive* ([Using namespace directives](namespaces.md#using-namespace-directives)) imports the type members of a namespace.
 
 The scope of a *using_directive* extends over the *namespace_member_declarations* of its immediately containing compilation unit or namespace body. The scope of a *using_directive* specifically does not include its peer *using_directive*s. Thus, peer *using_directive*s do not affect each other, and the order in which they are written is insignificant.
 
@@ -411,7 +411,7 @@ The *namespace_name* referenced by a *using_namespace_directive* is resolved in 
 
 ## Namespace members
 
-A *namespace_member_declaration* is either a *namespace_declaration* (§9.2) or a *type_declaration* (§9.6).
+A *namespace_member_declaration* is either a *namespace_declaration* ([Namespace declarations](namespaces.md#namespace-declarations)) or a *type_declaration* ([Type declarations](namespaces.md#type-declarations)).
 
 ```antlr
 namespace_member_declarations
@@ -428,7 +428,7 @@ A compilation unit or a namespace body can contain *namespace_member_declaration
 
 ## Type declarations
 
-A *type_declaration* is a *class_declaration* (§10.1), a *struct_declaration* (§11.1), an *interface_declaration* (§13.1), an *enum_declaration* (§14.1), or a *delegate_declaration* (§15.1).
+A *type_declaration* is a *class_declaration* ([Class declarations](classes.md#class-declarations)), a *struct_declaration* ([Struct declarations](structs.md#struct-declarations)), an *interface_declaration* ([Interface declarations](interfaces.md#interface-declarations)), an *enum_declaration* ([Enum declarations](enums.md#enum-declarations)), or a *delegate_declaration* ([Delegate declarations](delegates.md#delegate-declarations)).
 
 ```antlr
 type_declaration
@@ -444,9 +444,9 @@ A *type_declaration* can occur as a top-level declaration in a compilation unit 
 
 When a type declaration for a type `T` occurs as a top-level declaration in a compilation unit, the fully qualified name of the newly declared type is simply `T`. When a type declaration for a type `T` occurs within a namespace, class, or struct, the fully qualified name of the newly declared type is `N.T`, where `N` is the fully qualified name of the containing namespace, class, or struct.
 
-A type declared within a class or struct is called a nested type (§10.3.8).
+A type declared within a class or struct is called a nested type ([Nested types](classes.md#nested-types)).
 
-The permitted access modifiers and the default access for a type declaration depend on the context in which the declaration takes place (§3.5.1):
+The permitted access modifiers and the default access for a type declaration depend on the context in which the declaration takes place ([Declared accessibility](basic-concepts.md#declared-accessibility)):
 
 *  Types declared in compilation units or namespaces can have `public` or `internal` access. The default is `internal` access.
 *  Types declared in classes can have `public`, `protected internal`, `protected`, `internal`, or `private` access. The default is `private` access.
@@ -464,7 +464,7 @@ qualified_alias_member
     ;
 ```
 
-A *qualified_alias_member* can be used as a *namespace_or_type_name* (§3.8) or as the left operand in a *member_access* (§7.6.4).
+A *qualified_alias_member* can be used as a *namespace_or_type_name* ([Namespace and type names](basic-concepts.md#namespace-and-type-names)) or as the left operand in a *member_access* ([Member access](expressions.md#member-access)).
 
 A *qualified_alias_member* has one of two forms:
 
@@ -479,7 +479,7 @@ Using this notation, the meaning of a *qualified_alias_member* is determined as 
    * Otherwise, if the global namespace contains a type named `I` that has `K` type parameters, then the *qualified_alias_member* refers to that type constructed with the given type arguments.
    * Otherwise, the *qualified_alias_member* is undefined and a compile-time error occurs.
 
-*  Otherwise, starting with the namespace declaration (§9.2) immediately containing the *qualified_alias_member* (if any), continuing with each enclosing namespace declaration (if any), and ending with the compilation unit containing the *qualified_alias_member*, the following steps are evaluated until an entity is located:
+*  Otherwise, starting with the namespace declaration ([Namespace declarations](namespaces.md#namespace-declarations)) immediately containing the *qualified_alias_member* (if any), continuing with each enclosing namespace declaration (if any), and ending with the compilation unit containing the *qualified_alias_member*, the following steps are evaluated until an entity is located:
 
    * If the namespace declaration or compilation unit contains a *using_alias_directive* that associates `N` with a type, then the *qualified_alias_member* is undefined and a compile-time error occurs.
    * Otherwise, if the namespace declaration or compilation unit contains an *extern_alias_directive* or *using_alias_directive* that associates `N` with a namespace, then:

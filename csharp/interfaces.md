@@ -1,4 +1,4 @@
-# Interfaces
+﻿# Interfaces
 
 An interface defines a contract. A class or struct that implements an interface must adhere to its contract. An interface may inherit from multiple base interfaces, and a class or struct may implement multiple interfaces.
 
@@ -6,7 +6,7 @@ Interfaces can contain methods, properties, events, and indexers. The interface 
 
 ## Interface declarations
 
-An *interface_declaration* is a *type_declaration* (§9.6) that declares a new interface type.
+An *interface_declaration* is a *type_declaration* ([Type declarations](namespaces.md#type-declarations)) that declares a new interface type.
 
 ```antlr
 interface_declaration
@@ -16,7 +16,7 @@ interface_declaration
     ;
 ```
 
-An *interface_declaration* consists of an optional set of *attributes* (§17), followed by an optional set of *interface_modifiers* (§13.1.1), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant_type_parameter_list* specification (§13.1.3), followed by an optional *interface_base* specification (§13.1.4), followed by an optional *type_parameter_constraints_clauses* specification (§10.1.5), followed by an *interface_body* (§13.1.5), optionally followed by a semicolon.
+An *interface_declaration* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), followed by an optional set of *interface_modifiers* ([Interface modifiers](interfaces.md#interface-modifiers)), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant_type_parameter_list* specification ([Variant type parameter lists](interfaces.md#variant-type-parameter-lists)), followed by an optional *interface_base* specification ([Base interfaces](interfaces.md#base-interfaces)), followed by an optional *type_parameter_constraints_clauses* specification ([Type parameter constraints](classes.md#type-parameter-constraints)), followed by an *interface_body* ([Interface body](interfaces.md#interface-body)), optionally followed by a semicolon.
 
 ### Interface modifiers
 
@@ -35,13 +35,13 @@ interface_modifier
 
 It is a compile-time error for the same modifier to appear multiple times in an interface declaration.
 
-The `new` modifier is only permitted on interfaces defined within a class. It specifies that the interface hides an inherited member by the same name, as described in §10.3.4.
+The `new` modifier is only permitted on interfaces defined within a class. It specifies that the interface hides an inherited member by the same name, as described in [The new modifier](classes.md#the-new-modifier).
 
-The `public`, `protected`, `internal`, and `private` modifiers control the accessibility of the interface. Depending on the context in which the interface declaration occurs, only some of these modifiers may be permitted (§3.5.1).
+The `public`, `protected`, `internal`, and `private` modifiers control the accessibility of the interface. Depending on the context in which the interface declaration occurs, only some of these modifiers may be permitted ([Declared accessibility](basic-concepts.md#declared-accessibility)).
 
 ### Partial modifier
 
-The `partial` modifier indicates that this *interface_declaration* is a partial type declaration. Multiple partial interface declarations with the same name within an enclosing namespace or type declaration combine to form one interface declaration, following the rules specified in §10.2.
+The `partial` modifier indicates that this *interface_declaration* is a partial type declaration. Multiple partial interface declarations with the same name within an enclosing namespace or type declaration combine to form one interface declaration, following the rules specified in [Partial types](classes.md#partial-types).
 
 ### Variant type parameter lists
 
@@ -101,7 +101,7 @@ A type is ***output-safe*** if it is not output-unsafe, and ***input-safe*** if 
 
 #### Variance conversion
 
-The purpose of variance annotations is to provide for more lenient (but still type safe) conversions to interface and delegate types. To this end the definitions of implicit (§6.1) and explicit conversions (§6.2) make use of the notion of variance-convertibility, which is defined as follows:
+The purpose of variance annotations is to provide for more lenient (but still type safe) conversions to interface and delegate types. To this end the definitions of implicit ([Implicit conversions](conversions.md#implicit-conversions)) and explicit conversions ([Explicit conversions](conversions.md#explicit-conversions)) make use of the notion of variance-convertibility, which is defined as follows:
 
 A type `T<A1,...,An>` is variance-convertible to a type `T<B1,...,Bn>` if `T` is either an interface or a delegate type declared with the variant type parameters `T<X1,...,Xn>`, and for each variant type parameter `Xi` one of the following holds:
 
@@ -121,7 +121,7 @@ interface_base
 
 For a constructed interface type, the explicit base interfaces are formed by taking the explicit base interface declarations on the generic type declaration, and substituting, for each *type_parameter* in the base interface declaration, the corresponding *type_argument* of the constructed type.
 
-The explicit base interfaces of an interface must be at least as accessible as the interface itself (§3.5.4). For example, it is a compile-time error to specify a `private` or `internal` interface in the *interface_base* of a `public` interface.
+The explicit base interfaces of an interface must be at least as accessible as the interface itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)). For example, it is a compile-time error to specify a `private` or `internal` interface in the *interface_base* of a `public` interface.
 
 It is a compile-time error for an interface to directly or indirectly inherit from itself.
 
@@ -148,7 +148,7 @@ the base interfaces of `IComboBox` are `IControl`, `ITextBox`, and `IListBox`.
 
 In other words, the `IComboBox` interface above inherits members `SetText` and `SetItems` as well as `Paint`.
 
-Every base interface of an interface must be output-safe (§13.1.3.1). A class or struct that implements an interface also implicitly implements all of the interface's base interfaces.
+Every base interface of an interface must be output-safe ([Variance safety](interfaces.md#variance-safety)). A class or struct that implements an interface also implicitly implements all of the interface's base interfaces.
 
 ### Interface body
 
@@ -191,17 +191,17 @@ public interface IStringList
 ```
 declares an interface that contains one each of the possible kinds of members: A method, a property, an event, and an indexer.
 
-An *interface_declaration* creates a new declaration space (§3.3), and the *interface_member_declarations* immediately contained by the *interface_declaration* introduce new members into this declaration space. The following rules apply to *interface_member_declaration*s:
+An *interface_declaration* creates a new declaration space ([Declarations](basic-concepts.md#declarations)), and the *interface_member_declarations* immediately contained by the *interface_declaration* introduce new members into this declaration space. The following rules apply to *interface_member_declaration*s:
 
-*  The name of a method must differ from the names of all properties and events declared in the same interface. In addition, the signature (§3.6) of a method must differ from the signatures of all other methods declared in the same interface, and two methods declared in the same interface may not have signatures that differ solely by `ref` and `out`.
+*  The name of a method must differ from the names of all properties and events declared in the same interface. In addition, the signature ([Signatures and overloading](basic-concepts.md#signatures-and-overloading)) of a method must differ from the signatures of all other methods declared in the same interface, and two methods declared in the same interface may not have signatures that differ solely by `ref` and `out`.
 *  The name of a property or event must differ from the names of all other members declared in the same interface.
 *  The signature of an indexer must differ from the signatures of all other indexers declared in the same interface.
 
-The inherited members of an interface are specifically not part of the declaration space of the interface. Thus, an interface is allowed to declare a member with the same name or signature as an inherited member. When this occurs, the derived interface member is said to hide the base interface member. Hiding an inherited member is not considered an error, but it does cause the compiler to issue a warning. To suppress the warning, the declaration of the derived interface member must include a `new` modifier to indicate that the derived member is intended to hide the base member. This topic is discussed further in §3.7.1.2.
+The inherited members of an interface are specifically not part of the declaration space of the interface. Thus, an interface is allowed to declare a member with the same name or signature as an inherited member. When this occurs, the derived interface member is said to hide the base interface member. Hiding an inherited member is not considered an error, but it does cause the compiler to issue a warning. To suppress the warning, the declaration of the derived interface member must include a `new` modifier to indicate that the derived member is intended to hide the base member. This topic is discussed further in [Hiding through inheritance](basic-concepts.md#hiding-through-inheritance).
 
 If a `new` modifier is included in a declaration that doesn't hide an inherited member, a warning is issued to that effect. This warning is suppressed by removing the `new` modifier.
 
-Note that the members in class `object` are not, strictly speaking, members of any interface (§13.2). However, the members in class `object` are available via member lookup in any interface type (§7.4).
+Note that the members in class `object` are not, strictly speaking, members of any interface ([Interface members](interfaces.md#interface-members)). However, the members in class `object` are available via member lookup in any interface type ([Member lookup](expressions.md#member-lookup)).
 
 ### Interface methods
 
@@ -214,9 +214,9 @@ interface_method_declaration
     ;
 ```
 
-The *attributes*, *return_type*, *identifier*, and *formal_parameter_list* of an interface method declaration have the same meaning as those of a method declaration in a class (§10.6). An interface method declaration is not permitted to specify a method body, and the declaration therefore always ends with a semicolon.
+The *attributes*, *return_type*, *identifier*, and *formal_parameter_list* of an interface method declaration have the same meaning as those of a method declaration in a class ([Methods](classes.md#methods)). An interface method declaration is not permitted to specify a method body, and the declaration therefore always ends with a semicolon.
 
-Each formal parameter type of an interface method must be input-safe (§13.1.3.1), and the return type must be either `void` or output-safe. Furthermore, each class type constraint, interface type constraint and type parameter constraint on any type parameter of the method must be input-safe.
+Each formal parameter type of an interface method must be input-safe ([Variance safety](interfaces.md#variance-safety)), and the return type must be either `void` or output-safe. Furthermore, each class type constraint, interface type constraint and type parameter constraint on any type parameter of the method must be input-safe.
 
 These rules ensure that any covariant or contravariant usage of the interface remains typesafe. For example,
 ```csharp
@@ -253,9 +253,9 @@ interface_accessors
     ;
 ```
 
-The *attributes*, *type*, and *identifier* of an interface property declaration have the same meaning as those of a property declaration in a class (§10.7).
+The *attributes*, *type*, and *identifier* of an interface property declaration have the same meaning as those of a property declaration in a class ([Properties](classes.md#properties)).
 
-The accessors of an interface property declaration correspond to the accessors of a class property declaration (§10.7.2), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the property is read-write, read-only, or write-only.
+The accessors of an interface property declaration correspond to the accessors of a class property declaration ([Accessors](classes.md#accessors)), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the property is read-write, read-only, or write-only.
 
 The type of an interface property must be output-safe if there is a get accessor, and must be input-safe if there is a set accessor.
 
@@ -269,7 +269,7 @@ interface_event_declaration
     ;
 ```
 
-The *attributes*, *type*, and *identifier* of an interface event declaration have the same meaning as those of an event declaration in a class (§10.8).
+The *attributes*, *type*, and *identifier* of an interface event declaration have the same meaning as those of an event declaration in a class ([Events](classes.md#events)).
 
 The type of an interface event must be input-safe.
 
@@ -283,9 +283,9 @@ interface_indexer_declaration
     ;
 ```
 
-The *attributes*, *type*, and *formal_parameter_list* of an interface indexer declaration have the same meaning as those of an indexer declaration in a class (§10.9).
+The *attributes*, *type*, and *formal_parameter_list* of an interface indexer declaration have the same meaning as those of an indexer declaration in a class ([Indexers](classes.md#indexers)).
 
-The accessors of an interface indexer declaration correspond to the accessors of a class indexer declaration (§10.9), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the indexer is read-write, read-only, or write-only.
+The accessors of an interface indexer declaration correspond to the accessors of a class indexer declaration ([Indexers](classes.md#indexers)), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the indexer is read-write, read-only, or write-only.
 
 All the formal parameter types of an interface indexer must be input-safe . In addition, any `out` or `ref` formal parameter types must also be output-safe. Note that even `out` parameters are required to be input-safe, due to a limitiation of the underlying execution platform.
 
@@ -293,9 +293,9 @@ The type of an interface indexer must be output-safe if there is a get accessor,
 
 ### Interface member access
 
-Interface members are accessed through member access (§7.6.4) and indexer access (§7.6.6.2) expressions of the form `I.M` and `I[A]`, where `I` is an interface type, `M` is a method, property, or event of that interface type, and `A` is an indexer argument list.
+Interface members are accessed through member access ([Member access](expressions.md#member-access)) and indexer access ([Indexer access](expressions.md#indexer-access)) expressions of the form `I.M` and `I[A]`, where `I` is an interface type, `M` is a method, property, or event of that interface type, and `A` is an indexer argument list.
 
-For interfaces that are strictly single-inheritance (each interface in the inheritance chain has exactly zero or one direct base interface), the effects of the member lookup (§7.4), method invocation (§7.6.5.1), and indexer access (§7.6.6.2) rules are exactly the same as for classes and structs: More derived members hide less derived members with the same name or signature. However, for multiple-inheritance interfaces, ambiguities can occur when two or more unrelated base interfaces declare members with the same name or signature. This section shows several examples of such situations. In all cases, explicit casts can be used to resolve the ambiguities.
+For interfaces that are strictly single-inheritance (each interface in the inheritance chain has exactly zero or one direct base interface), the effects of the member lookup ([Member lookup](expressions.md#member-lookup)), method invocation ([Method invocations](expressions.md#method-invocations)), and indexer access ([Indexer access](expressions.md#indexer-access)) rules are exactly the same as for classes and structs: More derived members hide less derived members with the same name or signature. However, for multiple-inheritance interfaces, ambiguities can occur when two or more unrelated base interfaces declare members with the same name or signature. This section shows several examples of such situations. In all cases, explicit casts can be used to resolve the ambiguities.
 
 In the example
 ```csharp
@@ -321,7 +321,7 @@ class C
     }
 }
 ```
-the first two statements cause compile-time errors because the member lookup (§7.4) of `Count` in `IListCounter` is ambiguous. As illustrated by the example, the ambiguity is resolved by casting `x` to the appropriate base interface type. Such casts have no run-time costs—they merely consist of viewing the instance as a less derived type at compile-time.
+the first two statements cause compile-time errors because the member lookup ([Member lookup](expressions.md#member-lookup)) of `Count` in `IListCounter` is ambiguous. As illustrated by the example, the ambiguity is resolved by casting `x` to the appropriate base interface type. Such casts have no run-time costs—they merely consist of viewing the instance as a less derived type at compile-time.
 
 In the example
 ```csharp
@@ -347,7 +347,7 @@ class C
     }
 }
 ```
-the invocation `n.Add(1)` selects `IInteger.Add` by applying the overload resolution rules of §7.5.3. Similarly the invocation `n.Add(1.0)` selects `IDouble.Add`. When explicit casts are inserted, there is only one candidate method, and thus no ambiguity.
+the invocation `n.Add(1)` selects `IInteger.Add` by applying the overload resolution rules of [Overload resolution](expressions.md#overload-resolution). Similarly the invocation `n.Add(1.0)` selects `IDouble.Add`. When explicit casts are inserted, there is only one candidate method, and thus no ambiguity.
 
 In the example
 ```csharp
@@ -455,7 +455,7 @@ class TextBox: ITextBox
 
 Here, class `TextBox` implements both `IControl` and `ITextBox`.
 
-When a class `C` directly implements an interface, all classes derived from C also implement the interface implicitly. The base interfaces specified in a class declaration can be constructed interface types (§4.4). A base interface cannot be a type parameter on its own, though it can involve the type parameters that are in scope. The following code illustrates how a class can implement and extend constructed types:
+When a class `C` directly implements an interface, all classes derived from C also implement the interface implicitly. The base interfaces specified in a class declaration can be constructed interface types ([Constructed types](types.md#constructed-types)). A base interface cannot be a type parameter on its own, though it can involve the type parameters that are in scope. The following code illustrates how a class can implement and extend constructed types:
 ```csharp
 class C<U,V> {}
 
@@ -466,7 +466,7 @@ class D: C<string,int>, I1<string> {}
 class E<T>: C<int,T>, I1<T> {}
 ```
 
-The base interfaces of a generic class declaration must satisfy the uniqueness rule described in §13.4.2.
+The base interfaces of a generic class declaration must satisfy the uniqueness rule described in [Uniqueness of implemented interfaces](interfaces.md#uniqueness-of-implemented-interfaces).
 
 ### Explicit interface member implementations
 
@@ -620,7 +620,7 @@ This code is valid even though `Derived<U,V>` implements both `I<U>` and `I<V>`.
 I<int> x = new Derived<int,int>();
 x.F();
 ```
-invokes the method in `Derived`, since `Derived<int,int>` effectively re-implements `I<int>` (§13.4.6).
+invokes the method in `Derived`, since `Derived<int,int>` effectively re-implements `I<int>` ([Interface re-implementation](interfaces.md#interface-re-implementation)).
 
 ### Implementation of generic methods
 
