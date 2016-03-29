@@ -327,6 +327,8 @@ Class MarkdownSpec
                 p.AppendChild(New BookmarkEnd With {.Id = CStr(maxBookmarkId.Value)})
                 Yield p
                 Console.WriteLine(New String(" "c, level * 4 - 4) & sr.Number & " " & sr.Title)
+                Dim rep = $"s = s.Replace(""§{sr.Number}"",""[{sr.Title}]({sr.Url}expressions.md#addition-operator)"")"
+                IO.File.AppendAllText("rep.txt", rep & vbCrLf)
                 Return
 
             ElseIf md.IsParagraph Then
