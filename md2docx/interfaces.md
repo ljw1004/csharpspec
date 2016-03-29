@@ -6,7 +6,7 @@ Interfaces can contain methods, properties, events, and indexers. The interface 
 
 ## Interface declarations
 
-An *interface-declaration* is a *type-declaration* (§9.6) that declares a new interface type.
+An *interface_declaration* is a *type_declaration* (§9.6) that declares a new interface type.
 
 ```antlr
 interface_declaration
@@ -14,11 +14,11 @@ interface_declaration
     ;
 ```
 
-An *interface-declaration* consists of an optional set of *attributes* (§17), followed by an optional set of *interface-modifiers* (§13.1.1), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant-type-parameter-list* specification (§13.1.3), followed by an optional *interface-base* specification (§13.1.4), followed by an optional *type-parameter-constraints-clauses* specification (§10.1.5), followed by an *interface-body* (§13.1.5), optionally followed by a semicolon.
+An *interface_declaration* consists of an optional set of *attributes* (§17), followed by an optional set of *interface_modifiers* (§13.1.1), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant_type_parameter_list* specification (§13.1.3), followed by an optional *interface_base* specification (§13.1.4), followed by an optional *type_parameter_constraints_clauses* specification (§10.1.5), followed by an *interface_body* (§13.1.5), optionally followed by a semicolon.
 
 ### Interface modifiers
 
-An *interface-declaration* may optionally include a sequence of interface modifiers:
+An *interface_declaration* may optionally include a sequence of interface modifiers:
 
 ```antlr
 interface_modifier
@@ -39,11 +39,11 @@ The `public`, `protected`, `internal`, and `private` modifiers control the acces
 
 ### Partial modifier
 
-The `partial` modifier indicates that this *interface-declaration* is a partial type declaration. Multiple partial interface declarations with the same name within an enclosing namespace or type declaration combine to form one interface declaration, following the rules specified in §10.2.
+The `partial` modifier indicates that this *interface_declaration* is a partial type declaration. Multiple partial interface declarations with the same name within an enclosing namespace or type declaration combine to form one interface declaration, following the rules specified in §10.2.
 
 ### Variant type parameter lists
 
-Variant type parameter lists can only occur on interface and delegate types. The difference from ordinary *type-parameter-list*s is the optional *variance-annotation* on each type parameter.
+Variant type parameter lists can only occur on interface and delegate types. The difference from ordinary *type_parameter_list*s is the optional *variance_annotation* on each type parameter.
 
 ```antlr
 variant_type_parameter_list
@@ -118,9 +118,9 @@ interface_base
     ;
 ```
 
-For a constructed interface type, the explicit base interfaces are formed by taking the explicit base interface declarations on the generic type declaration, and substituting, for each *type-parameter* in the base interface declaration, the corresponding *type-argument* of the constructed type.
+For a constructed interface type, the explicit base interfaces are formed by taking the explicit base interface declarations on the generic type declaration, and substituting, for each *type_parameter* in the base interface declaration, the corresponding *type_argument* of the constructed type.
 
-The explicit base interfaces of an interface must be at least as accessible as the interface itself (§3.5.4). For example, it is a compile-time error to specify a `private` or `internal` interface in the *interface-base* of a `public` interface.
+The explicit base interfaces of an interface must be at least as accessible as the interface itself (§3.5.4). For example, it is a compile-time error to specify a `private` or `internal` interface in the *interface_base* of a `public` interface.
 
 It is a compile-time error for an interface to directly or indirectly inherit from itself.
 
@@ -151,7 +151,7 @@ Every base interface of an interface must be output-safe (§13.1.3.1). A class o
 
 ### Interface body
 
-The *interface-body* of an interface defines the members of the interface.
+The *interface_body* of an interface defines the members of the interface.
 
 ```antlr
 interface_body
@@ -190,7 +190,7 @@ public interface IStringList
 ```
 declares an interface that contains one each of the possible kinds of members: A method, a property, an event, and an indexer.
 
-An *interface-declaration* creates a new declaration space (§3.3), and the *interface-member-declarations* immediately contained by the *interface-declaration* introduce new members into this declaration space. The following rules apply to *interface-member-declaration*s:
+An *interface_declaration* creates a new declaration space (§3.3), and the *interface_member_declarations* immediately contained by the *interface_declaration* introduce new members into this declaration space. The following rules apply to *interface_member_declaration*s:
 
 *  The name of a method must differ from the names of all properties and events declared in the same interface. In addition, the signature (§3.6) of a method must differ from the signatures of all other methods declared in the same interface, and two methods declared in the same interface may not have signatures that differ solely by `ref` and `out`.
 *  The name of a property or event must differ from the names of all other members declared in the same interface.
@@ -204,7 +204,7 @@ Note that the members in class `object` are not, strictly speaking, members of a
 
 ### Interface methods
 
-Interface methods are declared using *interface-method-declaration*s:
+Interface methods are declared using *interface_method_declaration*s:
 
 ```antlr
 interface_method_declaration
@@ -213,7 +213,7 @@ interface_method_declaration
     ;
 ```
 
-The *attributes*, *return-type*, *identifier*, and *formal-parameter-list* of an interface method declaration have the same meaning as those of a method declaration in a class (§10.6). An interface method declaration is not permitted to specify a method body, and the declaration therefore always ends with a semicolon.
+The *attributes*, *return_type*, *identifier*, and *formal_parameter_list* of an interface method declaration have the same meaning as those of a method declaration in a class (§10.6). An interface method declaration is not permitted to specify a method body, and the declaration therefore always ends with a semicolon.
 
 Each formal parameter type of an interface method must be input-safe (§13.1.3.1), and the return type must be either `void` or output-safe. Furthermore, each class type constraint, interface type constraint and type parameter constraint on any type parameter of the method must be input-safe.
 
@@ -237,7 +237,7 @@ This is actually a call to `C.M<E>`. But that call requires that `E` derive from
 
 ### Interface properties
 
-Interface properties are declared using *interface-property-declaration*s:
+Interface properties are declared using *interface_property_declaration*s:
 
 ```antlr
 interface_property_declaration
@@ -260,7 +260,7 @@ The type of an interface property must be output-safe if there is a get accessor
 
 ### Interface events
 
-Interface events are declared using *interface-event-declarations*:
+Interface events are declared using *interface_event_declarations*:
 
 ```antlr
 interface_event_declaration
@@ -274,7 +274,7 @@ The type of an interface event must be input-safe.
 
 ### Interface indexers
 
-Interface indexers are declared using *interface-indexer-declaration*s:
+Interface indexers are declared using *interface_indexer_declaration*s:
 
 ```antlr
 interface_indexer_declaration
@@ -282,7 +282,7 @@ interface_indexer_declaration
     ;
 ```
 
-The *attributes*, *type*, and *formal-parameter-list* of an interface indexer declaration have the same meaning as those of an indexer declaration in a class (§10.9).
+The *attributes*, *type*, and *formal_parameter_list* of an interface indexer declaration have the same meaning as those of an indexer declaration in a class (§10.9).
 
 The accessors of an interface indexer declaration correspond to the accessors of a class indexer declaration (§10.9), except that the accessor body must always be a semicolon. Thus, the accessors simply indicate whether the indexer is read-write, read-only, or write-only.
 
