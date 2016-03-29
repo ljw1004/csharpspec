@@ -1,14 +1,14 @@
 # Attributes
 
-Much of the C# language enables the programmer to specify declarative information about the entities defined in the program. For example, the accessibility of a method in a class is specified by decorating it with the *method-modifiers*`public`, `protected`, `internal`, and `private`.
+Much of the C# language enables the programmer to specify declarative information about the entities defined in the program. For example, the accessibility of a method in a class is specified by decorating it with the *method_modifiers* `public`, `protected`, `internal`, and `private`.
 
-C# enables programmers to invent new kinds of declarative information, called *__attributes__*. Programmers can then attach attributes to various program entities, and retrieve attribute information in a run-time environment. For instance, a framework might define a `HelpAttribute` attribute that can be placed on certain program elements (such as classes and methods) to provide a mapping from those program elements to their documentation.
+C# enables programmers to invent new kinds of declarative information, called ***attributes***. Programmers can then attach attributes to various program entities, and retrieve attribute information in a run-time environment. For instance, a framework might define a `HelpAttribute` attribute that can be placed on certain program elements (such as classes and methods) to provide a mapping from those program elements to their documentation.
 
 Attributes are defined through the declaration of attribute classes (§17.1), which may have positional and named parameters (§17.1.2). Attributes are attached to entities in a C# program using attribute specifications (§17.2), and can be retrieved at run-time as attribute instances (§17.3).
 
 ## Attribute classes
 
-A class that derives from the abstract class `System.Attribute`, whether directly or indirectly, is an *__attribute class__*. The declaration of an attribute class defines a new kind of *__attribute__* that can be placed on a declaration. By convention, attribute classes are named with a suffix of `Attribute`. Uses of an attribute may either include or omit this suffix.
+A class that derives from the abstract class `System.Attribute`, whether directly or indirectly, is an ***attribute class***. The declaration of an attribute class defines a new kind of ***attribute*** that can be placed on a declaration. By convention, attribute classes are named with a suffix of `Attribute`. Uses of an attribute may either include or omit this suffix.
 
 ### Attribute usage
 
@@ -26,7 +26,7 @@ public class SimpleAttribute: Attribute
 }
 ```
 
-defines an attribute class named `SimpleAttribute` that can be placed on *class-declaration* s and *interface-declaration* s only. The example
+defines an attribute class named `SimpleAttribute` that can be placed on *class_declaration*s and *interface_declaration*s only. The example
 
 ```csharp
 [Simple] class Class1 {...}
@@ -42,7 +42,7 @@ shows several uses of the `Simple` attribute. Although this attribute is defined
 [SimpleAttribute] interface Interface1 {...}
 ```
 
-`AttributeUsage` has a named parameter (§17.1.2) called `AllowMultiple`, which indicates whether the attribute can be specified more than once for a given entity. If `AllowMultiple` for an attribute class is true, then that attribute class is a *__multi-use attribute class__*, and can be specified more than once on an entity. If `AllowMultiple` for an attribute class is false or it is unspecified, then that attribute class is a *__single-use attribute class__*, and can be specified at most once on an entity.
+`AttributeUsage` has a named parameter (§17.1.2) called `AllowMultiple`, which indicates whether the attribute can be specified more than once for a given entity. If `AllowMultiple` for an attribute class is true, then that attribute class is a ***multi-use attribute class***, and can be specified more than once on an entity. If `AllowMultiple` for an attribute class is false or it is unspecified, then that attribute class is a ***single-use attribute class***, and can be specified at most once on an entity.
 
 The example
 
@@ -101,7 +101,7 @@ class X: Attribute {...}
 
 ### Positional and named parameters
 
-Attribute classes can have *__positional parameters__* and *__named parameters__*. Each public instance constructor for an attribute class defines a valid sequence of positional parameters for that attribute class. Each non-static public read-write field and property for an attribute class defines a named parameter for the attribute class.
+Attribute classes can have ***positional parameters*** and ***named parameters***. Each public instance constructor for an attribute class defines a valid sequence of positional parameters for that attribute class. Each non-static public read-write field and property for an attribute class defines a named parameter for the attribute class.
 
 The example
 
@@ -146,97 +146,108 @@ class Class2
 
 ### Attribute parameter types
 
-The types of positional and named parameters for an attribute class are limited to the *__attribute parameter types__*, which are:
+The types of positional and named parameters for an attribute class are limited to the ***attribute parameter types***, which are:
 
--  One of the following types: `bool`, `byte`, `char`, `double`, `float`, `int`, `long`, `sbyte`, `short`, `string`, `uint`, `ulong`, `ushort`.
--  The type `object`.
--  The type `System.Type`.
--  An enum type, provided it has public accessibility and the types in which it is nested (if any) also have public accessibility (§17.2).
--  Single-dimensional arrays of the above types.
--  A constructor argument or public field which does not have one of these types, cannot be used as a positional or named parameter in an attribute specification.
+*  One of the following types: `bool`, `byte`, `char`, `double`, `float`, `int`, `long`, `sbyte`, `short`, `string`, `uint`, `ulong`, `ushort`.
+*  The type `object`.
+*  The type `System.Type`.
+*  An enum type, provided it has public accessibility and the types in which it is nested (if any) also have public accessibility (§17.2).
+*  Single-dimensional arrays of the above types.
+*  A constructor argument or public field which does not have one of these types, cannot be used as a positional or named parameter in an attribute specification.
 
 ## Attribute specification
 
-*__Attribute specification__* is the application of a previously defined attribute to a declaration. An attribute is a piece of additional declarative information that is specified for a declaration. Attributes can be specified at global scope (to specify attributes on the containing assembly or module) and for *type-declaration* s (§9.6), *class-member-declaration* s (§10.1.5), *interface-member-declaration* s (§13.2), *struct-member-declaration* s (§11.2), *enum-member-declaration* s (§14.3), *accessor-declaration* s (§10.7.2), *event-accessor-declarations* (§10.8.1), and *formal-parameter-lists* (§10.6.1).
+***Attribute specification*** is the application of a previously defined attribute to a declaration. An attribute is a piece of additional declarative information that is specified for a declaration. Attributes can be specified at global scope (to specify attributes on the containing assembly or module) and for *type_declaration*s (§9.6), *class_member_declaration*s (§10.1.5), *interface_member_declaration*s (§13.2), *struct_member_declaration*s (§11.2), *enum_member_declaration*s (§14.3), *accessor_declaration*s (§10.7.2), *event_accessor_declaration*s (§10.8.1), and *formal_parameter_lists* (§10.6.1).
 
-Attributes are specified in *__attribute sections__*. An attribute section consists of a pair of square brackets, which surround a comma-separated list of one or more attributes. The order in which attributes are specified in such a list, and the order in which sections attached to the same program entity are arranged, is not significant. For instance, the attribute specifications `[A][B]`, `[B][A]`, `[A,B]`, and `[B,A]` are equivalent.
+Attributes are specified in ***attribute sections***. An attribute section consists of a pair of square brackets, which surround a comma-separated list of one or more attributes. The order in which attributes are specified in such a list, and the order in which sections attached to the same program entity are arranged, is not significant. For instance, the attribute specifications `[A][B]`, `[B][A]`, `[A,B]`, and `[B,A]` are equivalent.
 
-<pre>global-attributes:
-global-attribute-sections</pre>
+```antlr
+global_attributes
+    : global_attribute_section+
+    ;
 
-<pre>global-attribute-sections:
-global-attribute-section
-global-attribute-sections   global-attribute-section</pre>
+global_attribute_section
+    : '[' global_attribute_target_specifier attribute_list ']'
+    | '[' global_attribute_target_specifier attribute_list ',' ']'
+    ;
 
-<pre>global-attribute-section:
-<b>[</b>   global-attribute-target-specifier   attribute-list   <b>]</b>
-<b>[</b>   global-attribute-target-specifier   attribute-list   <b>,</b><b>]</b></pre>
+global_attribute_target_specifier
+    : global_attribute_target ':'
+    ;
 
-<pre>global-attribute-target-specifier:
-global-attribute-target   <b>:</b></pre>
+global_attribute_target
+    : 'assembly'
+    | 'module'
+    ;
 
-<pre>global-attribute-target:
-<b>assembly</b>
-<b>module</b></pre>
+attributes
+    : attribute_section+
+    ;
 
-<pre>attributes:
-attribute-sections</pre>
+attribute_section
+    : '[' attribute_target_specifier? attribute_list ']'
+    | '[' attribute_target_specifier? attribute_list ',' ']'
+    ;
 
-<pre>attribute-sections:
-attribute-section
-attribute-sections   attribute-section</pre>
+attribute_target_specifier
+    : attribute_target ':'
+    ;
 
-<pre>attribute-section:
-<b>[</b>   attribute-target-specifier<sub>opt</sub>   attribute-list   <b>]</b>
-<b>[</b>   attribute-target-specifier<sub>opt</sub>   attribute-list   <b>,</b><b>]</b></pre>
+attribute_target
+    : 'field'
+    | 'event'
+    | 'method'
+    | 'param'
+    | 'property'
+    | 'return'
+    | 'type'
+    ;
 
-<pre>attribute-target-specifier:
-attribute-target   <b>:</b></pre>
+attribute_list
+    : attribute
+    | attribute_list ',' attribute
+    ;
 
-<pre>attribute-target:
-<b>field</b>
-<b>event</b>
-<b>method</b>
-<b>param</b>
-<b>property</b>
-<b>return</b>
-<b>type</b></pre>
-
-<pre>attribute-list:
 attribute
-attribute-list   <b>,</b>   attribute</pre>
+    : attribute_name attribute_arguments?
+    ;
 
-<pre>attribute:
-attribute-name   attribute-arguments<sub>opt</sub></pre>
+attribute_name
+    : type_name
+    ;
 
-<pre>attribute-name:
- type-name</pre>
+attribute_arguments
+    : '(' positional_argument_list? ')'
+    | '(' positional_argument_list ',' named_argument_list ')'
+    | '(' named_argument_list ')'
+    ;
 
-<pre>attribute-arguments:
-<b>(</b>   positional-argument-list<sub>opt</sub><b>)</b>
-<b>(</b>   positional-argument-list   <b>,</b>   named-argument-list   <b>)</b>
-<b>(</b>   named-argument-list   <b>)</b></pre>
+positional_argument_list
+    : positional_argument
+    | positional_argument_list ',' positional_argument
+    ;
 
-<pre>positional-argument-list:
-positional-argument
-positional-argument-list   <b>,</b>   positional-argument</pre>
+positional_argument
+    : attribute_argument_expression
+    ;
 
-<pre>positional-argument:
-argument-name<sub>opt</sub>   attribute-argument-expression</pre>
+named_argument_list
+    : named_argument
+    | named_argument_list ',' named_argument
+    ;
 
-<pre>named-argument-list:
-named-argument
-named-argument-list   <b>,</b>   named-argument</pre>
+named_argument
+    : identifier '=' attribute_argument_expression
+    ;
 
-<pre>named-argument:
-identifier   <b>=</b>   attribute-argument-expression</pre>
+attribute_argument_expression
+    : expression
+    ;
+```
 
-<pre>attribute-argument-expression:
-expression</pre>
+An attribute consists of an *attribute_name* and an optional list of positional and named arguments. The positional arguments (if any) precede the named arguments. A positional argument consists of an *attribute_argument_expression*; a named argument consists of a name, followed by an equal sign, followed by an *attribute_argument_expression*, which, together, are constrained by the same rules as simple assignment. The order of named arguments is not significant.
 
-An attribute consists of an *attribute-name* and an optional list of positional and named arguments. The positional arguments (if any) precede the named arguments. A positional argument consists of an *attribute-argument-expression*; a named argument consists of a name, followed by an equal sign, followed by an *attribute-argument-expression*, which, together, are constrained by the same rules as simple assignment. The order of named arguments is not significant.
-
-The *attribute-name* identifies an attribute class. If the form of *attribute-name* is *type-name* then this name must refer to an attribute class. Otherwise, a compile-time error occurs. The example
+The *attribute_name* identifies an attribute class. If the form of *attribute_name* is *type_name* then this name must refer to an attribute class. Otherwise, a compile-time error occurs. The example
 
 ```csharp
 class Class1 {}
@@ -246,18 +257,18 @@ class Class1 {}
 
 results in a compile-time error because it attempts to use `Class1` as an attribute class when `Class1` is not an attribute class.
 
-Certain contexts permit the specification of an attribute on more than one target. A program can explicitly specify the target by including an *attribute-target-specifier*. When an attribute is placed at the global level, a *global-attribute-target-specifier* is required. In all other locations, a reasonable default is applied, but an *attribute-target-specifier* can be used to affirm or override the default in certain ambiguous cases (or to just affirm the default in non-ambiguous cases). Thus, typically, *attribute-target-specifier* s can be omitted except at the global level. The potentially ambiguous contexts are resolved as follows:
+Certain contexts permit the specification of an attribute on more than one target. A program can explicitly specify the target by including an *attribute_target_specifier*. When an attribute is placed at the global level, a *global_attribute_target_specifier* is required. In all other locations, a reasonable default is applied, but an *attribute_target_specifier* can be used to affirm or override the default in certain ambiguous cases (or to just affirm the default in non-ambiguous cases). Thus, typically, *attribute_target_specifier*s can be omitted except at the global level. The potentially ambiguous contexts are resolved as follows:
 
--  An attribute specified at global scope can apply either to the target assembly or the target module. No default exists for this context, so an *attribute-target-specifier* is always required in this context. The presence of the `assembly` *attribute-target-specifier* indicates that the attribute applies to the target assembly; the presence of the `module` *attribute-target-specifier* indicates that the attribute applies to the target module.
--  An attribute specified on a delegate declaration can apply either to the delegate being declared or to its return value. In the absence of an *attribute-target-specifier*, the attribute applies to the delegate. The presence of the `type` *attribute-target-specifier* indicates that the attribute applies to the delegate; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
--  An attribute specified on a method declaration can apply either to the method being declared or to its return value. In the absence of an *attribute-target-specifier*, the attribute applies to the method. The presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the method; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
--  An attribute specified on an operator declaration can apply either to the operator being declared or to its return value. In the absence of an *attribute-target-specifier*, the attribute applies to the operator. The presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the operator; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
--  An attribute specified on an event declaration that omits event accessors can apply to the event being declared, to the associated field (if the event is not abstract), or to the associated add and remove methods. In the absence of an *attribute-target-specifier*, the attribute applies to the event. The presence of the `event` *attribute-target-specifier* indicates that the attribute applies to the event; the presence of the `field` *attribute-target-specifier* indicates that the attribute applies to the field; and the presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the methods.
--  An attribute specified on a get accessor declaration for a property or indexer declaration can apply either to the associated method or to its return value. In the absence of an *attribute-target-specifier*, the attribute applies to the method. The presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the method; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
--  An attribute specified on a set accessor for a property or indexer declaration can apply either to the associated method or to its lone implicit parameter. In the absence of an *attribute-target-specifier*, the attribute applies to the method. The presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the method; the presence of the `param` *attribute-target-specifier* indicates that the attribute applies to the parameter; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
--  An attribute specified on an add or remove accessor declaration for an event declaration can apply either to the associated method or to its lone parameter. In the absence of an *attribute-target-specifier*, the attribute applies to the method. The presence of the `method` *attribute-target-specifier* indicates that the attribute applies to the method; the presence of the `param` *attribute-target-specifier* indicates that the attribute applies to the parameter; the presence of the `return` *attribute-target-specifier* indicates that the attribute applies to the return value.
+*  An attribute specified at global scope can apply either to the target assembly or the target module. No default exists for this context, so an *attribute_target_specifier* is always required in this context. The presence of the `assembly` *attribute_target_specifier* indicates that the attribute applies to the target assembly; the presence of the `module` *attribute_target_specifier* indicates that the attribute applies to the target module.
+*  An attribute specified on a delegate declaration can apply either to the delegate being declared or to its return value. In the absence of an *attribute_target_specifier*, the attribute applies to the delegate. The presence of the `type` *attribute_target_specifier* indicates that the attribute applies to the delegate; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
+*  An attribute specified on a method declaration can apply either to the method being declared or to its return value. In the absence of an *attribute_target_specifier*, the attribute applies to the method. The presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the method; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
+*  An attribute specified on an operator declaration can apply either to the operator being declared or to its return value. In the absence of an *attribute_target_specifier*, the attribute applies to the operator. The presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the operator; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
+*  An attribute specified on an event declaration that omits event accessors can apply to the event being declared, to the associated field (if the event is not abstract), or to the associated add and remove methods. In the absence of an *attribute_target_specifier*, the attribute applies to the event. The presence of the `event` *attribute_target_specifier* indicates that the attribute applies to the event; the presence of the `field` *attribute_target_specifier* indicates that the attribute applies to the field; and the presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the methods.
+*  An attribute specified on a get accessor declaration for a property or indexer declaration can apply either to the associated method or to its return value. In the absence of an *attribute_target_specifier*, the attribute applies to the method. The presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the method; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
+*  An attribute specified on a set accessor for a property or indexer declaration can apply either to the associated method or to its lone implicit parameter. In the absence of an *attribute_target_specifier*, the attribute applies to the method. The presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the method; the presence of the `param` *attribute_target_specifier* indicates that the attribute applies to the parameter; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
+*  An attribute specified on an add or remove accessor declaration for an event declaration can apply either to the associated method or to its lone parameter. In the absence of an *attribute_target_specifier*, the attribute applies to the method. The presence of the `method` *attribute_target_specifier* indicates that the attribute applies to the method; the presence of the `param` *attribute_target_specifier* indicates that the attribute applies to the parameter; the presence of the `return` *attribute_target_specifier* indicates that the attribute applies to the return value.
 
-In other contexts, inclusion of an *attribute-target-specifier* is permitted but unnecessary. For instance, a class declaration may either include or omit the specifier `type`:
+In other contexts, inclusion of an *attribute_target_specifier* is permitted but unnecessary. For instance, a class declaration may either include or omit the specifier `type`:
 
 ```csharp
 [type: Author("Brian Kernighan")]
@@ -267,14 +278,14 @@ class Class1 {}
 class Class2 {}
 ```
 
-It is an error to specify an invalid *attribute-target-specifier*. For instance, the specifier `param` cannot be used on a class declaration:
+It is an error to specify an invalid *attribute_target_specifier*. For instance, the specifier `param` cannot be used on a class declaration:
 
 ```csharp
 [param: Author("Brian Kernighan")]        // Error
 class Class1 {}
 ```
 
-By convention, attribute classes are named with a suffix of `Attribute`. An *attribute-name* of the form *type-name* may either include or omit this suffix. If an attribute class is found both with and without this suffix, an ambiguity is present, and a compile-time error results. If the *attribute-name* is spelled such that its right-most *identifier* is a verbatim identifier (§2.4.2), then only an attribute without a suffix is matched, thus enabling such an ambiguity to be resolved. The example
+By convention, attribute classes are named with a suffix of `Attribute`. An *attribute_name* of the form *type_name* may either include or omit this suffix. If an attribute class is found both with and without this suffix, an ambiguity is present, and a compile-time error results. If the *attribute_name* is spelled such that its right-most *identifier* is a verbatim identifier (§2.4.2), then only an attribute without a suffix is matched, thus enabling such an ambiguity to be resolved. The example
 
 ```csharp
 using System;
@@ -287,16 +298,16 @@ public class X: Attribute
 public class XAttribute: Attribute
 {}
 
-[X]                        // Error: ambiguity
+[X]                     // Error: ambiguity
 class Class1 {}
 
 [XAttribute]            // Refers to XAttribute
 class Class2 {}
 
-[@X]                        // Refers to X
+[@X]                    // Refers to X
 class Class3 {}
 
-[@XAttribute]            // Refers to XAttribute
+[@XAttribute]           // Refers to XAttribute
 class Class4 {}
 ```
 
@@ -309,13 +320,13 @@ using System;
 public class XAttribute: Attribute
 {}
 
-[X]                        // Refers to XAttribute
+[X]                     // Refers to XAttribute
 class Class1 {}
 
 [XAttribute]            // Refers to XAttribute
 class Class2 {}
 
-[@X]                        // Error: no attribute named "X"
+[@X]                    // Error: no attribute named "X"
 class Class3 {}
 ```
 
@@ -345,16 +356,13 @@ public class Class1 {}
 
 results in a compile-time error because it attempts to use `HelpString`, which is a single-use attribute class, more than once on the declaration of `Class1`.
 
-An expression `E` is an *attribute-argument-expression* if all of the following statements are true:
+An expression `E` is an *attribute_argument_expression* if all of the following statements are true:
 
--  The type of `E` is an attribute parameter type (§17.1.3).
--  At compile-time, the value of `E` can be resolved to one of the following:
-
-A constant value.
-
-A `System.Type` object.
-
-A one-dimensional array of *attribute-argument-expression* s.
+*  The type of `E` is an attribute parameter type (§17.1.3).
+*  At compile-time, the value of `E` can be resolved to one of the following:
+   * A constant value.
+   * A `System.Type` object.
+   * A one-dimensional array of *attribute_argument_expression*s.
 
 For example:
 
@@ -384,7 +392,7 @@ public class TestAttribute: Attribute
 class MyClass {}
 ```
 
-A *typeof-expression* (§7.6.11) used as an attribute argument expression can reference a non-generic type, a closed constructed type, or an unbound generic type, but it cannot reference an open type. This is to ensure that the expression can be resolved at compile-time.
+A *typeof_expression* (§7.6.11) used as an attribute argument expression can reference a non-generic type, a closed constructed type, or an unbound generic type, but it cannot reference an open type. This is to ensure that the expression can be resolved at compile-time.
 
 ```csharp
 class A: Attribute
@@ -394,61 +402,53 @@ class A: Attribute
 
 class G<T>
 {
-    [A(typeof(T))] T t;                    // Error, open type in attribute
+    [A(typeof(T))] T t;                  // Error, open type in attribute
 }
 
 class X
 {
     [A(typeof(List<int>))] int x;        // Ok, closed constructed type
-    [A(typeof(List<>))] int y;            // Ok, unbound generic type
+    [A(typeof(List<>))] int y;           // Ok, unbound generic type
 }
 ```
 
 ## Attribute instances
 
-An *__attribute instance__* is an instance that represents an attribute at run-time. An attribute is defined with an attribute class, positional arguments, and named arguments. An attribute instance is an instance of the attribute class that is initialized with the positional and named arguments.
+An ***attribute instance*** is an instance that represents an attribute at run-time. An attribute is defined with an attribute class, positional arguments, and named arguments. An attribute instance is an instance of the attribute class that is initialized with the positional and named arguments.
 
 Retrieval of an attribute instance involves both compile-time and run-time processing, as described in the following sections.
 
 ### Compilation of an attribute
 
-The compilation of an *attribute* with attribute class `T`, *positional-argument-list*`P` and *named-argument-list*`N`, consists of the following steps:
+The compilation of an *attribute* with attribute class `T`, *positional_argument_list* `P` and *named_argument_list* `N`, consists of the following steps:
 
--  Follow the compile-time processing steps for compiling an *object-creation-expression* of the form `new T(P)`. These steps either result in a compile-time error, or determine an instance constructor `C` on `T` that can be invoked at run-time.
--  If `C` does not have public accessibility, then a compile-time error occurs.
--  For each *named-argument*`Arg` in `N`:
-
-Let `Name` be the *identifier* of the *named-argument*`Arg`.
-
-`Name` must identify a non-static read-write public field or property on `T`. If `T` has no such field or property, then a compile-time error occurs.
-
--  Keep the following information for run-time instantiation of the attribute: the attribute class `T`, the instance constructor `C` on `T`, the *positional-argument-list*`P` and the *named-argument-list*`N`.
+*  Follow the compile-time processing steps for compiling an *object_creation_expression* of the form `new T(P)`. These steps either result in a compile-time error, or determine an instance constructor `C` on `T` that can be invoked at run-time.
+*  If `C` does not have public accessibility, then a compile-time error occurs.
+*  For each *named_argument* `Arg` in `N`:
+   * Let `Name` be the *identifier* of the *named_argument* `Arg`.
+   * `Name` must identify a non-static read-write public field or property on `T`. If `T` has no such field or property, then a compile-time error occurs.
+*  Keep the following information for run-time instantiation of the attribute: the attribute class `T`, the instance constructor `C` on `T`, the *positional_argument_list* `P` and the *named_argument_list* `N`.
 
 ### Run-time retrieval of an attribute instance
 
-Compilation of an *attribute* yields an attribute class `T`, an instance constructor `C` on `T`, a *positional-argument-list*`P`, and a *named-argument-list*`N`. Given this information, an attribute instance can be retrieved at run-time using the following steps:
+Compilation of an *attribute* yields an attribute class `T`, an instance constructor `C` on `T`, a *positional_argument_list* `P`, and a *named_argument_list* `N`. Given this information, an attribute instance can be retrieved at run-time using the following steps:
 
--  Follow the run-time processing steps for executing an *object-creation-expression* of the form `new``T(P)`, using the instance constructor `C` as determined at compile-time. These steps either result in an exception, or produce an instance `O` of `T`.
--  For each *named-argument*`Arg` in `N`, in order:
-
-Let `Name` be the *identifier* of the *named-argument*`Arg`. If `Name` does not identify a non-static public read-write field or property on `O`, then an exception is thrown.
-
-Let `Value` be the result of evaluating the *attribute-argument-expression* of `Arg`.
-
-If `Name` identifies a field on `O`, then set this field to `Value`.
-
-Otherwise, `Name` identifies a property on `O`. Set this property to `Value`.
-
-The result is `O`, an instance of the attribute class `T` that has been initialized with the *positional-argument-list*`P` and the *named-argument-list*`N`.
+*  Follow the run-time processing steps for executing an *object_creation_expression* of the form `new T(P)`, using the instance constructor `C` as determined at compile-time. These steps either result in an exception, or produce an instance `O` of `T`.
+*  For each *named_argument* `Arg` in `N`, in order:
+   * Let `Name` be the *identifier* of the *named_argument* `Arg`. If `Name` does not identify a non-static public read-write field or property on `O`, then an exception is thrown.
+   * Let `Value` be the result of evaluating the *attribute_argument_expression* of `Arg`.
+   * If `Name` identifies a field on `O`, then set this field to `Value`.
+   * Otherwise, `Name` identifies a property on `O`. Set this property to `Value`.
+   * The result is `O`, an instance of the attribute class `T` that has been initialized with the *positional_argument_list* `P` and the *named_argument_list* `N`.
 
 ## Reserved attributes
 
 A small number of attributes affect the language in some way. These attributes include:
 
--  `System.AttributeUsageAttribute` (§17.4.1), which is used to describe the ways in which an attribute class can be used.
--  `System.Diagnostics.ConditionalAttribute` (§17.4.2), which is used to define conditional methods.
--  `System.ObsoleteAttribute` (§17.4.3), which is used to mark a member as obsolete.
--  `System.Runtime.CompilerServices.CallerLineNumberAttribute`, `System.Runtime.CompilerServices.Caller``FilePath``Attribute` and `System.Runtime.CompilerServices.CallerMemberNameAttribute` (§17.4.4), which are used to supply information about the calling context to optional parameters.
+*  `System.AttributeUsageAttribute` (§17.4.1), which is used to describe the ways in which an attribute class can be used.
+*  `System.Diagnostics.ConditionalAttribute` (§17.4.2), which is used to define conditional methods.
+*  `System.ObsoleteAttribute` (§17.4.3), which is used to mark a member as obsolete.
+*  `System.Runtime.CompilerServices.CallerLineNumberAttribute`, `System.Runtime.CompilerServices.CallerFilePathAttribute` and `System.Runtime.CompilerServices.CallerMemberNameAttribute` (§17.4.4), which are used to supply information about the calling context to optional parameters.
 
 ### The AttributeUsage attribute
 
@@ -463,30 +463,27 @@ namespace System
     public class AttributeUsageAttribute: Attribute
     {
         public AttributeUsageAttribute(AttributeTargets validOn) {...}
-
         public virtual bool AllowMultiple { get {...} set {...} }
-
         public virtual bool Inherited { get {...} set {...} }
-
         public virtual AttributeTargets ValidOn { get {...} }
     }
 
     public enum AttributeTargets
     {
         Assembly     = 0x0001,
-        Module         = 0x0002,
-        Class         = 0x0004,
-        Struct         = 0x0008,
-        Enum             = 0x0010,
-        Constructor = 0x0020,
-        Method         = 0x0040,
+        Module       = 0x0002,
+        Class        = 0x0004,
+        Struct       = 0x0008,
+        Enum         = 0x0010,
+        Constructor  = 0x0020,
+        Method       = 0x0040,
         Property     = 0x0080,
-        Field         = 0x0100,
-        Event         = 0x0200,
-        Interface     = 0x0400,
-        Parameter     = 0x0800,
+        Field        = 0x0100,
+        Event        = 0x0200,
+        Interface    = 0x0400,
+        Parameter    = 0x0800,
         Delegate     = 0x1000,
-        ReturnValue = 0x2000,
+        ReturnValue  = 0x2000,
 
         All = Assembly | Module | Class | Struct | Enum | Constructor | 
             Method | Property | Field | Event | Interface | Parameter | 
@@ -497,17 +494,15 @@ namespace System
 
 ### The Conditional attribute
 
-The attribute `Conditional` enables the definition of *__conditional methods__* and *__conditional attribute classes__*.
+The attribute `Conditional` enables the definition of ***conditional methods*** and ***conditional attribute classes***.
 
 ```csharp
 namespace System.Diagnostics
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class,
-                   AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public class ConditionalAttribute: Attribute
     {
         public ConditionalAttribute(string conditionString) {...}
-
         public string ConditionString { get {...} }
     }
 }
@@ -519,12 +514,12 @@ A method decorated with the `Conditional` attribute is a conditional method. The
 
 A conditional method is subject to the following restrictions:
 
--  The conditional method must be a method in a *class-declaration* or *struct-declaration*. A compile-time error occurs if the `Conditional` attribute is specified on a method in an interface declaration.
--  The conditional method must have a return type of `void`.
--  The conditional method must not be marked with the `override` modifier. A conditional method may be marked with the `virtual` modifier, however. Overrides of such a method are implicitly conditional, and must not be explicitly marked with a `Conditional` attribute.
--  The conditional method must not be an implementation of an interface method. Otherwise, a compile-time error occurs.
+*  The conditional method must be a method in a *class_declaration* or *struct_declaration*. A compile-time error occurs if the `Conditional` attribute is specified on a method in an interface declaration.
+*  The conditional method must have a return type of `void`.
+*  The conditional method must not be marked with the `override` modifier. A conditional method may be marked with the `virtual` modifier, however. Overrides of such a method are implicitly conditional, and must not be explicitly marked with a `Conditional` attribute.
+*  The conditional method must not be an implementation of an interface method. Otherwise, a compile-time error occurs.
 
-In addition, a compile-time error occurs if a conditional method is used in a *delegate-creation-expression*. The example
+In addition, a compile-time error occurs if a conditional method is used in a *delegate_creation_expression*. The example
 
 ```csharp
 #define DEBUG
@@ -641,11 +636,11 @@ class Class3
 }
 ```
 
-`Class2` includes a call to the `M` defined in its base class. This call is omitted because the base method is conditional based on the presence of the symbol `DEBUG`, which is undefined. Thus, the method writes to the console "`Class2.M executed`" only. Judicious use of *pp-declaration* s can eliminate such problems.
+`Class2` includes a call to the `M` defined in its base class. This call is omitted because the base method is conditional based on the presence of the symbol `DEBUG`, which is undefined. Thus, the method writes to the console "`Class2.M executed`" only. Judicious use of *pp_declaration*s can eliminate such problems.
 
 #### Conditional attribute classes
 
-An attribute class (§17.1) decorated with one or more `Conditional` attributes is a *__conditional attribute class__*. A conditional attribute class is thus associated with the conditional compilation symbols declared in its `Conditional` attributes. This example:
+An attribute class (§17.1) decorated with one or more `Conditional` attributes is a ***conditional attribute class***. A conditional attribute class is thus associated with the conditional compilation symbols declared in its `Conditional` attributes. This example:
 
 ```csharp
 using System;
@@ -704,7 +699,7 @@ namespace System
     [AttributeUsage(
         AttributeTargets.Class | 
         AttributeTargets.Struct |
-         AttributeTargets.Enum | 
+        AttributeTargets.Enum | 
         AttributeTargets.Interface | 
         AttributeTargets.Delegate |
         AttributeTargets.Method | 
@@ -717,13 +712,9 @@ namespace System
     public class ObsoleteAttribute: Attribute
     {
         public ObsoleteAttribute() {...}
-
         public ObsoleteAttribute(string message) {...}
-
         public ObsoleteAttribute(string message, bool error) {...}
-
         public string Message { get {...} }
-
         public bool IsError { get {...} }
     }
 }
@@ -767,7 +758,7 @@ For example:
 ```csharp
 using System.Runtime.CompilerServices
 
-…
+...
 
 public void Log(
     [CallerLineNumber] int line = -1,
@@ -797,9 +788,9 @@ If more than one caller info attribute is specified on a given parameter, they a
 
 #### The CallerLineNumber attribute
 
-The `System.Runtime.CompilerServices.``CallerLineNumberAttribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from the constant value `int``.MaxValue` to  the parameter's type. This ensures that any non-negative line number up to that value can be passed without error.
+The `System.Runtime.CompilerServices.CallerLineNumberAttribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from the constant value `int.MaxValue` to the parameter's type. This ensures that any non-negative line number up to that value can be passed without error.
 
-If a function invocation from a location in source code omits an optional parameter with the `CallerLineNumber``Attribute`, then a numeric literal representing that location's line number is used as an argument to the invocation instead of the default parameter value.
+If a function invocation from a location in source code omits an optional parameter with the `CallerLineNumberAttribute`, then a numeric literal representing that location's line number is used as an argument to the invocation instead of the default parameter value.
 
 If the invocation spans multiple lines, the line chosen is implementation-dependent.
 
@@ -807,9 +798,9 @@ Note that the line number may be affected by `#line` directives (§2.5.7).
 
 #### The CallerFilePath attribute
 
-The `System.Runtime.CompilerServices.``CallerFilePathAttribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from `string` to  the parameter's type.
+The `System.Runtime.CompilerServices.CallerFilePathAttribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from `string` to the parameter's type.
 
-If a function invocation from a location in source code omits an optional parameter with the `Caller``FilePathAttribute`, then a string literal representing that location's file path is used as an argument to the invocation instead of the default parameter value.
+If a function invocation from a location in source code omits an optional parameter with the `CallerFilePathAttribute`, then a string literal representing that location's file path is used as an argument to the invocation instead of the default parameter value.
 
 The format of the file path is implementation-dependent.
 
@@ -817,9 +808,9 @@ Note that the file path may be affected by `#line` directives (§2.5.7).
 
 #### The CallerMemberName attribute
 
-The `System.Runtime.CompilerServices.``Caller``MemberName``Attribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from `string` to  the parameter's type.
+The `System.Runtime.CompilerServices.CallerMemberNameAttribute` is allowed on optional parameters when there is a standard implicit conversion (§6.3.1) from `string` to the parameter's type.
 
-If a function invocation from a location within the body of a function member or within an attribute applied to the function member itself or its return type, parameters or type parameters in source code omits an optional parameter with the `Caller``MemberNameAttribute`, then a string literal representing the name of that member is used as an argument to the invocation instead of the default parameter value.
+If a function invocation from a location within the body of a function member or within an attribute applied to the function member itself or its return type, parameters or type parameters in source code omits an optional parameter with the `CallerMemberNameAttribute`, then a string literal representing the name of that member is used as an argument to the invocation instead of the default parameter value.
 
 For invocations that occur within generic methods, only the method name itself is used, without the type parameter list.
 
@@ -837,7 +828,7 @@ Note: This section is applicable only to the Microsoft .NET implementation of C#
 
 ### Interoperation with COM and Win32 components
 
-The .NET run-time provides a large number of attributes that enable C# programs to interoperate with components written using COM and Win32 DLLs. For example, the `DllImport` attribute can be used on a `static``extern` method to indicate that the implementation of the method is to be found in a Win32 DLL. These attributes are found in the `System.Runtime.InteropServices` namespace, and detailed documentation for these attributes is found in the .NET runtime documentation.
+The .NET run-time provides a large number of attributes that enable C# programs to interoperate with components written using COM and Win32 DLLs. For example, the `DllImport` attribute can be used on a `static extern` method to indicate that the implementation of the method is to be found in a Win32 DLL. These attributes are found in the `System.Runtime.InteropServices` namespace, and detailed documentation for these attributes is found in the .NET runtime documentation.
 
 ### Interoperation with other .NET languages
 
@@ -852,7 +843,6 @@ namespace System.Runtime.CompilerServices.CSharp
     public class IndexerNameAttribute: Attribute
     {
         public IndexerNameAttribute(string indexerName) {...}
-
         public string Value { get {...} } 
     }
 }

@@ -1,22 +1,26 @@
 # Documentation comments
 
-C# provides a mechanism for programmers to document their code using a special comment syntax that contains XML text. In source code files, comments having a certain form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Comments using such syntax are called *__documentation comments__*. They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method). The XML generation tool is called the *__documentation generator__*. (This generator could be, but need not be, the C# compiler itself.) The output produced by the documentation generator is called the *__documentation file__*. A documentation file is used as input to a *__documentation viewer__*; a tool intended to produce some sort of visual display of type information and its associated documentation.
+C# provides a mechanism for programmers to document their code using a special comment syntax that contains XML text. In source code files, comments having a certain form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Comments using such syntax are called ***documentation comments***. They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method). The XML generation tool is called the ***documentation generator***. (This generator could be, but need not be, the C# compiler itself.) The output produced by the documentation generator is called the ***documentation file***. A documentation file is used as input to a ***documentation viewer***; a tool intended to produce some sort of visual display of type information and its associated documentation.
 
 This specification suggests a set of tags to be used in documentation comments, but use of these tags is not required, and other tags may be used if desired, as long the rules of well-formed XML are followed.
 
-Introduction
+## Introduction
 
 Comments having a special form can be used to direct a tool to produce XML from those comments and the source code elements, which they precede. Such comments are single-line comments that start with three slashes (`///`), or delimited comments that start with a slash and two stars (`/**`). They must immediately precede a user-defined type (such as a class, delegate, or interface) or a member (such as a field, event, property, or method) that they annotate. Attribute sections (§17.2) are considered part of declarations, so documentation comments must precede attributes applied to a type or member.
 
 __Syntax:__
 
-<pre>single-line-doc-comment:
-<b>///</b>   input-characters<sub>opt</sub></pre>
+```antlr
+single_line_doc_comment
+    : '///' input_character*
+    ;
 
-<pre>delimited-doc-comment:
-<b>/**</b>   delimited-comment-text<sub>opt</sub><b>*/</b></pre>
+delimited_doc_comment
+    : '/**' delimited_comment_section* asterisk* '/'
+    ;
+```
 
-In a *single-line-doc-comment*, if there is a *whitespace* character following the `///` characters on each of the *single-line-doc-comment* s adjacent to the current *single-line-doc-comment*, then that *whitespace* character is not included in the XML output.
+In a *single_line_doc_comment*, if there is a *whitespace* character following the `///` characters on each of the *single_line_doc_comment*s adjacent to the current *single_line_doc_comment*, then that *whitespace* character is not included in the XML output.
 
 In a delimited-doc-comment, if the first non-whitespace character on the second line is an asterisk and the same pattern of optional whitespace characters and an asterisk character is repeated at the beginning of each of the line within the delimited-doc-comment, then the characters of the repeated pattern are not included in the XML output. The pattern may include whitespace characters after, as well as before, the asterisk character.
 
@@ -29,54 +33,55 @@ __Example:__
 public class Point 
 {
     /// <summary>method <c>draw</c> renders the point.</summary>
-    void draw() {…}
+    void draw() {...}
 }
 ```
 
 The text within documentation comments must be well formed according to the rules of XML (http://www.w3.org/TR/REC-xml). If the XML is ill formed, a warning is generated and the documentation file will contain a comment saying that an error was encountered.
 
-Although developers are free to create their own set of tags, a recommended set is defined in §A.2. Some of the recommended tags have special meanings:
+Although developers are free to create their own set of tags, a recommended set is defined in §19.2. Some of the recommended tags have special meanings:
 
--  The `<param>` tag is used to describe parameters. If such a tag is used, the documentation generator must verify that the specified parameter exists and that all parameters are described in documentation comments. If such verification fails, the documentation generator issues a warning.
--  The `cref` attribute can be attached to any tag to provide a reference to a code element. The documentation generator must verify that this code element exists. If the verification fails, the documentation generator issues a warning. When looking for a name described in a `cref` attribute, the documentation generator must respect namespace visibility according to `using` statements appearing within the source code. For code elements that are generic, the normal generic syntax (ie "`List<T>`") cannot be used because it produces invalid XML. Braces can be used instead of brackets (ie "`List{T}`"), or the XML escape syntax can be used (ie "`List&amp;lt;T&amp;gt;`").
--  The `<summary>` tag is intended to be used by a documentation viewer to display additional information about a type or member.
--  The `<include>` tag includes information from an external XML file.
+*  The `<param>` tag is used to describe parameters. If such a tag is used, the documentation generator must verify that the specified parameter exists and that all parameters are described in documentation comments. If such verification fails, the documentation generator issues a warning.
+*  The `cref` attribute can be attached to any tag to provide a reference to a code element. The documentation generator must verify that this code element exists. If the verification fails, the documentation generator issues a warning. When looking for a name described in a `cref` attribute, the documentation generator must respect namespace visibility according to `using` statements appearing within the source code. For code elements that are generic, the normal generic syntax (ie "`List<T>`") cannot be used because it produces invalid XML. Braces can be used instead of brackets (ie "`List{T}`"), or the XML escape syntax can be used (ie "`List&lt;T&gt;`").
+*  The `<summary>` tag is intended to be used by a documentation viewer to display additional information about a type or member.
+*  The `<include>` tag includes information from an external XML file.
 
 Note carefully that the documentation file does not provide full information about the type and members (for example, it does not contain any type information). To get such information about a type or member, the documentation file must be used in conjunction with reflection on the actual type or member.
 
-Recommended tags
+## Recommended tags
 
 The documentation generator must accept and process any tag that is valid according to the rules of XML. The following tags provide commonly used functionality in user documentation. (Of course, other tags are possible.)
 
 
-| __Tag__ | __Section__ | __Purpose__ | 
-| `<c>` | A.2.1 | Set text in a code-like font | 
-| `<code>` | A.2.2 | Set one or more lines of source code or program output | 
-| `<example>` | `A.2.3``` | Indicate an example | 
-| `<exception>` | `A.2.4` | Identifies the exceptions a method can throw | 
-| `<include>` | A.2.5 | Includes XML from an external file | 
-| `<list>` | A.2.6 | Create a list or table | 
-| `<para>` | `A.2.7``` | Permit structure to be added to text | 
-| `<param>` | `A.2.8``` | Describe a parameter for a method or constructor | 
-| `<paramref>` | `A.2.9``` | Identify that a word is a parameter name | 
-| `<permission>` | `A.2.10``` | Document the security accessibility of a member | 
-| `<``remark``>` | `A.2.11``` | Describe additional information about a type | 
-| `<returns>` | `A.2.12``` | Describe the return value of a method | 
-| `<see>` | `A.2.13``` | Specify a link | 
-| `<seealso>` | `A.2.14``` | Generate a See Also entry | 
-| `<summary>` | `A.2.15``` | Describe a type or a member of a type | 
-| `<value>` | `A.2.16``` | Describe a property | 
-| `<typeparam>` |  | Describe a generic type parameter | 
-| `<typeparamref>` |  | Identify that a word is a type parameter name | 
+| __Tag__          | __Section__ | __Purpose__                                            |
+|------------------|-------------|--------------------------------------------------------|
+| `<c>`            | 19.2.1      | Set text in a code-like font                           | 
+| `<code>`         | 19.2.2      | Set one or more lines of source code or program output |
+| `<example>`      | 19.2.3      | Indicate an example                                    |
+| `<exception>`    | 19.2.4      | Identifies the exceptions a method can throw           |
+| `<include>`      | 19.2.5      | Includes XML from an external file                     |
+| `<list>`         | 19.2.6      | Create a list or table                                 |
+| `<para>`         | 19.2.7      | Permit structure to be added to text                   |
+| `<param>`        | 19.2.8      | Describe a parameter for a method or constructor       |
+| `<paramref>`     | 19.2.9      | Identify that a word is a parameter name               |
+| `<permission>`   | 19.2.10     | Document the security accessibility of a member        |
+| `<remark>`       | 19.2.11     | Describe additional information about a type           |
+| `<returns>`      | 19.2.12     | Describe the return value of a method                  |
+| `<see>`          | 19.2.13     | Specify a link                                         |
+| `<seealso>`      | 19.2.14     | Generate a See Also entry                              |
+| `<summary>`      | 19.2.15     | Describe a type or a member of a type                  |
+| `<value>`        | 19.2.16     | Describe a property                                    |
+| `<typeparam>`    |             | Describe a generic type parameter                      |
+| `<typeparamref>` |             | Identify that a word is a type parameter name          |
 
-<c>
+### `<c>`
 
-This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` (§A.2.2).
+This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` (§19.2.2).
 
 __Syntax:__
 
 ```csharp
-<c>*text*</c>
+<c>text</c>
 ```
 
 __Example:__
@@ -91,14 +96,14 @@ public class Point
 }
 ```
 
-<code>
+### `<code>`
 
-This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` (§A.2.1).
+This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` (§19.2.1).
 
 __Syntax:__
 
 ```csharp
-<code>*source code or program output*</code>
+<code>source code or program output</code>
 ```
 
 __Example:__
@@ -121,39 +126,34 @@ public void Translate(int xor, int yor) {
 }   
 ```
 
-<example>
+### `<example>`
 
-This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` (§```A.2.2`) as well.
+This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` (§19.2.2) as well.
 
 __Syntax:__
 
 ```csharp
-<example>*description*</example>
+<example>description</example>
 ```
 
 __Example:__
 
-See `<code>``(`§A.2.2`)` for an example.
+See `<code>` (§19.2.2) for an example.
 
-<exception>
+### `<exception>`
 
 This tag provides a way to document the exceptions a method can throw.
 
 __Syntax:__
 
 ```csharp
-<exception cref="*member*">*description*</exception>
+<exception cref="member">description</exception>
 ```
 
 where
 
-`cref="``*member*``"`
-
-The name of a member. The documentation generator checks that the given member exists and translates *member* to the canonical element name in the documentation file.
-
-`*description*`
-
-A description of the circumstances in which the exception is thrown.
+* `member` is the name of a member. The documentation generator checks that the given member exists and translates `member` to the canonical element name in the documentation file.
+* `description` is a description of the circumstances in which the exception is thrown.
 
 __Example:__
 
@@ -167,106 +167,92 @@ public class DataBaseOperations
             throw new MasterFileFormatCorruptException();
         else if (flag == 2)
             throw new MasterFileLockedOpenException();
-        // …
+        // ...
     } 
 }
 ```
 
-<include>
+### `<include>`
 
-This tag allows including information from an XML document that is external to the source code file. The external file must be a well-formed XML document, and an XPath expression is applied to that document to specify what XML from that document to include. The <include> tag is then replaced with the selected XML from the external document.
-
-__Syntax:__
-
-```csharp
-<include file="*filename*" path="*xpath*" />
-```
-
-*where*
-
-```csharp
-file="filename"
-```
-
-*The file name of an external XML file. The file name is interpreted relative to the file that contains the include tag.*
-
-```csharp
-path="xpath"
-```
-
-An XPath expression that selects some of the XML in the external XML file.
-
-*__Example:__*
-
-*If the source code contained a declaration like:*
-
-```csharp
-*/// <include file=*"*docs.xml*" *path=*'extradoc/class[@name="IntList"]/*' />
-*public class IntList { … }*
-```
-
-*and the external file "*docs.xml*" had the following contents:*
-
-```csharp
-*<?xml version=*"1.0"?>
-*<extradoc>*
-*  <class name=*"*IntList*"*>*
-*     <summary>*
-*        Contains a list of integers.*
-*     </summary>*
-*  </class>*
-*  <class name=*"*StringList*"*>*
-*     <summary>*
-*        Contains a list of integers.*
-*     </summary>*
-*  </class>*
-*</extradoc>*
-```
-
-*then the same documentation is output as if the source code contained:*
-
-```csharp
-*/// <summary>*
-*///    Contains a list of integers.*
-*/// </summary>*
-*public class IntList { … }*
-```
-
-<list>
-
-This tag is used to create a list or table of items. It may contain a `<listheader>` block to define the heading row of either a table or definition list. (When defining a table, only an entry for `*term*` in the heading need be supplied.)
-
-Each item in the list is specified with an `<item>` block. When creating a definition list, both `*term*` and `*description*` must be specified. However, for a table, bulleted list, or numbered list, only `*description*` need be specified.
+This tag allows including information from an XML document that is external to the source code file. The external file must be a well-formed XML document, and an XPath expression is applied to that document to specify what XML from that document to include. The `<include>` tag is then replaced with the selected XML from the external document.
 
 __Syntax:__
 
 ```csharp
+<include file="filename" path="xpath" />
+```
+
+where
+
+* `filename` is the file name of an external XML file. The file name is interpreted relative to the file that contains the include tag.
+* `xpath` is an XPath expression that selects some of the XML in the external XML file.
+
+__Example:__
+
+If the source code contained a declaration like:
+
+```csharp
+/// <include file="docs.xml" *path=*'extradoc/class[@name="IntList"]/*' />
+public class IntList { ... }
+```
+
+and the external file "docs.xml" had the following contents:
+
+```xml
+<?xml version="1.0"?>
+<extradoc>
+  <class name="IntList">
+     <summary>
+        Contains a list of integers.
+     </summary>
+  </class>
+  <class name="StringList">
+     <summary>
+        Contains a list of integers.
+     </summary>
+  </class>
+</extradoc>
+```
+
+then the same documentation is output as if the source code contained:
+
+```csharp
+/// <summary>
+///    Contains a list of integers.
+/// </summary>
+public class IntList { ... }
+```
+
+### `<list>`
+
+This tag is used to create a list or table of items. It may contain a `<listheader>` block to define the heading row of either a table or definition list. (When defining a table, only an entry for `term` in the heading need be supplied.)
+
+Each item in the list is specified with an `<item>` block. When creating a definition list, both `term` and `description` must be specified. However, for a table, bulleted list, or numbered list, only `description` need be specified.
+
+__Syntax:__
+
+```xml
 <list type="bullet" | "number" | "table">
    <listheader>
-      <term>*term*</term>
+      <term>term</term>
       <description>*description*</description>
    </listheader>
    <item>
-      <term>*term*</term>
+      <term>term</term>
       <description>*description*</description>
    </item>
-    …
+    ...
    <item>
-      <term>*term*</term>
-      <description>*description*</description>
+      <term>term</term>
+      <description>description</description>
    </item>
 </list>
 ```
 
 where
 
-`*term*`
-
-The term to define, whose definition is in `*description*`.
-
-`*description*`
-
-Either an item in a bullet or numbered list, or the definition of a `*term*`.
+* `term` is the term to define, whose definition is in `description`.
+* `description` is either an item in a bullet or numbered list, or the definition of a `term`.
 
 __Example:__
 
@@ -289,21 +275,17 @@ public class MyClass
 }
 ```
 
-<para>
+### `<para>`
 
-This tag is for use inside other tags, such as `<summary>` (§```A.2.11`) or `<returns>` (§```A.2.12`), and permits structure to be added to text.
+This tag is for use inside other tags, such as `<summary>` (§19.2.11) or `<returns>` (§19.2.12), and permits structure to be added to text.
 
 __Syntax:__
 
 ```csharp
-<para>*content*</para>
+<para>content</para>
 ```
 
-where
-
-`*content*`
-
-The text of the paragraph.
+where `content` is the text of the paragraph.
 
 __Example:__
 
@@ -317,25 +299,20 @@ public static void Main() {
 }
 ```
 
-<param>
+### `<param>`
 
 This tag is used to describe a parameter for a method, constructor, or indexer.
 
 __Syntax:__
 
 ```csharp
-<param name="*name*">*description*</param>
+<param name="name">description</param>
 ```
 
 where
 
-`*name*`
-
-The name of the parameter.
-
-`*description*`
-
-A description of the parameter.
+* `name` is the name of the parameter.
+* `description` is a description of the parameter.
 
 __Example:__
 
@@ -350,21 +327,17 @@ public void Move(int xor, int yor) {
 }
 ```
 
-<paramref>
+### `<paramref>`
 
 This tag is used to indicate that a word is a parameter. The documentation file can be processed to format this parameter in some distinct way.
 
 __Syntax:__
 
 ```csharp
-<paramref name="*name*"/>
+<paramref name="name"/>
 ```
 
-where
-
-`*name*`
-
-The name of the parameter.
+where `name` is the name of the parameter.
 
 __Example:__
 
@@ -380,25 +353,20 @@ public Point(int xor, int yor) {
 }
 ```
 
-<permission>
+### `<permission>`
 
 This tag allows the security accessibility of a member to be documented.
 
 __Syntax:__
 
 ```csharp
-<permission cref="*member*">*description*</permission>
+<permission cref="member">description</permission>
 ```
 
 where
 
-`cref="``*member*``"`
-
-The name of a member. The documentation generator checks that the given code element exists and translates *member* to the canonical element name in the documentation file.
-
-`*description*`
-
-A description of the access to the member.
+* `member` is the name of a member. The documentation generator checks that the given code element exists and translates *member* to the canonical element name in the documentation file.
+* `description` is a description of the access to the member.
 
 __Example:__
 
@@ -411,21 +379,17 @@ public static void Test() {
 }
 ```
 
-<remark>
+### `<remark>`
 
-This tag is used to specify extra information about a type. (Use `<summary>` (§```A.2.15`) to describe the type itself and the members of a type.)
+This tag is used to specify extra information about a type. (Use `<summary>` (§19.2.15) to describe the type itself and the members of a type.)
 
 __Syntax:__
 
 ```csharp
-<remark>*description*</remark>
+<remark>description</remark>
 ```
 
-where
-
-`*description*`
-
-The text of the remark.
+where `description` is the text of the remark.
 
 __Example:__
 
@@ -439,21 +403,17 @@ public class Point
 }
 ```
 
-<returns>
+### `<returns>`
 
 This tag is used to describe the return value of a method.
 
 __Syntax:__
 
 ```csharp
-<returns>*description*</returns>
+<returns>description</returns>
 ```
 
-where
-
-`*description*`
-
-A description of the return value.
+where `description` is a description of the return value.
 
 __Example:__
 
@@ -466,21 +426,17 @@ public override string ToString() {
 }
 ```
 
-<see>
+### `<see>`
 
-This tag allows a link to be specified within text. Use `<seealso>` (§```A.2.14`) to indicate text that is to appear in a See Also section.
+This tag allows a link to be specified within text. Use `<seealso>` (§19.2.14) to indicate text that is to appear in a See Also section.
 
 __Syntax:__
 
 ```csharp
-<see cref="*member*"/>
+<see cref="member"/>
 ```
 
-where
-
-`cref="``*member*``"`
-
-The name of a member. The documentation generator checks that the given code element exists and changes *member* to the element name in the generated documentation file.
+where `member` is the name of a member. The documentation generator checks that the given code element exists and changes *member* to the element name in the generated documentation file.
 
 __Example:__
 
@@ -503,21 +459,17 @@ public void Translate(int xor, int yor) {
 }
 ```
 
-<seealso>
+### `<seealso>`
 
-This tag allows an entry to be generated for the See Also section. Use `<see>` (§```A.2.13`) to specify a link from within text.
+This tag allows an entry to be generated for the See Also section. Use `<see>` (§19.2.13) to specify a link from within text.
 
 __Syntax:__
 
 ```csharp
-<seealso cref="*member*"/>
+<seealso cref="member"/>
 ```
 
-where
-
-`cref="``*member*``" `
-
-The name of a member. The documentation generator checks that the given code element exists and changes *member* to the element name in the generated documentation file.
+where `member` is the name of a member. The documentation generator checks that the given code element exists and changes *member* to the element name in the generated documentation file.
 
 __Example:__
 
@@ -531,21 +483,17 @@ public override bool Equals(object o) {
 }
 ```
 
-<summary>
+### `<summary>`
 
-This tag can be used to describe a type or a member of a type. Use `<``remark``>` (§```A.2.11`) to describe the type itself.
+This tag can be used to describe a type or a member of a type. Use `<remark>` (§19.2.11) to describe the type itself.
 
 __Syntax:__
 
 ```csharp
-<summary>*description*</summary>
+<summary>description</summary>
 ```
 
-where
-
-`*description*`
-
-A summary of the type or member.
+where `description` is a summary of the type or member.
 
 __Example:__
 
@@ -555,21 +503,17 @@ public Point() : this(0,0) {
 }
 ```
 
-<value>
+### `<value>`
 
 This tag allows a property to be described.
 
 __Syntax:__
 
 ```csharp
-<value>*property**description*</value>
+<value>property description</value>
 ```
 
-where
-
-`*property description*`
-
-A description for the property.
+where `property description` is a description for the property.
 
 __Example:__
 
@@ -582,25 +526,17 @@ public int X
 }
 ```
 
-<typeparam>
+### `<typeparam>`
 
 This tag is used to describe a generic type parameter for a class, struct, interface, delegate, or method.
 
 __Syntax:__
 
 ```csharp
-<typeparam name="*name*">*description*</typeparam>
+<typeparam name="name">description</typeparam>
 ```
 
-where
-
-`*name*`
-
-The name of the type parameter.
-
-`*description*`
-
-A description of the type parameter.
+where `name` is the name of the type parameter, and `description` is its description.
 
 __Example:__
 
@@ -612,314 +548,311 @@ public class MyList<T> {
 }
 ```
 
-<typeparamref>
+### `<typeparamref>`
 
 This tag is used to indicate that a word is a type parameter. The documentation file can be processed to format this type parameter in some distinct way.
 
 __Syntax:__
 
 ```csharp
-<typeparamref name="*name*"/>
+<typeparamref name="name"/>
 ```
 
-where
-
-`*name*`
-
-The name of the type parameter.
+where `name` is the name of the type parameter.
 
 __Example:__
 
 ```csharp
-/// <summary>This method fetches data and returns a list of <typeparamref name="T"> "/>"> .</summary>
-/// <param name="string">query to execute</param>
-
+/// <summary>This method fetches data and returns a list of <typeparamref name="T"/>.</summary>
+/// <param name="query">query to execute</param>
 public List<T> FetchData<T>(string query) {
     ...
 }
 ```
 
-Processing the documentation file
+## Processing the documentation file
 
 The documentation generator generates an ID string for each element in the source code that is tagged with a documentation comment. This ID string uniquely identifies a source element. A documentation viewer can use an ID string to identify the corresponding metadata/reflection item to which the documentation applies.
 
 The documentation file is not a hierarchical representation of the source code; rather, it is a flat list with a generated ID string for each element.
 
-ID string format
+### ID string format
 
 The documentation generator observes the following rules when it generates the ID strings:
 
--  No white space is placed in the string.
--  The first part of the string identifies the kind of member being documented, via a single character followed by a colon. The following kinds of members are defined:
+*  No white space is placed in the string.
 
+*  The first part of the string identifies the kind of member being documented, via a single character followed by a colon. The following kinds of members are defined:
 
-| __Character__ | __Description__ | 
-| E | Event | 
-| F | Field | 
-| M | Method (including constructors, destructors, and operators) | 
-| N | Namespace | 
-| P | Property (including indexers) | 
-| T | Type (such as class, delegate, enum, interface, and struct) | 
-| ! | Error string; the rest of the string provides information about the error. For example, the documentation generator generates error information for links that cannot be resolved. | 
+   | __Character__ | __Description__                                             |
+   |---------------|-------------------------------------------------------------|
+   | E             | Event                                                       |
+   | F             | Field                                                       |
+   | M             | Method (including constructors, destructors, and operators) |
+   | N             | Namespace                                                   |
+   | P             | Property (including indexers)                               |
+   | T             | Type (such as class, delegate, enum, interface, and struct) |
+   | !             | Error string; the rest of the string provides information about the error. For example, the documentation generator generates error information for links that cannot be resolved. |
 
--  The second part of the string is the fully qualified name of the element, starting at the root of the namespace. The name of the element, its enclosing type(s), and namespace are separated by periods. If the name of the item itself has periods, they are replaced by `#` (`U+0023`) characters. (It is assumed that no element has this character in its name.)
--  For methods and properties with arguments, the argument list follows, enclosed in parentheses. For those without arguments, the parentheses are omitted. The arguments are separated by commas. The encoding of each argument is the same as a CLI signature, as follows:
+*  The second part of the string is the fully qualified name of the element, starting at the root of the namespace. The name of the element, its enclosing type(s), and namespace are separated by periods. If the name of the item itself has periods, they are replaced by `#(U+0023)` characters. (It is assumed that no element has this character in its name.)
+*  For methods and properties with arguments, the argument list follows, enclosed in parentheses. For those without arguments, the parentheses are omitted. The arguments are separated by commas. The encoding of each argument is the same as a CLI signature, as follows:
+   *  Arguments are represented by their documentation name, which is based on their fully qualified name, modified as follows:
+      * Arguments that represent generic types have an appended "'" character followed by the number of type parameters
+      * Arguments having the `out` or `ref` modifier have an `@` following their type name. Arguments passed by value or via `params` have no special notation.
+      * Arguments that are arrays are represented as `[lowerbound:size, ... , lowerbound:size]` where the number of commas is the rank less one, and the lower bounds and size of each dimension, if known, are represented in decimal. If a lower bound or size is not specified, it is omitted. If the lower bound and size for a particular dimension are omitted, the "`:`" is omitted as well. Jagged arrays are represented by one "`[]`" per level.
+      * Arguments that have pointer types other than void are represented using a `*` following the type name. A void pointer is represented using a type name of `System.Void`.
+      * Arguments that refer to generic type parameters defined on types are encoded using the "`" character followed by the zero-based index of the type parameter.
+      * Arguments that use generic type parameters defined in methods use a double-backtick "\`\`" instead of the "\`" used for types.
+      * Arguments that refer to constructed generic types are encoded using the generic type, followed by "{", followed by a comma-separated list of type arguments, followed by "}".
 
-Arguments are represented by their documentation name, which is based on their fully qualified name, modified as follows:
-
-<i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that represent generic types have an appended "'" character followed by the number of type parameters</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments having the `out` or `ref` modifier have an `@` following their type name. Arguments passed by value or via `params` have no special notation.</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that are arrays are represented as `[`*lowerbound*`:`*size*`,` … `,`*lowerbound*`:`*size*`]` where the number of commas is the rank less one, and the lower bounds and size of each dimension, if known, are represented in decimal. If a lower bound or size is not specified, it is omitted. If the lower bound and size for a particular dimension are omitted, the "`:`" is omitted as well. Jagged arrays are represented by one "`[]`" per level.</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that have pointer types other than void are represented using a `*` following the type name. A void pointer is represented using a type name of `System.Void`.</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that refer to generic type parameters defined on types are encoded using the "`" character followed by the zero-based index of the type parameter.</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that use generic type parameters defined in methods use a double-backtick "``" instead of the "`" used for types.</i:listitem><i:listitem level="0" type="0" xmlns:i="urn:docx2md:intermediary" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:rels="http://schemas.openxmlformats.org/package/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">Arguments that refer to constructed generic types are encoded using the generic type, followed by "{", followed by a comma-separated list of type arguments, followed by "}".</i:listitem>ID string examples
+### ID string examples
 
 The following examples each show a fragment of C# code, along with the ID string produced from each source element capable of having a documentation comment:
 
--  Types are represented using their fully qualified name, augmented with generic information:
+*  Types are represented using their fully qualified name, augmented with generic information:
 
-```csharp
-enum Color { Red, Blue, Green }
+   ```csharp
+   enum Color { Red, Blue, Green }
 
-namespace Acme
-{
-    interface IProcess {...}
+   namespace Acme
+   {
+       interface IProcess {...}
 
-    struct ValueType {...}
+       struct ValueType {...}
 
-    class Widget: IProcess
-    {
-        public class NestedClass {...}
+       class Widget: IProcess
+       {
+           public class NestedClass {...}
+           public interface IMenuItem {...}
+           public delegate void Del(int i);
+           public enum Direction { North, South, East, West }
+       }
 
-        public interface IMenuItem {...}
+       class MyList<T>
+       {
+           class Helper<U,V> {...}
+       }
+   }
 
-        public delegate void Del(int i);
+   "T:Color"
+   "T:Acme.IProcess"
+   "T:Acme.ValueType"
+   "T:Acme.Widget"
+   "T:Acme.Widget.NestedClass"
+   "T:Acme.Widget.IMenuItem"
+   "T:Acme.Widget.Del"
+   "T:Acme.Widget.Direction"
+   "T:Acme.MyList`1"
+   "T:Acme.MyList`1.Helper`2"
+   ```
 
-        public enum Direction { North, South, East, West }
-    }
+*  Fields are represented by their fully qualified name:
 
-    class MyList<T>
-    {
-        class Helper<U,V> {...}
-    }
-}
+   ```csharp
+   namespace Acme
+   {
+       struct ValueType
+       {
+           private int total;
+       }
+   
+       class Widget: IProcess
+       {
+           public class NestedClass
+           {
+               private int value;
+           }
+   
+           private string message;
+           private static Color defaultColor;
+           private const double PI = 3.14159;
+           protected readonly double monthlyAverage;
+           private long[] array1;
+           private Widget[,] array2;
+           private unsafe int *pCount;
+           private unsafe float **ppValues;
+       }
+   }
 
-"T:Color"
-"T:Acme.IProcess"
-"T:Acme.ValueType"
-"T:Acme.Widget"
-"T:Acme.Widget.NestedClass"
-"T:Acme.Widget.IMenuItem"
-"T:Acme.Widget.Del"
-"T:Acme.Widget.Direction"
-"T:Acme.MyList`1"
-"T:Acme.MyList`1.Helper`2"
-```
+   "F:Acme.ValueType.total"
+   "F:Acme.Widget.NestedClass.value"
+   "F:Acme.Widget.message"
+   "F:Acme.Widget.defaultColor"
+   "F:Acme.Widget.PI"
+   "F:Acme.Widget.monthlyAverage"
+   "F:Acme.Widget.array1"
+   "F:Acme.Widget.array2"
+   "F:Acme.Widget.pCount"
+   "F:Acme.Widget.ppValues"
+   ```
 
--  Fields are represented by their fully qualified name:
+*  Constructors.
 
-```csharp
-namespace Acme
-{
-    struct ValueType
-    {
-        private int total;
-    }
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           static Widget() {...}
+           public Widget() {...}
+           public Widget(string s) {...}
+       }
+   }
 
-    class Widget: IProcess
-    {
-        public class NestedClass
-        {
-            private int value;
-        }
+   "M:Acme.Widget.#cctor"
+   "M:Acme.Widget.#ctor"
+   "M:Acme.Widget.#ctor(System.String)"
+   ```
 
-        private string message;
-        private static Color defaultColor;
-        private const double PI = 3.14159;
-        protected readonly double monthlyAverage;
-        private long[] array1;
-        private Widget[,] array2;
-        private unsafe int *pCount;
-        private unsafe float **ppValues;
-    }
-}
+*  Destructors.
 
-"F:Acme.ValueType.total"
-"F:Acme.Widget.NestedClass.value"
-"F:Acme.Widget.message"
-"F:Acme.Widget.defaultColor"
-"F:Acme.Widget.PI"
-"F:Acme.Widget.monthlyAverage"
-"F:Acme.Widget.array1"
-"F:Acme.Widget.array2"
-"F:Acme.Widget.pCount"
-"F:Acme.Widget.ppValues"
-```
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           ~Widget() {...}
+       }
+   }
+   
+   "M:Acme.Widget.Finalize"
+   ```
 
--  Constructors.
+*  Methods.
 
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        static Widget() {...}
+   ```csharp
+   namespace Acme
+   {
+       struct ValueType
+       {
+           public void M(int i) {...}
+       }
 
-        public Widget() {...}
+       class Widget: IProcess
+       {
+           public class NestedClass
+           {
+               public void M(int i) {...}
+           }
 
-        public Widget(string s) {...}
-    }
-}
+           public static void M0() {...}
+           public void M1(char c, out float f, ref ValueType v) {...}
+           public void M2(short[] x1, int[,] x2, long[][] x3) {...}
+           public void M3(long[][] x3, Widget[][,,] x4) {...}
+           public unsafe void M4(char *pc, Color **pf) {...}
+           public unsafe void M5(void *pv, double *[][,] pd) {...}
+           public void M6(int i, params object[] args) {...}
+       }
 
-"M:Acme.Widget.#cctor"
-"M:Acme.Widget.#ctor"
-"M:Acme.Widget.#ctor(System.String)"
-```
+       class MyList<T>
+       {
+           public void Test(T t) { }
+       }
 
--  Destructors.
+       class UseList
+       {
+           public void Process(MyList<int> list) { }
+           public MyList<T> GetValues<T>(T inputValue) { return null; }
+       }
+   }
 
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        ~Widget() {...}
-    }
-}
+   "M:Acme.ValueType.M(System.Int32)"
+   "M:Acme.Widget.NestedClass.M(System.Int32)"
+   "M:Acme.Widget.M0"
+   "M:Acme.Widget.M1(System.Char,System.Single@,Acme.ValueType@)"
+   "M:Acme.Widget.M2(System.Int16[],System.Int32[0:,0:],System.Int64[][])"
+   "M:Acme.Widget.M3(System.Int64[][],Acme.Widget[0:,0:,0:][])"
+   "M:Acme.Widget.M4(System.Char*,Color**)"
+   "M:Acme.Widget.M5(System.Void*,System.Double*[0:,0:][])"
+   "M:Acme.Widget.M6(System.Int32,System.Object[])"
+   "M:Acme.MyList`1.Test(`0)"
+   "M:Acme.UseList.Process(Acme.MyList{System.Int32})"
+   "M:Acme.UseList.GetValues``(``0)"
+   ```
 
-"M:Acme.Widget.Finalize"
-```
+*  Properties and indexers.
 
--  Methods.
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           public int Width { get {...} set {...} }
+           public int this[int i] { get {...} set {...} }
+           public int this[string s, int i] { get {...} set {...} }
+       }
+   }
 
-```csharp
-namespace Acme
-{
-    struct ValueType
-    {
-        public void M(int i) {...}
-    }
+   "P:Acme.Widget.Width"
+   "P:Acme.Widget.Item(System.Int32)"
+   "P:Acme.Widget.Item(System.String,System.Int32)"
+   ```
 
-    class Widget: IProcess
-    {
-        public class NestedClass
-        {
-            public void M(int i) {...}
-        }
+*  Events.
 
-        public static void M0() {...}
-        public void M1(char c, out float f, ref ValueType v) {...}
-        public void M2(short[] x1, int[,] x2, long[][] x3) {...}
-        public void M3(long[][] x3, Widget[][,,] x4) {...}
-        public unsafe void M4(char *pc, Color **pf) {...}
-        public unsafe void M5(void *pv, double *[][,] pd) {...}
-        public void M6(int i, params object[] args) {...}
-    }
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           public event Del AnEvent;
+       }
+   }
 
-    class MyList<T>
-    {
-        public void Test(T t) { }
-    }
+   "E:Acme.Widget.AnEvent"
+   ```
 
-    class UseList
-    {
-        public void Process(MyList<int> list) { }
-        public MyList<T> GetValues<T>(T inputValue) { return null; }
-    }
-}
+*  Unary operators.
 
-"M:Acme.ValueType.M(System.Int32)"
-"M:Acme.Widget.NestedClass.M(System.Int32)"
-"M:Acme.Widget.M0"
-"M:Acme.Widget.M1(System.Char,System.Single@,Acme.ValueType@)"
-"M:Acme.Widget.M2(System.Int16[],System.Int32[0:,0:],System.Int64[][])"
-"M:Acme.Widget.M3(System.Int64[][],Acme.Widget[0:,0:,0:][])"
-"M:Acme.Widget.M4(System.Char*,Color**)"
-"M:Acme.Widget.M5(System.Void*,System.Double*[0:,0:][])"
-"M:Acme.Widget.M6(System.Int32,System.Object[])"
-"M:Acme.MyList`1.Test(`0)"
-"M:Acme.UseList.Process(Acme.MyList{System.Int32})"
-"M:Acme.UseList.GetValues``(``0)"
-```
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           public static Widget operator+(Widget x) {...}
+       }
+   }
 
--  Properties and indexers.
+   "M:Acme.Widget.op_UnaryPlus(Acme.Widget)"
+   ```
 
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        public int Width { get {...} set {...} }
-        public int this[int i] { get {...} set {...} }
-        public int this[string s, int i] { get {...} set {...} }
-    }
-}
+   The complete set of unary operator function names used is as follows: `op_UnaryPlus`, `op_UnaryNegation`, `op_LogicalNot`, `op_OnesComplement`, `op_Increment`, `op_Decrement`, `op_True`, and `op_False`.
 
-"P:Acme.Widget.Width"
-"P:Acme.Widget.Item(System.Int32)"
-"P:Acme.Widget.Item(System.String,System.Int32)"
-```
+*  Binary operators.
 
--  Events.
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           public static Widget operator+(Widget x1, Widget x2) {...}
+       }
+   }
 
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        public event Del AnEvent;
-    }
-}
+   "M:Acme.Widget.op_Addition(Acme.Widget,Acme.Widget)"
+   ```
 
-"E:Acme.Widget.AnEvent"
-```
+   The complete set of binary operator function names used is as follows: `op_Addition`, `op_Subtraction`, `op_Multiply`, `op_Division`, `op_Modulus`, `op_BitwiseAnd`, `op_BitwiseOr`, `op_ExclusiveOr`, `op_LeftShift`, `op_RightShift`, `op_Equality`, `op_Inequality`, `op_LessThan`, `op_LessThanOrEqual`, `op_GreaterThan`, and `op_GreaterThanOrEqual`.
 
--  Unary operators.
+*  Conversion operators have a trailing "`~`" followed by the return type.
 
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        public static Widget operator+(Widget x) {...}
-    }
-}
+   ```csharp
+   namespace Acme
+   {
+       class Widget: IProcess
+       {
+           public static explicit operator int(Widget x) {...}
+           public static implicit operator long(Widget x) {...}
+       }
+   }
 
-"M:Acme.Widget.op_UnaryPlus(Acme.Widget)"
-```
+   "M:Acme.Widget.op_Explicit(Acme.Widget)~System.Int32"
+   "M:Acme.Widget.op_Implicit(Acme.Widget)~System.Int64"
+   ```
 
-The complete set of unary operator function names used is as follows: `op_UnaryPlus`, `op_UnaryNegation`, `op_LogicalNot`, `op_OnesComplement`, `op_Increment`, `op_Decrement`, `op_True`, and `op_False`.
+## An example
 
--  Binary operators.
-
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        public static Widget operator+(Widget x1, Widget x2) {...}
-    }
-}
-
-"M:Acme.Widget.op_Addition(Acme.Widget,Acme.Widget)"
-```
-
-The complete set of binary operator function names used is as follows: `op_Addition`, `op_Subtraction`, `op_Multiply`, `op_Division`, `op_Modulus`, `op_BitwiseAnd`, `op_BitwiseOr`, `op_ExclusiveOr`, `op_LeftShift`, `op_RightShift`, `op_Equality`, `op_Inequality`, `op_LessThan`, `op_LessThanOrEqual`, `op_GreaterThan`, and `op_GreaterThanOrEqual`.
-
--  Conversion operators have a trailing "`~`" followed by the return type.
-
-```csharp
-namespace Acme
-{
-    class Widget: IProcess
-    {
-        public static explicit operator int(Widget x) {...}
-        public static implicit operator long(Widget x) {...}
-    }
-}
-
-"M:Acme.Widget.op_Explicit(Acme.Widget)~System.Int32"
-"M:Acme.Widget.op_Implicit(Acme.Widget)~System.Int64"
-```
-
-An example
-
-C# source code
+### C# source code
 
 The following example shows the source code of a `Point` class:
 
@@ -1014,7 +947,7 @@ public class Point
 
         if (GetType() == o.GetType()) {
             Point p = (Point)o;
-            return (X == p.X) &amp;&amp; (Y == p.Y);
+            return (X == p.X) && (Y == p.Y);
         }
         return false;
     }
@@ -1040,7 +973,7 @@ public class Point
         }
 
         if (p1.GetType() == p2.GetType()) {
-            return (p1.X == p2.X) &amp;&amp; (p1.Y == p2.Y);
+            return (p1.X == p2.X) && (p1.Y == p2.Y);
         }
 
         return false;
@@ -1070,11 +1003,11 @@ public class Point
 }
 ```
 
-Resulting XML
+### Resulting XML
 
 Here is the output produced by one documentation generator when given the source code for class `Point`, shown above:
 
-```csharp
+```xml
 <?xml version="1.0"?>
 <doc>
     <assembly>
@@ -1203,5 +1136,4 @@ Here is the output produced by one documentation generator when given the source
         </member>
     </members>
 </doc>
-```
 ```

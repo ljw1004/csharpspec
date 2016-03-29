@@ -312,7 +312,7 @@ The `using` statement is used to obtain a resource, execute a statement, and the
 
 Below are examples of each kind of statement
 
-**Local variable declarations**
+__Local variable declarations__
 
 ```csharp
 static void Main() {
@@ -324,7 +324,7 @@ static void Main() {
 ```
 
 
-**Local constant declaration**
+__Local constant declaration__
 
 ```csharp
 static void Main() {
@@ -335,7 +335,7 @@ static void Main() {
 ```
 
 
-**Expression statement**
+__Expression statement__
 
 ```csharp
 static void Main() {
@@ -347,7 +347,7 @@ static void Main() {
 }
 ```
 
-**`if` statement**
+__`if` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -361,7 +361,7 @@ static void Main(string[] args) {
 ```
 
 
-**`switch` statement**
+__`switch` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -381,7 +381,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`while` statement**
+__`while` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -394,7 +394,7 @@ static void Main(string[] args) {
 ```
 
 
-**`do` statement**
+__`do` statement__
 
 ```csharp
 static void Main() {
@@ -406,7 +406,7 @@ static void Main() {
 }
 ```
 
-**`for` statement**
+__`for` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -416,7 +416,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`foreach` statement**
+__`foreach` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -426,7 +426,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`break` statement**
+__`break` statement__
 
 ```csharp
 static void Main() {
@@ -438,7 +438,7 @@ static void Main() {
 }
 ```
 
-**`continue` statement**
+__`continue` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -449,7 +449,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`goto` statement**
+__`goto` statement__
 
 ```csharp
 static void Main(string[] args) {
@@ -462,7 +462,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`return` statement**
+__`return` statement__
 
 ```csharp
 static int Add(int a, int b) {
@@ -475,7 +475,7 @@ static void Main() {
 }
 ```
 
-**`yield` statement**
+__`yield` statement__
 
 ```csharp
 static IEnumerable<int> Range(int from, int to) {
@@ -492,7 +492,7 @@ static void Main() {
 }
 ```
 
-**`throw` and `try` statements**
+__`throw` and `try` statements__
 
 ```csharp
 static double Divide(double x, double y) {
@@ -518,7 +518,7 @@ static void Main(string[] args) {
 }
 ```
 
-**`checked` and `unchecked` statements**
+__`checked` and `unchecked` statements__
 
 ```csharp
 static void Main() {
@@ -532,7 +532,7 @@ static void Main() {
 }
 ```
 
-**`lock` statement**
+__`lock` statement__
 
 ```csharp
 class Account
@@ -549,7 +549,7 @@ class Account
 }
 ```
 
-**`using` statement**
+__`using` statement__
 
 ```csharp
 static void Main() {

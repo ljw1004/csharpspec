@@ -651,16 +651,16 @@ pp_directive
 
 The following pre-processing directives are available:
 
--  `#define` and `#undef`, which are used to define and undefine, respectively, conditional compilation symbols (§2.5.3).
--  `#if`, `#elif`, `#else`, and `#endif`, which are used to conditionally skip sections of source code (§2.5.4).
--  `#line`, which is used to control line numbers emitted for errors and warnings (§2.5.7).
--  `#error` and `#warning`, which are used to issue errors and warnings, respectively (§2.5.5).
--  `#region` and `#endregion`, which are used to explicitly mark sections of source code (§2.5.6).
--  `#pragma`, which is used to specify optional contextual information to the compiler (§2.5.8).
+*  `#define` and `#undef`, which are used to define and undefine, respectively, conditional compilation symbols (§2.5.3).
+*  `#if`, `#elif`, `#else`, and `#endif`, which are used to conditionally skip sections of source code (§2.5.4).
+*  `#line`, which is used to control line numbers emitted for errors and warnings (§2.5.7).
+*  `#error` and `#warning`, which are used to issue errors and warnings, respectively (§2.5.5).
+*  `#region` and `#endregion`, which are used to explicitly mark sections of source code (§2.5.6).
+*  `#pragma`, which is used to specify optional contextual information to the compiler (§2.5.8).
 
 A pre-processing directive always occupies a separate line of source code and always begins with a `#` character and a pre-processing directive name. White space may occur before the `#` character and between the `#` character and the directive name.
 
-A source line containing a `#define`, `#undef`, `#if`, `#elif`, `#else`, `#endif`, `#line`, or `#endregion` directive may end with a single-line comment. Delimited comments (the `/*``*/` style of comments) are not permitted on source lines containing pre-processing directives.
+A source line containing a `#define`, `#undef`, `#if`, `#elif`, `#else`, `#endif`, `#line`, or `#endregion` directive may end with a single-line comment. Delimited comments (the `/* */` style of comments) are not permitted on source lines containing pre-processing directives.
 
 Pre-processing directives are not tokens and are not part of the syntactic grammar of C#. However, pre-processing directives can be used to include or exclude sequences of tokens and can in that way affect the meaning of a C# program. For example, when compiled, the program:
 ```csharp
@@ -1054,7 +1054,7 @@ C# provides `#pragma` directives to control compiler warnings. Future versions o
 
 #### Pragma warning
 
-The `#pragma``warning` directive is used to disable or restore all or a particular set of warning messages during compilation of the subsequent program text.
+The `#pragma warning` directive is used to disable or restore all or a particular set of warning messages during compilation of the subsequent program text.
 
 ```antlr
 pragma_warning_body
@@ -1073,13 +1073,13 @@ warning_list
     ;
 ```
 
-A `#pragma``warning` directive that omits the warning list affects all warnings. A `#pragma``warning` directive the includes a warning list affects only those warnings that are specified in the list.
+A `#pragma warning` directive that omits the warning list affects all warnings. A `#pragma warning` directive the includes a warning list affects only those warnings that are specified in the list.
 
-A `#pragma``warning``disable` directive disables all or the given set of warnings.
+A `#pragma warning disable` directive disables all or the given set of warnings.
 
-A `#pragma``warning``restore` directive restores all or the given set of warnings to the state that was in effect at the beginning of the compilation unit. Note that if a particular warning was disabled externally, a `#pragma``warning``restore` (whether for all or the specific warning) will not re-enable that warning.
+A `#pragma warning restore` directive restores all or the given set of warnings to the state that was in effect at the beginning of the compilation unit. Note that if a particular warning was disabled externally, a `#pragma warning restore` (whether for all or the specific warning) will not re-enable that warning.
 
-The following example shows use of `#pragma``warning` to temporarily disable the warning reported when obsoleted members are referenced, using the warning number from the Microsoft C# compiler.
+The following example shows use of `#pragma warning` to temporarily disable the warning reported when obsoleted members are referenced, using the warning number from the Microsoft C# compiler.
 ```csharp
 using System;
 

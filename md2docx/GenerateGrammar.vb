@@ -42,14 +42,20 @@ Class Grammar
 
     Public Function AreProductionsSameAs(copy As Grammar) As Boolean
 
-        Dim ToDictionary = Function(g As Grammar)
+        Dim ToDictionary = Function(g As Grammar, allowDuplicates As Boolean)
                                Dim d As New Dictionary(Of String, Production)
                                For Each p In g.Productions
-                                   If p.ProductionName IsNot Nothing Then d.Add(p.ProductionName, p)
+                                   If p.ProductionName Is Nothing Then Continue For
+                                   If d.ContainsKey(p.ProductionName) Then
+                                       Dim p1 = Antlr.ToString(d(p.ProductionName)), p2 = Antlr.ToString(p)
+                                       If p1 <> p2 Then Console.WriteLine($"INCONSISTENT for '{p}'{vbCrLf}FIRST:{vbCrLf}{p1}{vbCrLf}SECOND:{vbCrLf}{p2}")
+                                       If Not allowDuplicates Then Console.WriteLine("DUPLICATES for '{p}'")
+                                   End If
+                                   d(p.ProductionName) = p
                                Next
                                Return d
                            End Function
-        Dim dme = ToDictionary(Me), dcopy = ToDictionary(copy)
+        Dim dme = ToDictionary(Me, False), dcopy = ToDictionary(copy, True)
         Dim ok = True
 
         For Each p In dme.Keys
@@ -135,8 +141,8 @@ Class Html
             If p.EBNF Is Nothing Then Continue For
             Dim choices = If(p.EBNF.Kind = EBNFKind.Choice, CType(p.EBNF.Children, IEnumerable(Of EBNF)), {p.EBNF})
             If flatten(choices).Where(Function(e) e.Kind = EBNFKind.Choice).Count > 0 Then Throw New Exception("nested choice not implemented")
-            Me.Productions.Add(p.ProductionName, choices)
-            If p.Link IsNot Nothing Then Me.ProductionReferences.Add(p.ProductionName, Tuple.Create(p.Link, p.LinkName))
+            Me.Productions(p.ProductionName) = choices
+            If p.Link IsNot Nothing Then Me.ProductionReferences(p.ProductionName) = Tuple.Create(p.Link, p.LinkName)
         Next
         Dim InvalidReferences As New HashSet(Of String)
         For Each p In Me.Productions
@@ -770,7 +776,7 @@ Class Antlr
                 ExtraComments &= tokens.First.Value.Substring(2) : tokens.RemoveFirst()
             ElseIf tokens.First.Value = vbCrLf Then
                 HasNewline = True : tokens.RemoveFirst() : If ExtraComments.Length > 0 Then ExtraComments &= " "
-            ElseIf String.IsNullOrWhiteSpace(tokens.First.value) Then
+            ElseIf String.IsNullOrWhiteSpace(tokens.First.Value) Then
                 ExtraWhitespace &= tokens.First.Value : tokens.RemoveFirst()
             Else
                 Exit While

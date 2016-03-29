@@ -271,8 +271,11 @@ for ( for_initializer ; for_condition ; for_iterator ) embedded_statement
 ```
 is done as if the statement were written:
 ```csharp
-{    for_initializer ;
-    while ( for_condition ) {        embedded_statement ;        for_iterator ;
+{
+    for_initializer ;
+    while ( for_condition ) {
+        embedded_statement ;
+        for_iterator ;
     }
 }
 ```
@@ -455,7 +458,8 @@ Each of these expressions has one or more sub-expressions that are unconditional
 #### Invocation expressions and object creation expressions
 
 For an invocation expression *expr* of the form:
-```csharpprimary_expression ( arg1 , arg2 , ... , argN )
+```csharp
+primary_expression ( arg1 , arg2 , ... , argN )
 ```
 or an object creation expression of the form:
 ```csharp

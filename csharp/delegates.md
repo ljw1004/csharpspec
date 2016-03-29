@@ -1,6 +1,6 @@
 # Delegates
 
-Delegates enable scenarios that other languages—such as C++, Pascal, and Modula—have addressed with function pointers. Unlike C++ function pointers, however, delegates are fully object oriented, and unlike C++ pointers to member functions, delegates encapsulate both an object instance and a method.
+Delegates enable scenarios that other languages—such as C++, Pascal, and Modula -- have addressed with function pointers. Unlike C++ function pointers, however, delegates are fully object oriented, and unlike C++ pointers to member functions, delegates encapsulate both an object instance and a method.
 
 A delegate declaration defines a class that is derived from the class `System.Delegate`. A delegate instance encapsulates an invocation list, which is a list of one or more methods, each of which is referred to as a callable entity. For instance methods, a callable entity consists of an instance and a method on that instance. For static methods, a callable entity consists of just a method. Invoking a delegate instance with an appropriate set of arguments causes each of the delegate's callable entities to be invoked with the given set of arguments.
 
@@ -8,23 +8,24 @@ An interesting and useful property of a delegate instance is that it does not kn
 
 ## Delegate declarations
 
-A *delegate-declaration* is a *type-declaration* (§9.6) that declares a new delegate type.
+A *delegate_declaration* is a *type_declaration* (§9.6) that declares a new delegate type.
 
-<pre>delegate-declaration:
-attributes<sub>opt</sub>   delegate-modifiers<sub>opt</sub><b>delegate</b>   return-type   
-        identifier  variant-type-parameter-list<sub>opt</sub>
-<b>(</b>   formal-parameter-list<sub>opt</sub><b>)</b>   type-parameter-constraints-clauses<sub>opt</sub><b>;</b></pre>
+```antlr
+delegate_declaration
+    : attributes? delegate_modifier* 'delegate' return_type
+      identifier variant_type_parameter_list?
+      '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
+    ;
 
-<pre>delegate-modifiers:
-delegate-modifier
-delegate-modifiers   delegate-modifier</pre>
-
-<pre>delegate-modifier:
-<b>new</b>
-<b>public</b>
-<b>protected</b>
-<b>internal</b>
-<b>private</b></pre>
+delegate_modifier
+    : 'new'
+    | 'public'
+    | 'protected'
+    | 'internal'
+    | 'private'
+    | delegate_modifier_unsafe
+    ;
+```
 
 It is a compile-time error for the same modifier to appear multiple times in a delegate declaration.
 
@@ -34,9 +35,9 @@ The `public`, `protected`, `internal`, and `private` modifiers control the acces
 
 The delegate's type name is *identifier*.
 
-The optional *formal-parameter-list* specifies the parameters of the delegate, and *return-type* indicates the return type of the delegate.
+The optional *formal_parameter_list* specifies the parameters of the delegate, and *return_type* indicates the return type of the delegate.
 
-The optional *variant-type-parameter-list* (§13.1.3) specifies the type parameters to the delegate itself.
+The optional *variant_type_parameter_list* (§13.1.3) specifies the type parameters to the delegate itself.
 
 The return type of a delegate type must be either `void`, or output-safe (§13.1.3.1).
 
@@ -57,13 +58,9 @@ class A
 class B
 {
     delegate int D2(int c, double d);
-
     public static int M1(int f, double g) {...}
-
     public static void M2(int k, double l) {...}
-
     public static int M3(int g) {...}
-
     public static void M4(int g) {...}
 }
 ```
@@ -78,18 +75,17 @@ delegate bool Predicate<T>(T value);
 class X
 {
     static bool F(int i) {...}
-
     static bool G(string s) {...}
 }
 ```
 
 The method `X.F` is compatible with the delegate type `Predicate<int>` and the method `X.G` is compatible with the delegate type `Predicate<string>` .
 
-The only way to declare a delegate type is via a *delegate-declaration*. A delegate type is a class type that is derived from `System.Delegate`. Delegate types are implicitly `sealed`, so it is not permissible to derive any type from a delegate type. It is also not permissible to derive a non-delegate class type from `System.Delegate`. Note that `System.Delegate` is not itself a delegate type; it is a class type from which all delegate types are derived.
+The only way to declare a delegate type is via a *delegate_declaration*. A delegate type is a class type that is derived from `System.Delegate`. Delegate types are implicitly `sealed`, so it is not permissible to derive any type from a delegate type. It is also not permissible to derive a non-delegate class type from `System.Delegate`. Note that `System.Delegate` is not itself a delegate type; it is a class type from which all delegate types are derived.
 
 C# provides special syntax for delegate instantiation and invocation. Except for instantiation, any operation that can be applied to a class or class instance can also be applied to a delegate class or instance, respectively. In particular, it is possible to access members of the `System.Delegate` type via the usual member access syntax.
 
-The set of methods encapsulated by a delegate instance is called an invocation list. When a delegate instance is created (§15.2) from a single method, it encapsulates that method, and its invocation list contains only one entry. However, when two non-null delegate instances are combined, their invocation lists are concatenated—in the order left operand then right operand—to form a new invocation list, which contains two or more entries.
+The set of methods encapsulated by a delegate instance is called an invocation list. When a delegate instance is created (§15.2) from a single method, it encapsulates that method, and its invocation list contains only one entry. However, when two non-null delegate instances are combined, their invocation lists are concatenated -- in the order left operand then right operand -- to form a new invocation list, which contains two or more entries.
 
 Delegates are combined using the binary `+` (§7.8.4) and `+=` operators (§7.17.2). A delegate can be removed from a combination of delegates, using the binary `-` (§7.8.5) and `-=` operators (§7.17.2). Delegates can be compared for equality (§7.10.8).
 
@@ -101,7 +97,6 @@ delegate void D(int x);
 class C
 {
     public static void M1(int i) {...}
-
     public static void M2(int i) {...}
 
 }
@@ -109,11 +104,11 @@ class C
 class Test
 {
     static void Main() {
-        D cd1 = new D(C.M1);        // M1
-        D cd2 = new D(C.M2);        // M2
+        D cd1 = new D(C.M1);      // M1
+        D cd2 = new D(C.M2);      // M2
         D cd3 = cd1 + cd2;        // M1 + M2
-        D cd4 = cd3 + cd1;         // M1 + M2 + M1
-        D cd5 = cd4 + cd3;         // M1 + M2 + M1 + M1 + M2
+        D cd4 = cd3 + cd1;        // M1 + M2 + M1
+        D cd5 = cd4 + cd3;        // M1 + M2 + M1 + M1 + M2
     }
 
 }
@@ -123,20 +118,20 @@ When `cd1` and `cd2` are instantiated, they each encapsulate one method. When `c
 
 ## Delegate compatibility
 
-A method or delegate `M` is *__compatible__* with a delegate type `D` if all of the following are true:
+A method or delegate `M` is ***compatible*** with a delegate type `D` if all of the following are true:
 
--  `D` and `M` have the same number of parameters, and each parameter in `D` has the same `ref` or `out` modifiers as the corresponding parameter in `M`.
--  For each value parameter (a parameter with no `ref` or `out` modifier), an identity conversion (§6.1.1) or implicit reference conversion (§6.1.6) exists from the parameter type in `D` to the corresponding parameter type in `M`.
--  For each `ref` or `out` parameter, the parameter type in `D` is the same as the parameter type in `M`.
--  An identity or implicit reference conversion exists from the return type of `M` to the return type of `D`.
+*  `D` and `M` have the same number of parameters, and each parameter in `D` has the same `ref` or `out` modifiers as the corresponding parameter in `M`.
+*  For each value parameter (a parameter with no `ref` or `out` modifier), an identity conversion (§6.1.1) or implicit reference conversion (§6.1.6) exists from the parameter type in `D` to the corresponding parameter type in `M`.
+*  For each `ref` or `out` parameter, the parameter type in `D` is the same as the parameter type in `M`.
+*  An identity or implicit reference conversion exists from the return type of `M` to the return type of `D`.
 
 ## Delegate instantiation
 
-An instance of a delegate is created by a *delegate-creation-expression* (§7.6.10.5) or a conversion to a delegate type. The newly created delegate instance then refers to either:
+An instance of a delegate is created by a *delegate_creation_expression* (§7.6.10.5) or a conversion to a delegate type. The newly created delegate instance then refers to either:
 
--  The static method referenced in the *delegate-creation-expression*, or
--  The target object (which cannot be `null`) and instance method referenced in the *delegate-creation-expression*, or
--  Another delegate.
+*  The static method referenced in the *delegate_creation_expression*, or
+*  The target object (which cannot be `null`) and instance method referenced in the *delegate_creation_expression*, or
+*  Another delegate.
 
 For example:
 
@@ -214,7 +209,7 @@ class Test
         cd3 += cd4;
         cd3(30);                // call M1, M2, M1, then M3
 
-        cd3 -= cd1;            // remove last M1
+        cd3 -= cd1;             // remove last M1
         cd3(40);                // call M1, M2, then M3
 
         cd3 -= cd4;
@@ -223,14 +218,14 @@ class Test
         cd3 -= cd2;
         cd3(60);                // call M1
 
-        cd3 -= cd2;            // impossible removal is benign
+        cd3 -= cd2;             // impossible removal is benign
         cd3(60);                // call M1
 
-        cd3 -= cd1;            // invocation list is empty so cd3 is null
+        cd3 -= cd1;             // invocation list is empty so cd3 is null
 
-        //        cd3(70);        // System.NullReferenceException thrown
+        cd3(70);                // System.NullReferenceException thrown
 
-        cd3 -= cd1;            // impossible removal is benign
+        cd3 -= cd1;             // impossible removal is benign
     }
 }
 ```
@@ -241,7 +236,7 @@ Immediately prior to the execution of the final statement, `cd3 -= cd1;`, the de
 
 The output produced is:
 
-```csharp
+```
 C.M1: -1
 C.M2: -2
 C.M1: 10

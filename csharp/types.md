@@ -150,7 +150,7 @@ The simple types differ from other struct types in that they permit certain addi
 
 *  Most simple types permit values to be created by writing *literals* (§2.4.4). For example, `123` is a literal of type `int` and `'a'` is a literal of type `char`. C# makes no provision for literals of struct types in general, and non-default values of other struct types are ultimately always created through instance constructors of those struct types.
 *  When the operands of an expression are all simple type constants, it is possible for the compiler to evaluate the expression at compile-time. Such an expression is known as a *constant_expression* (§7.19). Expressions involving operators defined by other struct types are not considered to be constant expressions.
-*  Through `const` declarations it is possible to declare constants of the simple types (§10.4). It is not possible to have constants of other struct types, but a similar effect is provided by `static``readonly` fields.
+*  Through `const` declarations it is possible to declare constants of the simple types (§10.4). It is not possible to have constants of other struct types, but a similar effect is provided by `static readonly` fields.
 *  Conversions involving simple types can participate in evaluation of conversion operators defined by other struct types, but a user-defined conversion operator can never participate in evaluation of another user-defined operator (§6.4.3).
 
 ### Integral types
@@ -186,7 +186,7 @@ The `checked` and `unchecked` operators and statements are used to control overf
 C# supports two floating point types: `float` and `double`. The `float` and `double` types are represented using the 32-bit single-precision and 64-bit double-precision IEEE 754 formats, which provide the following sets of values:
 
 *  Positive zero and negative zero. In most situations, positive zero and negative zero behave identically as the simple value zero, but certain operations distinguish between the two (§7.8.2).
-*  Positive infinity and negative infinity. Infinities are produced by such operations as dividing a non-zero number by zero. For example, `1.0``/``0.0` yields positive infinity, and `–1.0``/``0.0` yields negative infinity.
+*  Positive infinity and negative infinity. Infinities are produced by such operations as dividing a non-zero number by zero. For example, `1.0 / 0.0` yields positive infinity, and `–1.0 / 0.0` yields negative infinity.
 *  The ***Not-a-Number*** value, often abbreviated NaN. NaNs are produced by invalid floating-point operations, such as dividing zero by zero.
 *  The finite set of non-zero values of the form `s * m * 2^e`, where `s` is 1 or -1, and `m` and `e` are determined by the particular floating-point type: For `float`, `0 < m < 2^24` and `-149 <= e <= 104`, and for `double`, `0 < m < 2^53` and `1075 <= e <= 970`. Denormalized floating-point numbers are considered valid non-zero values.
 
@@ -409,7 +409,7 @@ sealed class Box<T>: System.ValueType
 }
 ```
 
-Boxing of a value `v` of type `T` now consists of executing the expression `new Box``<T>``(v)`, and returning the resulting instance as a value of type `object`. Thus, the statements
+Boxing of a value `v` of type `T` now consists of executing the expression `new Box<T>(v)`, and returning the resulting instance as a value of type `object`. Thus, the statements
 ```csharp
 int i = 123;
 object box = i;
@@ -420,7 +420,7 @@ int i = 123;
 object box = new Box<int>(i);
 ```
 
-A boxing class like `Box``<T>` above doesn't actually exist and the dynamic type of a boxed value isn't actually a class type. Instead, a boxed value of type `T` has the dynamic type `T`, and a dynamic type check using the `is` operator can simply reference type `T`. For example,
+A boxing class like `Box<T>` above doesn't actually exist and the dynamic type of a boxed value isn't actually a class type. Instead, a boxed value of type `T` has the dynamic type `T`, and a dynamic type check using the `is` operator can simply reference type `T`. For example,
 ```csharp
 int i = 123;
 object box = i;
@@ -467,7 +467,7 @@ An unboxing operation to a *non_nullable_value_type* consists of first checking 
 
 Unboxing to a *nullable_type* produces the null value of the *nullable_type* if the source operand is `null`, or the wrapped result of unboxing the object instance to the underlying type of the *nullable_type* otherwise.
 
-Referring to the imaginary boxing class described in the previous section, an unboxing conversion of an object `box` to a *value_type* `T` consists of executing the expression `((``Box``<T>``)box).value`. Thus, the statements
+Referring to the imaginary boxing class described in the previous section, an unboxing conversion of an object `box` to a *value_type* `T` consists of executing the expression `((Box<T>)box).value`. Thus, the statements
 ```csharp
 object box = 123;
 int i = (int)box;
@@ -638,7 +638,7 @@ Func<int,int> del = x => x + 1;                    // Code
 Expression<Func<int,int>> exp = x => x + 1;        // Data
 ```
 
-Following these assignments, the delegate `del` references a method that returns `x``+``1`, and the expression tree `exp` references a data structure that describes the expression `x ``=> x ``+ 1`.
+Following these assignments, the delegate `del` references a method that returns `x + 1`, and the expression tree `exp` references a data structure that describes the expression `x => x + 1`.
 
 The exact definition of the generic type `Expression<D>` as well as the precise rules for constructing an expression tree when a lambda expressionis converted to an expression tree type, are both outside the scope of this specification.
 

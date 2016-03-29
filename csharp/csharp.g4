@@ -562,6 +562,7 @@ non_array_type
 rank_specifier
     : '[' dim_separator* ']'
     ;
+
 dim_separator
     : ','
     ;
@@ -1157,6 +1158,7 @@ statement_expression
     | post_decrement_expression
     | pre_increment_expression
     | pre_decrement_expression
+    | await_expression
     ;
 
 selection_statement
@@ -1776,7 +1778,8 @@ destructor_body
 // Structs
 
 struct_declaration
-    : attributes? struct_modifier* 'partial'? 'struct' identifier type_parameter_list? struct_interfaces? type_parameter_constraints_clause* struct_body ';'?
+    : attributes? struct_modifier* 'partial'? 'struct' identifier type_parameter_list?
+      struct_interfaces? type_parameter_constraints_clause* struct_body ';'?
     ;
 
 struct_modifier
@@ -1827,7 +1830,9 @@ variable_initializer_list
 // Interfaces
 
 interface_declaration
-    : attributes? interface_modifier* 'partial'? 'interface' identifier variant_type_parameter_list? interface_base? type_parameter_constraints_clause* interface_body ';'?
+    : attributes? interface_modifier* 'partial'? 'interface'
+      identifier variant_type_parameter_list? interface_base?
+      type_parameter_constraints_clause* interface_body ';'?
     ;
 
 interface_modifier
@@ -1869,7 +1874,8 @@ interface_member_declaration
     ;
 
 interface_method_declaration
-    : attributes? 'new'? return_type identifier type_parameter_list '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
+    : attributes? 'new'? return_type identifier type_parameter_list
+      '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
     ;
 
 interface_property_declaration
@@ -1898,14 +1904,6 @@ enum_declaration
     : attributes? enum_modifier* 'enum' identifier enum_base? enum_body ';'?
     ;
 
-enum_modifier
-    : 'new'
-    | 'public'
-    | 'protected'
-    | 'internal'
-    | 'private'
-    ;
-
 enum_base
     : ':' integral_type
     ;
@@ -1915,9 +1913,17 @@ enum_body
     | '{' enum_member_declarations ',' '}'
     ;
 
+enum_modifier
+    : 'new'
+    | 'public'
+    | 'protected'
+    | 'internal'
+    | 'private'
+    ;
+
+
 enum_member_declarations
-    : enum_member_declaration
-    | enum_member_declarations ',' enum_member_declaration
+    : enum_member_declaration (',' enum_member_declaration)*
     ;
 
 enum_member_declaration
@@ -1929,7 +1935,9 @@ enum_member_declaration
 // Delegates
 
 delegate_declaration
-    : attributes? delegate_modifier* 'delegate' return_type identifier type_parameter_list? '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
+    : attributes? delegate_modifier* 'delegate' return_type
+      identifier variant_type_parameter_list?
+      '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
     ;
 
 delegate_modifier
@@ -2163,7 +2171,7 @@ struct_member_declaration_unsafe
     ;
 
 fixed_size_buffer_declaration
-    : attributes? fixed_size_buffer_modifier* 'fixed' buffer_element_type fixed_size_buffer_declarators ';'
+    : attributes? fixed_size_buffer_modifier* 'fixed' buffer_element_type fixed_size_buffer_declarator+ ';'
     ;
 
 fixed_size_buffer_modifier
@@ -2177,11 +2185,6 @@ fixed_size_buffer_modifier
 
 buffer_element_type
     : type
-    ;
-
-fixed_size_buffer_declarators
-    : fixed_size_buffer_declarator
-    | fixed_size_buffer_declarator fixed_size_buffer_declarators
     ;
 
 fixed_size_buffer_declarator

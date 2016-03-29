@@ -88,6 +88,14 @@
       <Link>conversions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\csharp\csharp.g4">
+      <Link>csharp.g4</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\csharp\documentation-comments.md">
+      <Link>documentation-comments.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\csharp\expressions.md">
       <Link>expressions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -116,41 +124,52 @@
       <Link>types.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\csharp\unsafe-code.md">
+      <Link>unsafe-code.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\csharp\variables.md">
       <Link>variables.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="arrays.md">
+    <None Include="..\csharp\arrays.md">
+      <Link>arrays.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="attributes.md">
+    <None Include="..\csharp\attributes.md">
+      <Link>attributes.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="classes.md">
+    <None Include="..\csharp\classes.md">
+      <Link>classes.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="delegates.md">
+    <None Include="..\csharp\delegates.md">
+      <Link>delegates.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="enums.md">
+    <None Include="..\csharp\enums.md">
+      <Link>enums.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="exceptions.md">
+    <None Include="..\csharp\exceptions.md">
+      <Link>exceptions.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="interfaces.md">
+    <None Include="..\csharp\interfaces.md">
+      <Link>interfaces.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="project.json" />
-    <None Include="structs.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="template-orig.docx">
+    <None Include="..\csharp\structs.md">
+      <Link>structs.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="template.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />

@@ -2220,12 +2220,8 @@ The `checked` and `unchecked` operators and statements allow programmers to cont
 A default value expression is used to obtain the default value (§5.2) of a type. Typically a default value expression is used for type parameters, since it may not be known if the type parameter is a value type or a reference type. (No conversion exists from the `null` literal to a type parameter unless the type parameter is known to be a reference type.)
 
 ```antlr
-checked_expression
-    : 'checked' '(' expression ')'
-    ;
-
-unchecked_expression
-    : 'unchecked' '(' expression ')'
+default_value_expression
+    : 'default' '(' type ')'
     ;
 ```
 
@@ -3437,6 +3433,10 @@ An ***anonymous function*** is an expression that represents an "in-line" method
 For historical reasons there are two syntactic flavors of anonymous functions, namely *lambda_expression*s and *anonymous_method_expression*s. For almost all purposes, *lambda_expression*s are more concise and expressive than *anonymous_method_expression*s, which remain in the language for backwards compatibility.
 
 ```antlr
+lambda_expression
+    : anonymous_function_signature '=>' anonymous_function_body
+    ;
+
 anonymous_method_expression
     : 'delegate' explicit_anonymous_function_signature? block
     ;

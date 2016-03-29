@@ -326,233 +326,234 @@ Class MarkdownSpec
                 p.Append(Spans2Elements(spans))
                 p.AppendChild(New BookmarkEnd With {.Id = CStr(maxBookmarkId.Value)})
                 Yield p
+                Console.WriteLine(New String(" "c, level * 4 - 4) & sr.Number & " " & sr.Title)
                 Return
 
             ElseIf md.IsParagraph Then
-                Dim mdp = CType(md, MarkdownParagraph.Paragraph), spans = mdp.Item
-                Yield New Paragraph(Spans2Elements(spans))
-                Return
+                    Dim mdp = CType(md, MarkdownParagraph.Paragraph), spans = mdp.Item
+                    Yield New Paragraph(Spans2Elements(spans))
+                    Return
 
-            ElseIf md.IsListBlock Then
-                Dim mdl = CType(md, MarkdownParagraph.ListBlock)
-                Dim flat = FlattenList(mdl)
+                ElseIf md.IsListBlock Then
+                    Dim mdl = CType(md, MarkdownParagraph.ListBlock)
+                    Dim flat = FlattenList(mdl)
 
-                ' Let's figure out what kind of list it is - ordered or unordered? nested?
-                Dim format0 = {"1", "1", "1", "1"}
-                For Each item In flat
-                    format0(item.Level) = If(item.IsBulletOrdered, "1", "o")
-                Next
-                Dim format = String.Join("", format0)
-
-                Dim numberingPart = If(wdoc.MainDocumentPart.NumberingDefinitionsPart, wdoc.MainDocumentPart.AddNewPart(Of NumberingDefinitionsPart)("NumberingDefinitionsPart001"))
-                If numberingPart.Numbering Is Nothing Then numberingPart.Numbering = New Numbering()
-
-                Dim createLevel = Function(level As Integer, isOrdered As Boolean) As Level
-                                      Dim numFormat = NumberFormatValues.Bullet, levelText = {"·", "o", "·", "o"}(level)
-                                      If isOrdered AndAlso level = 0 Then numFormat = NumberFormatValues.Decimal : levelText = "%1."
-                                      If isOrdered AndAlso level = 1 Then numFormat = NumberFormatValues.LowerLetter : levelText = "%2."
-                                      If isOrdered AndAlso level = 2 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%3."
-                                      If isOrdered AndAlso level = 3 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%4."
-                                      Dim r As New Level With {.LevelIndex = level}
-                                      r.Append(New StartNumberingValue With {.Val = 1})
-                                      r.Append(New NumberingFormat With {.Val = numFormat})
-                                      r.Append(New LevelText With {.Val = levelText})
-                                      r.Append(New ParagraphProperties(New Indentation With {.Left = CStr(540 + 360 * level), .Hanging = "360"}))
-                                      If levelText = "·" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Symbol", .HighAnsi = "Symbol", .EastAsia = "Times New Roman", .ComplexScript = "Times New Roman"}))
-                                      If levelText = "o" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Courier New", .HighAnsi = "Courier New", .ComplexScript = "Courier New"}))
-                                      Return r
-                                  End Function
-                Dim level0 = createLevel(0, format(0) = "1")
-                Dim level1 = createLevel(1, format(1) = "1")
-                Dim level2 = createLevel(2, format(2) = "1")
-                Dim level3 = createLevel(3, format(3) = "1")
-
-                Dim abstracts = numberingPart.Numbering.OfType(Of AbstractNum).Select(Function(an) an.AbstractNumberId.Value).ToList()
-                Dim aid = If(abstracts.Count = 0, 1, abstracts.Max() + 1)
-                Dim abstract As New AbstractNum(New MultiLevelType() With {.Val = MultiLevelValues.Multilevel}, level0, level1, level2, level3) With {.AbstractNumberId = aid}
-                numberingPart.Numbering.InsertAt(abstract, 0)
-
-                Dim instances = numberingPart.Numbering.OfType(Of NumberingInstance).Select(Function(ni) ni.NumberID.Value)
-                Dim nid = If(instances.Count = 0, 1, instances.Max() + 1)
-                Dim numInstance As New NumberingInstance(New AbstractNumId With {.Val = aid}) With {.NumberID = nid}
-                numberingPart.Numbering.AppendChild(numInstance)
-
-                ' We'll also figure out the indentation (for the benefit of those paragraphs that should be
-                ' indendent with the list but aren't numbered). I'm not sure what the indent comes from.
-                ' In the docx, each AbstractNum that I created has an indent for each of its levels,
-                ' defaulted at 900, 1260, 1620, ... but I can't see where in the above code that's created?
-                Dim calcIndent = Function(level%) CStr(540 + level * 360)
-
-                For Each item In flat
-                    Dim content = item.Paragraph
-                    If content.IsParagraph OrElse content.IsSpan Then
-                        Dim spans = If(content.IsParagraph, CType(content, MarkdownParagraph.Paragraph).Item, CType(content, MarkdownParagraph.Span).Item)
-                        If item.HasBullet Then
-                            Yield New Paragraph(Spans2Elements(spans)) With {.ParagraphProperties = New ParagraphProperties(New NumberingProperties(New ParagraphStyleId With {.Val = "ListParagraph"}, New NumberingLevelReference With {.Val = item.Level}, New NumberingId With {.Val = nid}))}
-                        Else
-                            Yield New Paragraph(Spans2Elements(spans)) With {.ParagraphProperties = New ParagraphProperties(New Indentation With {.Left = calcIndent(item.Level)})}
-                        End If
-                    ElseIf content.IsQuotedBlock OrElse content.IsCodeBlock Then
-                        For Each p In Paragraph2Paragraphs(content)
-                            Dim props = p.GetFirstChild(Of ParagraphProperties)
-                            If props Is Nothing Then props = New ParagraphProperties : p.InsertAt(props, 0)
-                            Dim indent = props?.GetFirstChild(Of Indentation)
-                            If indent Is Nothing Then indent = New Indentation : props.Append(indent)
-                            indent.Left = calcIndent(item.Level)
-                            Yield p
-                        Next
-                    ElseIf content.IsTableBlock Then
-                        For Each p In Paragraph2Paragraphs(content)
-                            Dim table = TryCast(p, Table)
-                            If table Is Nothing Then Yield p : Continue For
-                            Dim tprops = table.GetFirstChild(Of TableProperties)
-                            Dim tindent = tprops?.GetFirstChild(Of TableIndentation)
-                            If tindent Is Nothing Then Throw New Exception("Ooops! Table is missing indentation")
-                            tindent.Width = CInt(calcIndent(item.Level))
-                            Yield table
-                        Next
-                    Else
-                        Throw New Exception("Unexpected item in list")
-                    End If
-                Next
-
-            ElseIf md.IsCodeBlock Then
-                Dim mdc = CType(md, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
-                code = BugWorkaroundDecode(code)
-                Dim runs As New List(Of Run), onFirstLine = True
-                Dim lines = Colorize(code, lang)
-                For Each line In lines
-                    If onFirstLine Then onFirstLine = False Else runs.Add(New Run(New Break))
-                    For Each word In line.Words
-                        Dim run As New Run
-                        Dim props As New RunProperties
-                        If word.Red <> 0 OrElse word.Green <> 0 OrElse word.Blue <> 0 Then props.Append(New Color With {.Val = $"{word.Red:X2}{word.Green:X2}{word.Blue:X2}"})
-                        If word.IsItalic Then props.Append(New Italic)
-                        If props.HasChildren Then run.Append(props)
-                        run.Append(New Text(word.Text) With {.Space = SpaceProcessingModeValues.Preserve})
-                        runs.Add(run)
+                    ' Let's figure out what kind of list it is - ordered or unordered? nested?
+                    Dim format0 = {"1", "1", "1", "1"}
+                    For Each item In flat
+                        format0(item.Level) = If(item.IsBulletOrdered, "1", "o")
                     Next
-                Next
-                Dim style As New ParagraphStyleId With {.Val = If(lang = "antlr", "Grammar", "Code")}
-                Yield New Paragraph(runs) With {.ParagraphProperties = New ParagraphProperties(style)}
-                Return
+                    Dim format = String.Join("", format0)
 
-            ElseIf md.IsQuotedBlock Then
-                Dim mdq = CType(md, MarkdownParagraph.QuotedBlock), quoteds = mdq.Item
-                Dim kind = ""
-                For Each quoted In quoteds
-                    If quoted.IsParagraph Then
-                        Dim p = CType(quoted, MarkdownParagraph.Paragraph), spans = p.Item
-                        If spans.FirstOrDefault?.IsStrong Then
-                            Dim strong = CType(spans.First, MarkdownSpan.Strong).Item
-                            If strong.FirstOrDefault?.IsLiteral Then
-                                Dim literal = mdunescape(CType(strong.First, MarkdownSpan.Literal))
-                                If literal = "Annotation" Then
-                                    kind = "Annotation"
-                                    Yield New Paragraph(Span2Elements(spans.Head)) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
-                                    If spans.Tail.FirstOrDefault?.IsLiteral Then
-                                        Dim s = mdunescape(CType(spans.Tail.First, MarkdownSpan.Literal))
-                                        quoted = MarkdownParagraph.NewParagraph(
-                                            New Microsoft.FSharp.Collections.FSharpList(Of MarkdownSpan)(
-                                                MarkdownSpan.NewLiteral(s.TrimStart()),
-                                                spans.Tail.Tail))
-                                    Else
-                                        quoted = MarkdownParagraph.NewParagraph(spans.Tail)
+                    Dim numberingPart = If(wdoc.MainDocumentPart.NumberingDefinitionsPart, wdoc.MainDocumentPart.AddNewPart(Of NumberingDefinitionsPart)("NumberingDefinitionsPart001"))
+                    If numberingPart.Numbering Is Nothing Then numberingPart.Numbering = New Numbering()
+
+                    Dim createLevel = Function(level As Integer, isOrdered As Boolean) As Level
+                                          Dim numFormat = NumberFormatValues.Bullet, levelText = {"·", "o", "·", "o"}(level)
+                                          If isOrdered AndAlso level = 0 Then numFormat = NumberFormatValues.Decimal : levelText = "%1."
+                                          If isOrdered AndAlso level = 1 Then numFormat = NumberFormatValues.LowerLetter : levelText = "%2."
+                                          If isOrdered AndAlso level = 2 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%3."
+                                          If isOrdered AndAlso level = 3 Then numFormat = NumberFormatValues.LowerRoman : levelText = "%4."
+                                          Dim r As New Level With {.LevelIndex = level}
+                                          r.Append(New StartNumberingValue With {.Val = 1})
+                                          r.Append(New NumberingFormat With {.Val = numFormat})
+                                          r.Append(New LevelText With {.Val = levelText})
+                                          r.Append(New ParagraphProperties(New Indentation With {.Left = CStr(540 + 360 * level), .Hanging = "360"}))
+                                          If levelText = "·" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Symbol", .HighAnsi = "Symbol", .EastAsia = "Times New Roman", .ComplexScript = "Times New Roman"}))
+                                          If levelText = "o" Then r.Append(New NumberingSymbolRunProperties(New RunFonts With {.Hint = FontTypeHintValues.Default, .Ascii = "Courier New", .HighAnsi = "Courier New", .ComplexScript = "Courier New"}))
+                                          Return r
+                                      End Function
+                    Dim level0 = createLevel(0, format(0) = "1")
+                    Dim level1 = createLevel(1, format(1) = "1")
+                    Dim level2 = createLevel(2, format(2) = "1")
+                    Dim level3 = createLevel(3, format(3) = "1")
+
+                    Dim abstracts = numberingPart.Numbering.OfType(Of AbstractNum).Select(Function(an) an.AbstractNumberId.Value).ToList()
+                    Dim aid = If(abstracts.Count = 0, 1, abstracts.Max() + 1)
+                    Dim abstract As New AbstractNum(New MultiLevelType() With {.Val = MultiLevelValues.Multilevel}, level0, level1, level2, level3) With {.AbstractNumberId = aid}
+                    numberingPart.Numbering.InsertAt(abstract, 0)
+
+                    Dim instances = numberingPart.Numbering.OfType(Of NumberingInstance).Select(Function(ni) ni.NumberID.Value)
+                    Dim nid = If(instances.Count = 0, 1, instances.Max() + 1)
+                    Dim numInstance As New NumberingInstance(New AbstractNumId With {.Val = aid}) With {.NumberID = nid}
+                    numberingPart.Numbering.AppendChild(numInstance)
+
+                    ' We'll also figure out the indentation (for the benefit of those paragraphs that should be
+                    ' indendent with the list but aren't numbered). I'm not sure what the indent comes from.
+                    ' In the docx, each AbstractNum that I created has an indent for each of its levels,
+                    ' defaulted at 900, 1260, 1620, ... but I can't see where in the above code that's created?
+                    Dim calcIndent = Function(level%) CStr(540 + level * 360)
+
+                    For Each item In flat
+                        Dim content = item.Paragraph
+                        If content.IsParagraph OrElse content.IsSpan Then
+                            Dim spans = If(content.IsParagraph, CType(content, MarkdownParagraph.Paragraph).Item, CType(content, MarkdownParagraph.Span).Item)
+                            If item.HasBullet Then
+                                Yield New Paragraph(Spans2Elements(spans)) With {.ParagraphProperties = New ParagraphProperties(New NumberingProperties(New ParagraphStyleId With {.Val = "ListParagraph"}, New NumberingLevelReference With {.Val = item.Level}, New NumberingId With {.Val = nid}))}
+                            Else
+                                Yield New Paragraph(Spans2Elements(spans)) With {.ParagraphProperties = New ParagraphProperties(New Indentation With {.Left = calcIndent(item.Level)})}
+                            End If
+                        ElseIf content.IsQuotedBlock OrElse content.IsCodeBlock Then
+                            For Each p In Paragraph2Paragraphs(content)
+                                Dim props = p.GetFirstChild(Of ParagraphProperties)
+                                If props Is Nothing Then props = New ParagraphProperties : p.InsertAt(props, 0)
+                                Dim indent = props?.GetFirstChild(Of Indentation)
+                                If indent Is Nothing Then indent = New Indentation : props.Append(indent)
+                                indent.Left = calcIndent(item.Level)
+                                Yield p
+                            Next
+                        ElseIf content.IsTableBlock Then
+                            For Each p In Paragraph2Paragraphs(content)
+                                Dim table = TryCast(p, Table)
+                                If table Is Nothing Then Yield p : Continue For
+                                Dim tprops = table.GetFirstChild(Of TableProperties)
+                                Dim tindent = tprops?.GetFirstChild(Of TableIndentation)
+                                If tindent Is Nothing Then Throw New Exception("Ooops! Table is missing indentation")
+                                tindent.Width = CInt(calcIndent(item.Level))
+                                Yield table
+                            Next
+                        Else
+                            Throw New Exception("Unexpected item in list")
+                        End If
+                    Next
+
+                ElseIf md.IsCodeBlock Then
+                    Dim mdc = CType(md, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
+                    code = BugWorkaroundDecode(code)
+                    Dim runs As New List(Of Run), onFirstLine = True
+                    Dim lines = Colorize(code, lang)
+                    For Each line In lines
+                        If onFirstLine Then onFirstLine = False Else runs.Add(New Run(New Break))
+                        For Each word In line.Words
+                            Dim run As New Run
+                            Dim props As New RunProperties
+                            If word.Red <> 0 OrElse word.Green <> 0 OrElse word.Blue <> 0 Then props.Append(New Color With {.Val = $"{word.Red:X2}{word.Green:X2}{word.Blue:X2}"})
+                            If word.IsItalic Then props.Append(New Italic)
+                            If props.HasChildren Then run.Append(props)
+                            run.Append(New Text(word.Text) With {.Space = SpaceProcessingModeValues.Preserve})
+                            runs.Add(run)
+                        Next
+                    Next
+                    Dim style As New ParagraphStyleId With {.Val = If(lang = "antlr", "Grammar", "Code")}
+                    Yield New Paragraph(runs) With {.ParagraphProperties = New ParagraphProperties(style)}
+                    Return
+
+                ElseIf md.IsQuotedBlock Then
+                    Dim mdq = CType(md, MarkdownParagraph.QuotedBlock), quoteds = mdq.Item
+                    Dim kind = ""
+                    For Each quoted In quoteds
+                        If quoted.IsParagraph Then
+                            Dim p = CType(quoted, MarkdownParagraph.Paragraph), spans = p.Item
+                            If spans.FirstOrDefault?.IsStrong Then
+                                Dim strong = CType(spans.First, MarkdownSpan.Strong).Item
+                                If strong.FirstOrDefault?.IsLiteral Then
+                                    Dim literal = mdunescape(CType(strong.First, MarkdownSpan.Literal))
+                                    If literal = "Annotation" Then
+                                        kind = "Annotation"
+                                        Yield New Paragraph(Span2Elements(spans.Head)) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
+                                        If spans.Tail.FirstOrDefault?.IsLiteral Then
+                                            Dim s = mdunescape(CType(spans.Tail.First, MarkdownSpan.Literal))
+                                            quoted = MarkdownParagraph.NewParagraph(
+                                                New Microsoft.FSharp.Collections.FSharpList(Of MarkdownSpan)(
+                                                    MarkdownSpan.NewLiteral(s.TrimStart()),
+                                                    spans.Tail.Tail))
+                                        Else
+                                            quoted = MarkdownParagraph.NewParagraph(spans.Tail)
+                                        End If
+                                    ElseIf literal = "Note" Then
+                                        kind = "AlertText"
+                                    ElseIf literal = "Comment" Then
+                                        kind = "Comment"
                                     End If
-                                ElseIf literal = "Note" Then
-                                    kind = "AlertText"
-                                ElseIf literal = "Comment" Then
-                                    kind = "Comment"
                                 End If
                             End If
+                            '
+                            For Each qp In Paragraph2Paragraphs(quoted)
+                                Dim qpp = TryCast(qp, Paragraph)
+                                If qpp IsNot Nothing Then
+                                    Dim props As New ParagraphProperties(New ParagraphStyleId() With {.Val = kind})
+                                    qpp.ParagraphProperties = props
+                                End If
+                                If kind <> "Comment" Then Yield qp
+                            Next
+
+                        ElseIf quoted.IsCodeBlock Then
+                            Dim mdc = CType(quoted, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
+                            Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None).ToList()
+                            If String.IsNullOrWhiteSpace(lines.Last) Then lines.RemoveAt(lines.Count - 1)
+                            Dim run As New Run() With {.RunProperties = New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})}
+                            For Each line In lines
+                                If run.ChildElements.Count > 1 Then run.Append(New Break)
+                                run.Append(New Text("    " & line) With {.Space = SpaceProcessingModeValues.Preserve})
+                            Next
+                            Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
+
+                        ElseIf quoted.IsListBlock Then
+                            If Not CType(quoted, MarkdownParagraph.ListBlock).Item1.IsOrdered Then Throw New NotImplementedException("unordered list inside annotation")
+                            Dim count = 1
+                            For Each qp In Paragraph2Paragraphs(quoted)
+                                Dim qpp = TryCast(qp, Paragraph)
+                                If qpp IsNot Nothing Then
+                                    qp.InsertAt(New Run(New Text($"{count}. ") With {.Space = SpaceProcessingModeValues.Preserve}), 0)
+                                    count += 1
+                                    Dim props As New ParagraphProperties(New ParagraphStyleId() With {.Val = kind})
+                                    qpp.ParagraphProperties = props
+                                End If
+                                Yield qp
+                            Next
+
                         End If
+
                         '
-                        For Each qp In Paragraph2Paragraphs(quoted)
-                            Dim qpp = TryCast(qp, Paragraph)
-                            If qpp IsNot Nothing Then
-                                Dim props As New ParagraphProperties(New ParagraphStyleId() With {.Val = kind})
-                                qpp.ParagraphProperties = props
-                            End If
-                            If kind <> "Comment" Then Yield qp
-                        Next
-
-                    ElseIf quoted.IsCodeBlock Then
-                        Dim mdc = CType(quoted, MarkdownParagraph.CodeBlock), code = mdc.Item1, lang = mdc.Item2, ignoredAfterLang = mdc.Item3
-                        Dim lines = code.Split({vbCrLf, vbCr, vbLf}, StringSplitOptions.None).ToList()
-                        If String.IsNullOrWhiteSpace(lines.Last) Then lines.RemoveAt(lines.Count - 1)
-                        Dim run As New Run() With {.RunProperties = New RunProperties(New RunStyle With {.Val = "CodeEmbedded"})}
-                        For Each line In lines
-                            If run.ChildElements.Count > 1 Then run.Append(New Break)
-                            run.Append(New Text("    " & line) With {.Space = SpaceProcessingModeValues.Preserve})
-                        Next
-                        Yield New Paragraph(run) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
-
-                    ElseIf quoted.IsListBlock Then
-                        If Not CType(quoted, MarkdownParagraph.ListBlock).Item1.IsOrdered Then Throw New NotImplementedException("unordered list inside annotation")
-                        Dim count = 1
-                        For Each qp In Paragraph2Paragraphs(quoted)
-                            Dim qpp = TryCast(qp, Paragraph)
-                            If qpp IsNot Nothing Then
-                                qp.InsertAt(New Run(New Text($"{count}. ") With {.Space = SpaceProcessingModeValues.Preserve}), 0)
-                                count += 1
-                                Dim props As New ParagraphProperties(New ParagraphStyleId() With {.Val = kind})
-                                qpp.ParagraphProperties = props
-                            End If
-                            Yield qp
-                        Next
-
-                    End If
-
-                    '
-                Next
-                Return
-
-            ElseIf md.IsTableBlock Then
-                Dim mdt = CType(md, MarkdownParagraph.TableBlock), header = mdt.Item1.Option, align = mdt.Item2, rows = mdt.Item3
-                Dim table As New Table()
-                Dim tstyle As New TableStyle With {.Val = "TableGrid"}
-                Dim tindent = New TableIndentation With {.Width = 360, .Type = TableWidthUnitValues.Dxa}
-                Dim tborders As New TableBorders()
-                tborders.TopBorder = New TopBorder With {.Val = BorderValues.Single}
-                tborders.BottomBorder = New BottomBorder With {.Val = BorderValues.Single}
-                tborders.LeftBorder = New LeftBorder With {.Val = BorderValues.Single}
-                tborders.RightBorder = New RightBorder With {.Val = BorderValues.Single}
-                tborders.InsideHorizontalBorder = New InsideHorizontalBorder With {.Val = BorderValues.Single}
-                tborders.InsideVerticalBorder = New InsideVerticalBorder With {.Val = BorderValues.Single}
-                Dim tcellmar As New TableCellMarginDefault
-                tcellmar.Append()
-                table.Append(New TableProperties(tstyle, tindent, tborders))
-                Dim ncols = align.Length
-                For irow = -1 To rows.Length - 1
-                    If irow = -1 And header Is Nothing Then Continue For
-                    Dim mdrow = If(irow = -1, header, rows(irow))
-                    Dim row As New TableRow
-                    For icol = 0 To System.Math.Min(ncols, mdrow.Length) - 1
-                        Dim mdcell = mdrow(icol)
-                        Dim cell As New TableCell
-                        Dim pars = Paragraphs2Paragraphs(mdcell).ToList()
-                        For ip = 0 To pars.Count - 1
-                            Dim p = TryCast(pars(ip), Paragraph)
-                            If p IsNot Nothing Then
-                                Dim props As New ParagraphProperties(New ParagraphStyleId With {.Val = "TableCellNormal"})
-                                If align(icol).IsAlignCenter Then props.Append(New Justification With {.Val = JustificationValues.Center})
-                                If align(icol).IsAlignRight Then props.Append(New Justification With {.Val = JustificationValues.Right})
-                                p.InsertAt(props, 0)
-                            End If
-                            cell.Append(pars(ip))
-                        Next
-                        If pars.Count = 0 Then cell.Append(New Paragraph(New ParagraphProperties(New SpacingBetweenLines With {.After = "0"}), New Run(New Text(""))))
-                        row.Append(cell)
                     Next
-                    table.Append(row)
-                Next
-                Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineBefore"})}
-                Yield table
-                Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineAfter"})}
-                Return
+                    Return
 
-            Else
-                Yield New Paragraph(New Run(New Text($"[{md.GetType.Name}]")))
+                ElseIf md.IsTableBlock Then
+                    Dim mdt = CType(md, MarkdownParagraph.TableBlock), header = mdt.Item1.Option, align = mdt.Item2, rows = mdt.Item3
+                    Dim table As New Table()
+                    Dim tstyle As New TableStyle With {.Val = "TableGrid"}
+                    Dim tindent = New TableIndentation With {.Width = 360, .Type = TableWidthUnitValues.Dxa}
+                    Dim tborders As New TableBorders()
+                    tborders.TopBorder = New TopBorder With {.Val = BorderValues.Single}
+                    tborders.BottomBorder = New BottomBorder With {.Val = BorderValues.Single}
+                    tborders.LeftBorder = New LeftBorder With {.Val = BorderValues.Single}
+                    tborders.RightBorder = New RightBorder With {.Val = BorderValues.Single}
+                    tborders.InsideHorizontalBorder = New InsideHorizontalBorder With {.Val = BorderValues.Single}
+                    tborders.InsideVerticalBorder = New InsideVerticalBorder With {.Val = BorderValues.Single}
+                    Dim tcellmar As New TableCellMarginDefault
+                    tcellmar.Append()
+                    table.Append(New TableProperties(tstyle, tindent, tborders))
+                    Dim ncols = align.Length
+                    For irow = -1 To rows.Length - 1
+                        If irow = -1 And header Is Nothing Then Continue For
+                        Dim mdrow = If(irow = -1, header, rows(irow))
+                        Dim row As New TableRow
+                        For icol = 0 To System.Math.Min(ncols, mdrow.Length) - 1
+                            Dim mdcell = mdrow(icol)
+                            Dim cell As New TableCell
+                            Dim pars = Paragraphs2Paragraphs(mdcell).ToList()
+                            For ip = 0 To pars.Count - 1
+                                Dim p = TryCast(pars(ip), Paragraph)
+                                If p IsNot Nothing Then
+                                    Dim props As New ParagraphProperties(New ParagraphStyleId With {.Val = "TableCellNormal"})
+                                    If align(icol).IsAlignCenter Then props.Append(New Justification With {.Val = JustificationValues.Center})
+                                    If align(icol).IsAlignRight Then props.Append(New Justification With {.Val = JustificationValues.Right})
+                                    p.InsertAt(props, 0)
+                                End If
+                                cell.Append(pars(ip))
+                            Next
+                            If pars.Count = 0 Then cell.Append(New Paragraph(New ParagraphProperties(New SpacingBetweenLines With {.After = "0"}), New Run(New Text(""))))
+                            row.Append(cell)
+                        Next
+                        table.Append(row)
+                    Next
+                    Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineBefore"})}
+                    Yield table
+                    Yield New Paragraph(New Run(New Text(""))) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = "TableLineAfter"})}
+                    Return
+
+                Else
+                    Yield New Paragraph(New Run(New Text($"[{md.GetType.Name}]")))
                 Return
             End If
         End Function
