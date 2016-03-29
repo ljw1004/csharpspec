@@ -2,10 +2,6 @@
 
 ## Programs
 
-*hello_world*
-
-*alpha_beta*
-
 A C# ***program*** consists of one or more ***source files***, known formally as ***compilation units*** (§9.1). A source file is an ordered sequence of Unicode characters. Source files typically have a one-to-one correspondence with files in a file system, but this correspondence is not required. For maximal portability, it is recommended that files in a file system be encoded with the UTF-8 encoding.
 
 Conceptually speaking, a program is compiled using three steps:

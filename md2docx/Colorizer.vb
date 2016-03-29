@@ -153,18 +153,17 @@ Module Colorizer
                         prevElement = c
                     Next
                 Case EBNFKind.Sequence
-                    Dim lastWasNonTab = False
+                    Dim lastWasTab = False
                     Dim prevElement As EBNF = Nothing
                     For Each c In ebnf.Children
-                        ' put a space if r was a non-empty non-tab thing
-                        'If prevElement IsNot Nothing AndAlso lastWasNonTab Then Yield Col(" ", "PlainText")
+                        If lastWasTab Then Yield Col("  ", "PlainText")
                         If c.Kind = EBNFKind.Choice Then
                             Yield Col("( ", "PlainText")
                             For Each word In Colorize(c) : Yield word : Next
                             Yield Col(" )", "PlainText")
-                            lastWasNonTab = True
+                            lastWasTab = False
                         Else
-                            For Each word In Colorize(c) : Yield word : lastWasNonTab = (word IsNot Nothing AndAlso word.Text <> vbTab) : Next
+                            For Each word In Colorize(c) : Yield word : lastWasTab = (word IsNot Nothing AndAlso word.Text = vbTab) : Next
                         End If
                         prevElement = c
                     Next
@@ -187,7 +186,7 @@ Module Colorizer
 
 
         Public Shared Iterator Function Colorize(code As String) As IEnumerable(Of ColorizedWord)
-            code = code.Replace("...", "___threedots___") ' because ... is unusually hard to parse
+            code = code.Replace("...", " ___threedots___ ") ' because ... is unusually hard to parse
             code = code.Replace("from *", "from ___linq_transparent_asterisk___") ' transparent identifier doesn't parse
             '
             Dim ref_mscorlib = MetadataReference.CreateFromFile(GetType(Object).Assembly.Location)
@@ -207,9 +206,9 @@ Module Colorizer
             For Each word In w.words
                 If word Is Nothing Then Yield word : Continue For
                 If word.Text = "___linq_transparent_asterisk___" Then Yield New ColorizedWord With {.Text = "*"} : Continue For
-                If word.Text = "___threedots___" Then Yield New ColorizedWord With {.Text = "..."} : Continue For
+                If word.Text = " ___threedots___ " Then Yield New ColorizedWord With {.Text = "..."} : Continue For
                 word.Text = word.Text.Replace("___linq_transparent_asterisk___", "*")
-                word.Text = word.Text.Replace("___threedots___", "...")
+                word.Text = word.Text.Replace(" ___threedots___ ", "...").Replace("___threedots___", "...")
                 Yield word
             Next
         End Function
@@ -295,7 +294,8 @@ Module Colorizer
                         token.Parent.Parent.KindCS = CSharp.SyntaxKind.TypeArgumentList Then ' e.g. "DbTypes = New Dictionary();" DbType in this case
                         r = Col(token.Text, "UserType")
                     ElseIf TryCast(token.Parent.Parent, CSharp.Syntax.CastExpressionSyntax)?.Type Is token.Parent OrElse ' e.g. "(Foo)x" the Foo
-                        TryCast(token.Parent.Parent, CSharp.Syntax.TypeConstraintSyntax)?.Type Is token.Parent Then ' e.g. "where T:Foo" the Foo
+                        TryCast(token.Parent.Parent, CSharp.Syntax.TypeConstraintSyntax)?.Type Is token.Parent OrElse ' e.g. "where T:Foo" the Foo
+                        TryCast(token.Parent.Parent, CSharp.Syntax.ArrayTypeSyntax)?.ElementType Is token.parent Then ' e.g. "Foo[]" the Foo
                         r = Col(token.Text, "UserType")
                     ElseIf (token.Parent.Parent.KindCS = CSharp.SyntaxKind.ForEachStatement AndAlso token.GetNextToken().RawKind <> CSharp.SyntaxKind.CloseParenToken) OrElse
                         (token.Parent.Parent.Parent.KindCS = CSharp.SyntaxKind.CaseSwitchLabel AndAlso token.GetPreviousToken().RawKind <> CSharp.SyntaxKind.DotToken) OrElse

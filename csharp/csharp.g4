@@ -1136,6 +1136,15 @@ local_constant_declaration
     : 'const' type constant_declarators
     ;
 
+constant_declarators
+    : constant_declarator
+    | constant_declarators ',' constant_declarator
+    ;
+
+constant_declarator
+    : identifier '=' constant_expression
+    ;
+
 expression_statement
     : statement_expression ';'
     ;
@@ -1301,8 +1310,6 @@ yield_statement
 
 // Namespaces
 
-// TODO
-
 compilation_unit
     : extern_alias_directives? using_directives? global_attributes? namespace_member_declarations?
     ;
@@ -1321,8 +1328,7 @@ namespace_body
     ;
 
 extern_alias_directives
-    : extern_alias_directive
-    | extern_alias_directives extern_alias_directive
+    : extern_alias_directive+
     ;
 
 extern_alias_directive
@@ -1330,8 +1336,7 @@ extern_alias_directive
     ;
 
 using_directives
-    : using_directive
-    | using_directives using_directive
+    : using_directive+
     ;
 
 using_directive
@@ -1348,8 +1353,7 @@ using_namespace_directive
     ;
 
 namespace_member_declarations
-    : namespace_member_declaration
-    | namespace_member_declarations namespace_member_declaration
+    : namespace_member_declaration+
     ;
 
 namespace_member_declaration
@@ -1371,15 +1375,11 @@ qualified_alias_member
 
 
 
-//B.2.7 Classes
+// Classes
 
 class_declaration
-    : attributes? class_modifiers? 'partial'? 'class' identifier type_parameter_list? class_base? type_parameter_constraints_clauses? class_body ';'?
-    ;
-
-class_modifiers
-    : class_modifier
-    | class_modifiers class_modifier
+    : attributes? class_modifier* 'partial'? 'class' identifier type_parameter_list?
+      class_base? type_parameter_constraints_clause* class_body ';'?
     ;
 
 class_modifier
@@ -1414,11 +1414,6 @@ interface_type_list
     | interface_type_list ',' interface_type
     ;
 
-type_parameter_constraints_clauses
-    : type_parameter_constraints_clause
-    | type_parameter_constraints_clauses type_parameter_constraints_clause
-    ;
-
 type_parameter_constraints_clause
     : 'where' type_parameter ':' type_parameter_constraints
     ;
@@ -1451,12 +1446,7 @@ constructor_constraint
     ;
 
 class_body
-    : '{' class_member_declarations? '}'
-    ;
-
-class_member_declarations
-    : class_member_declaration
-    | class_member_declarations class_member_declaration
+    : '{' class_member_declaration* '}'
     ;
 
 class_member_declaration
@@ -1474,12 +1464,7 @@ class_member_declaration
     ;
 
 constant_declaration
-    : attributes? constant_modifiers? 'const' type constant_declarators ';'
-    ;
-
-constant_modifiers
-    : constant_modifier
-    | constant_modifiers constant_modifier
+    : attributes? constant_modifier* 'const' type constant_declarators ';'
     ;
 
 constant_modifier
@@ -1490,22 +1475,8 @@ constant_modifier
     | 'private'
     ;
 
-constant_declarators
-    : constant_declarator
-    | constant_declarators ',' constant_declarator
-    ;
-
-constant_declarator
-    : identifier '=' constant_expression
-    ;
-
 field_declaration
-    : attributes? field_modifiers? type variable_declarators ';'
-    ;
-
-field_modifiers
-    : field_modifier
-    | field_modifiers field_modifier
+    : attributes? field_modifier* type variable_declarators ';'
     ;
 
 field_modifier
@@ -1540,12 +1511,8 @@ method_declaration
     ;
 
 method_header
-    : attributes? method_modifiers? 'partial'? return_type member_name type_parameter_list? '(' formal_parameter_list? ')' type_parameter_constraints_clauses?
-    ;
-
-method_modifiers
-    : method_modifier
-    | method_modifiers method_modifier
+    : attributes? method_modifier* 'partial'? return_type member_name type_parameter_list?
+      '(' formal_parameter_list? ')' type_parameter_constraints_clause*
     ;
 
 method_modifier
@@ -1608,12 +1575,7 @@ parameter_array
     ;
 
 property_declaration
-    : attributes? property_modifiers? type member_name '{' accessor_declarations '}'
-    ;
-
-property_modifiers
-    : property_modifier
-    | property_modifiers property_modifier
+    : attributes? property_modifier* type member_name '{' accessor_declarations '}'
     ;
 
 property_modifier
@@ -1658,13 +1620,8 @@ accessor_body
     ;
 
 event_declaration
-    : attributes? event_modifiers? 'event' type variable_declarators ';'
-    | attributes? event_modifiers? 'event' type member_name '{' event_accessor_declarations '}'
-    ;
-
-event_modifiers
-    : event_modifier
-    | event_modifiers event_modifier
+    : attributes? event_modifier* 'event' type variable_declarators ';'
+    | attributes? event_modifier* 'event' type member_name '{' event_accessor_declarations '}'
     ;
 
 event_modifier
@@ -1696,12 +1653,7 @@ remove_accessor_declaration
     ;
 
 indexer_declaration
-    : attributes? indexer_modifiers? indexer_declarator '{' accessor_declarations '}'
-    ;
-
-indexer_modifiers
-    : indexer_modifier
-    | indexer_modifiers indexer_modifier
+    : attributes? indexer_modifier* indexer_declarator '{' accessor_declarations '}'
     ;
 
 indexer_modifier
@@ -1724,12 +1676,7 @@ indexer_declarator
     ;
 
 operator_declaration
-    : attributes? operator_modifiers operator_declarator operator_body
-    ;
-
-operator_modifiers
-    : operator_modifier
-    | operator_modifiers operator_modifier
+    : attributes? operator_modifier+ operator_declarator operator_body
     ;
 
 operator_modifier
@@ -1758,22 +1705,8 @@ binary_operator_declarator
     ;
 
 overloadable_binary_operator
-    : '+'
-    | '-'
-    | '*'
-    | '/'
-    | '%'
-    | '&'
-    | '|'
-    | '^'
-    | '<<'
-    | 'right_shift'
-    | '=='
-    | '!='
-    | '>'
-    | '<'
-    | '>='
-    | '<='
+    : '+'   | '-'   | '*'   | '/'   | '%'   | '&'   | '|'   | '^'   | '<<'
+    | 'right_shift' | '=='  | '!='  | '>'   | '<'   | '>='  | '<='
     ;
 
 conversion_operator_declarator
@@ -1787,12 +1720,7 @@ operator_body
     ;
 
 constructor_declaration
-    : attributes? constructor_modifiers? constructor_declarator constructor_body
-    ;
-
-constructor_modifiers
-    : constructor_modifier
-    | constructor_modifiers constructor_modifier
+    : attributes? constructor_modifier* constructor_declarator constructor_body
     ;
 
 constructor_modifier
@@ -1845,14 +1773,10 @@ destructor_body
 
 
 
-//B.2.8 Structs
-struct_declaration
-    : attributes? struct_modifiers? 'partial'? 'struct' identifier type_parameter_list? struct_interfaces? type_parameter_constraints_clauses? struct_body ';'?
-    ;
+// Structs
 
-struct_modifiers
-    : struct_modifier
-    | struct_modifiers struct_modifier
+struct_declaration
+    : attributes? struct_modifier* 'partial'? 'struct' identifier type_parameter_list? struct_interfaces? type_parameter_constraints_clause* struct_body ';'?
     ;
 
 struct_modifier
@@ -1869,12 +1793,7 @@ struct_interfaces
     ;
 
 struct_body
-    : '{' struct_member_declarations? '}'
-    ;
-
-struct_member_declarations
-    : struct_member_declaration
-    | struct_member_declarations struct_member_declaration
+    : '{' struct_member_declaration* '}'
     ;
 
 struct_member_declaration
@@ -1892,7 +1811,8 @@ struct_member_declaration
     ;
 
 
-//B.2.9 Arrays
+// Arrays
+
 array_initializer
     : '{' variable_initializer_list? '}'
     | '{' variable_initializer_list ',' '}'
@@ -1904,14 +1824,10 @@ variable_initializer_list
     ;
 
 
-//B.2.10 Interfaces
-interface_declaration
-    : attributes? interface_modifiers? 'partial'? 'interface' identifier variant_type_parameter_list? interface_base? type_parameter_constraints_clauses? interface_body ';'?
-    ;
+// Interfaces
 
-interface_modifiers
-    : interface_modifier
-    | interface_modifiers interface_modifier
+interface_declaration
+    : attributes? interface_modifier* 'partial'? 'interface' identifier variant_type_parameter_list? interface_base? type_parameter_constraints_clause* interface_body ';'?
     ;
 
 interface_modifier
@@ -1942,12 +1858,7 @@ interface_base
     ;
 
 interface_body
-    : '{' interface_member_declarations? '}'
-    ;
-
-interface_member_declarations
-    : interface_member_declaration
-    | interface_member_declarations interface_member_declaration
+    : '{' interface_member_declaration* '}'
     ;
 
 interface_member_declaration
@@ -1958,7 +1869,7 @@ interface_member_declaration
     ;
 
 interface_method_declaration
-    : attributes? 'new'? return_type identifier type_parameter_list '(' formal_parameter_list? ')' type_parameter_constraints_clauses? ';'
+    : attributes? 'new'? return_type identifier type_parameter_list '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
     ;
 
 interface_property_declaration
@@ -1981,10 +1892,18 @@ interface_indexer_declaration
     ;
 
 
+// Enums
 
-//B.2.11 Enums
 enum_declaration
-    : attributes? enum_modifiers? 'enum' identifier enum_base? enum_body ';'?
+    : attributes? enum_modifier* 'enum' identifier enum_base? enum_body ';'?
+    ;
+
+enum_modifier
+    : 'new'
+    | 'public'
+    | 'protected'
+    | 'internal'
+    | 'private'
     ;
 
 enum_base
@@ -1994,19 +1913,6 @@ enum_base
 enum_body
     : '{' enum_member_declarations? '}'
     | '{' enum_member_declarations ',' '}'
-    ;
-
-enum_modifiers
-    : enum_modifier
-    | enum_modifiers enum_modifier
-    ;
-
-enum_modifier
-    : 'new'
-    | 'public'
-    | 'protected'
-    | 'internal'
-    | 'private'
     ;
 
 enum_member_declarations
@@ -2020,15 +1926,10 @@ enum_member_declaration
     ;
 
 
+// Delegates
 
-//B.2.12 Delegates
 delegate_declaration
-    : attributes? delegate_modifiers? 'delegate' return_type identifier type_parameter_list? '(' formal_parameter_list? ')' type_parameter_constraints_clauses? ';'
-    ;
-
-delegate_modifiers
-    : delegate_modifier
-    | delegate_modifiers delegate_modifier
+    : attributes? delegate_modifier* 'delegate' return_type identifier type_parameter_list? '(' formal_parameter_list? ')' type_parameter_constraints_clause* ';'
     ;
 
 delegate_modifier
@@ -2041,15 +1942,10 @@ delegate_modifier
     ;
 
 
+// Attributes
 
-//B.2.13 Attributes
 global_attributes
-    : global_attribute_sections
-    ;
-
-global_attribute_sections
-    : global_attribute_section
-    | global_attribute_sections global_attribute_section
+    : global_attribute_section+
     ;
 
 global_attribute_section
@@ -2067,12 +1963,7 @@ global_attribute_target
     ;
 
 attributes
-    : attribute_sections
-    ;
-
-attribute_sections
-    : attribute_section
-    | attribute_sections attribute_section
+    : attribute_section+
     ;
 
 attribute_section
@@ -2136,8 +2027,8 @@ attribute_argument_expression
     ;
 
 
+// Grammar extensions for unsafe code
 
-//B.3 Grammar extensions for unsafe code
 class_modifier_unsafe
     : 'unsafe'
     ;
@@ -2272,12 +2163,7 @@ struct_member_declaration_unsafe
     ;
 
 fixed_size_buffer_declaration
-    : attributes? fixed_size_buffer_modifiers? 'fixed' buffer_element_type fixed_size_buffer_declarators ';'
-    ;
-
-fixed_size_buffer_modifiers
-    : fixed_size_buffer_modifier
-    | fixed_size_buffer_modifier fixed_size_buffer_modifiers
+    : attributes? fixed_size_buffer_modifier* 'fixed' buffer_element_type fixed_size_buffer_declarators ';'
     ;
 
 fixed_size_buffer_modifier
@@ -2311,7 +2197,8 @@ stackalloc_initializer
     ;
 
 
-// A.1. Documentation comments
+// Documentation comments
+
 single_line_doc_comment
     : '///' input_character*
     ;
@@ -2319,5 +2206,3 @@ single_line_doc_comment
 delimited_doc_comment
     : '/**' delimited_comment_section* asterisk* '/'
     ;
-
-

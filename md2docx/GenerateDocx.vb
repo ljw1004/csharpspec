@@ -674,8 +674,8 @@ Class MarkdownSpec
 
                     If sections.ContainsKey(url) Then
                         Dim section = sections(url)
-                        If anchor <> section.Title Then Throw New Exception($"Mismatch: link anchor is '{anchor}', should be '{section.Title}'")
-                        Dim txt As New Text(section.Number) With {.Space = SpaceProcessingModeValues.Preserve}
+                    ' TODO: ensure anchor titles are correct numbers If anchor <> section.Title Then Throw New Exception($"Mismatch: link anchor is '{anchor}', should be '{section.Title}'")
+                    Dim txt As New Text(section.Number) With {.Space = SpaceProcessingModeValues.Preserve}
                         Dim run As New Hyperlink(New Run(txt)) With {.Anchor = section.BookmarkName}
                         Yield run
 

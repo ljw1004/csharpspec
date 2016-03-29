@@ -1,4 +1,19 @@
-﻿Imports Microsoft.CodeAnalysis
+﻿' TODO:
+'
+' 1. Factor into a VB "grammar2html" library, a C# "colorize-csharp" NuGet + command-line util, and md2docx
+' 2. Finish putting up the spec
+'    interfaces.md
+'    enums.md
+'    delegates.md
+'    exceptions.md
+'    attributes.md
+'    unsafe-code.md
+'    documentation-comments.md
+' 3. Be more aggressive about trimming plural grammar products, particularly in the namespaces
+' 4. Make it check that all *this_that* things are indeed defined in the grammar
+' 5. Fix up all internal references
+' 6. Change more plurals into "A (',' A)*" pattern
+' 7. Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)
 
 Module Module1
 
@@ -37,7 +52,7 @@ Module Module1
         If files.Count = 0 Then files = {ifn}
         Dim md = MarkdownSpec.ReadFiles(files)
 
-        'Dim md = MarkdownSpec.ReadString("")
+        'Dim md = MarkdownSpec.ReadString("```csharp```")
 
 
         ' Now md.Gramar contains the grammar as extracted out of the *.md files, and moreover has
