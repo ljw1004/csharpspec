@@ -306,7 +306,7 @@ A reference type value is a reference to an ***instance*** of the type, the latt
 
 ### Class types
 
-A class type defines a data structure that contains data members (constants and fields), function members (methods, properties, events, indexers, operators, instance constructors, destructors and static constructors), and nested types. Class types support inheritance, a mechanism whereby derived classes can extend and specialize base classes. Instances of class types are created using *object_creation_expressions* ([Object creation expressions](expressions.md#object-creation-expressions)).
+A class type defines a data structure that contains data members (constants and fields), function members (methods, properties, events, indexers, operators, instance constructors, destructors and static constructors), and nested types. Class types support inheritance, a mechanism whereby derived classes can extend and specialize base classes. Instances of class types are created using *object_creation_expression*s ([Object creation expressions](expressions.md#object-creation-expressions)).
 
 Class types are described in [Classes](classes.md#classes).
 
@@ -387,7 +387,7 @@ A boxing conversion permits a *value_type* to be implicitly converted to a *refe
 *  From any *value_type* to the type `object`.
 *  From any *value_type* to the type `System.ValueType`.
 *  From any *non_nullable_value_type* to any *interface_type* implemented by the *value_type*.
-*  From any *nullable_type* to any *interface_type* implemented by the underlying type of the *nullable_type.*
+*  From any *nullable_type* to any *interface_type* implemented by the underlying type of the *nullable_type*.
 *  From any *enum_type* to the type `System.Enum`.
 *  From any *nullable_type* with an underlying *enum_type* to the type `System.Enum`.
 *  Note that an implicit conversion from a type parameter will be executed as a boxing conversion if at run-time it ends up converting from a value type to a reference type ([Implicit conversions involving type parameters](conversions.md#implicit-conversions-involving-type-parameters)).

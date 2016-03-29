@@ -16,7 +16,7 @@ interface_declaration
     ;
 ```
 
-An *interface_declaration* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), followed by an optional set of *interface_modifiers* ([Interface modifiers](interfaces.md#interface-modifiers)), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant_type_parameter_list* specification ([Variant type parameter lists](interfaces.md#variant-type-parameter-lists)), followed by an optional *interface_base* specification ([Base interfaces](interfaces.md#base-interfaces)), followed by an optional *type_parameter_constraints_clauses* specification ([Type parameter constraints](classes.md#type-parameter-constraints)), followed by an *interface_body* ([Interface body](interfaces.md#interface-body)), optionally followed by a semicolon.
+An *interface_declaration* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), followed by an optional set of *interface_modifier*s ([Interface modifiers](interfaces.md#interface-modifiers)), followed by an optional `partial` modifier, followed by the keyword `interface` and an *identifier* that names the interface, followed by an optional *variant_type_parameter_list* specification ([Variant type parameter lists](interfaces.md#variant-type-parameter-lists)), followed by an optional *interface_base* specification ([Base interfaces](interfaces.md#base-interfaces)), followed by an optional *type_parameter_constraints_clause*s specification ([Type parameter constraints](classes.md#type-parameter-constraints)), followed by an *interface_body* ([Interface body](interfaces.md#interface-body)), optionally followed by a semicolon.
 
 ### Interface modifiers
 
@@ -191,7 +191,7 @@ public interface IStringList
 ```
 declares an interface that contains one each of the possible kinds of members: A method, a property, an event, and an indexer.
 
-An *interface_declaration* creates a new declaration space ([Declarations](basic-concepts.md#declarations)), and the *interface_member_declarations* immediately contained by the *interface_declaration* introduce new members into this declaration space. The following rules apply to *interface_member_declaration*s:
+An *interface_declaration* creates a new declaration space ([Declarations](basic-concepts.md#declarations)), and the *interface_member_declaration*s immediately contained by the *interface_declaration* introduce new members into this declaration space. The following rules apply to *interface_member_declaration*s:
 
 *  The name of a method must differ from the names of all properties and events declared in the same interface. In addition, the signature ([Signatures and overloading](basic-concepts.md#signatures-and-overloading)) of a method must differ from the signatures of all other methods declared in the same interface, and two methods declared in the same interface may not have signatures that differ solely by `ref` and `out`.
 *  The name of a property or event must differ from the names of all other members declared in the same interface.
@@ -261,7 +261,7 @@ The type of an interface property must be output-safe if there is a get accessor
 
 ### Interface events
 
-Interface events are declared using *interface_event_declarations*:
+Interface events are declared using *interface_event_declaration*s:
 
 ```antlr
 interface_event_declaration

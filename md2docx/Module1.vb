@@ -1,11 +1,11 @@
 ﻿' TODO:
 '
-' * Make it check that all *this_that* things are indeed defined in the grammar, and log just the *this*
-' * Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)
 ' * Be more aggressive about trimming plural grammar products, particularly in the namespaces, and change plurals into the "A (',' A)*" pattern
 ' * Restore grammar from places where I removed duplicates, and reference the original location
-' * Factor into a VB "grammar2html" library, a C# "colorize-csharp" NuGet + command-line util, and md2docx
 ' * Make the hyperlinked grammar show its popups again
+' * Turn the github repro into a published one, check in html+docx, and add hyperlinks to them in readme.md
+' * Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)
+' * Factor into a VB "grammar2html" library, a C# "colorize-csharp" NuGet + command-line util, and md2docx
 
 Module Module1
 

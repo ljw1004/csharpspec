@@ -246,7 +246,7 @@ For a `while` statement *stmt* of the form:
 while ( expr ) while_body
 ```
 
-*  *v* has the same definite assignment state at the beginning of *expr *as at the beginning of *stmt*.
+*  *v* has the same definite assignment state at the beginning of *expr* as at the beginning of *stmt*.
 *  If *v* is definitely assigned at the end of *expr*, then it is definitely assigned on the control flow transfer to *while_body* and to the end point of *stmt*.
 *  If *v* has the state "definitely assigned after true expression" at the end of *expr*, then it is definitely assigned on the control flow transfer to *while_body*, but not definitely assigned at the end-point of *stmt*.
 *  If *v* has the state "definitely assigned after false expression" at the end of *expr*, then it is definitely assigned on the control flow transfer to the end point of *stmt*, but not definitely assigned on the control flow transfer to *while_body*.
@@ -551,10 +551,10 @@ For an expression *expr* of the form `! expr_operand`:
 
 *  The definite assignment state of *v* before *expr_operand* is the same as the definite assignment state of *v* before *expr*.
 *  The definite assignment state of *v* after *expr* is determined by:
-    * If the state of *v* after *expr-operand *is definitely assigned, then the state of *v* after *expr* is definitely assigned.
-    * If the state of *v* after *expr-operand *is not definitely assigned, then the state of *v* after *expr* is not definitely assigned.
-    * If the state of *v* after *expr-operand *is "definitely assigned after false expression", then the state of *v* after *expr* is "definitely assigned after true expression".
-    * If the state of *v* after *expr-operand *is "definitely assigned after true expression", then the state of *v* after *expr* is "definitely assigned after false expression".
+    * If the state of *v* after *expr_operand *is definitely assigned, then the state of *v* after *expr* is definitely assigned.
+    * If the state of *v* after *expr_operand *is not definitely assigned, then the state of *v* after *expr* is not definitely assigned.
+    * If the state of *v* after *expr_operand *is "definitely assigned after false expression", then the state of *v* after *expr* is "definitely assigned after true expression".
+    * If the state of *v* after *expr_operand *is "definitely assigned after true expression", then the state of *v* after *expr* is "definitely assigned after false expression".
 
 #### ?? (null coalescing) expressions
 

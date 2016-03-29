@@ -450,8 +450,8 @@ Class MarkdownSpec
                                     Dim literal = mdunescape(CType(strong.First, MarkdownSpan.Literal))
                                     If literal = "Annotation" Then
                                         kind = "Annotation"
-                                        Yield New Paragraph(Span2Elements(spans.Head)) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
-                                        If spans.Tail.FirstOrDefault?.IsLiteral Then
+                                    Yield New Paragraph(Span2Elements(spans.Head)) With {.ParagraphProperties = New ParagraphProperties(New ParagraphStyleId With {.Val = kind})}
+                                    If spans.Tail.FirstOrDefault?.IsLiteral Then
                                             Dim s = mdunescape(CType(spans.Tail.First, MarkdownSpan.Literal))
                                             quoted = MarkdownParagraph.NewParagraph(
                                                 New Microsoft.FSharp.Collections.FSharpList(Of MarkdownSpan)(

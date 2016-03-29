@@ -33,7 +33,7 @@ The pre-defined implicit conversions always succeed and never cause exceptions t
 
 For the purposes of conversion, the types `object` and `dynamic` are considered equivalent.
 
-However, dynamic conversions ([Implicit dynamic conversions](conversions.md#implicit-dynamic-conversions) and [Explicit dynamic conversions](conversions.md#explicit-dynamic-conversions)) apply only to expressions of type `dynamic` ([Types](types.md#types).7).
+However, dynamic conversions ([Implicit dynamic conversions](conversions.md#implicit-dynamic-conversions) and [Explicit dynamic conversions](conversions.md#explicit-dynamic-conversions)) apply only to expressions of type `dynamic` ([The dynamic type](types.md#the-dynamic-type)).
 
 ### Identity conversion
 
@@ -117,7 +117,7 @@ A value type has a boxing conversion to an interface type `I` if it has a boxing
 
 A value type has a boxing conversion to an interface type `I` if it has a boxing conversion to an interface or delegate type `I0` and `I0` is variance-convertible ([Variance conversion](interfaces.md#variance-conversion)) to `I`.
 
-Boxing a value of a *non_nullable-**value-type* consists of allocating an object instance and copying the *value_type* value into that instance. A struct can be boxed to the type `System.ValueType`, since that is a base class for all structs ([Inheritance](structs.md#inheritance)).
+Boxing a value of a *non_nullable_value_type* consists of allocating an object instance and copying the *value_type* value into that instance. A struct can be boxed to the type `System.ValueType`, since that is a base class for all structs ([Inheritance](structs.md#inheritance)).
 
 Boxing a value of a *nullable_type* proceeds as follows:
 
@@ -295,7 +295,7 @@ Reference conversions, implicit or explicit, never change the referential identi
 
 ### Unboxing conversions
 
-An unboxing conversion permits a reference type to be explicitly converted to a *value_type*. An unboxing conversion exists from the types `object`, `dynamic` and `System.ValueType` to any *non_nullable_value**-type*, and from any *interface_type* to any *non_nullable_value_type* that implements the *interface_type*. Furthermore type `System.Enum` can be unboxed to any *enum_type*.
+An unboxing conversion permits a reference type to be explicitly converted to a *value_type*. An unboxing conversion exists from the types `object`, `dynamic` and `System.ValueType` to any *non_nullable_value_type*, and from any *interface_type* to any *non_nullable_value_type* that implements the *interface_type*. Furthermore type `System.Enum` can be unboxed to any *enum_type*.
 
 An unboxing conversion exists from a reference type to a *nullable_type* if an unboxing conversion exists from the reference type to the underlying *non_nullable_value_type* of the *nullable_type*.
 

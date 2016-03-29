@@ -99,7 +99,7 @@ A static class has no instance constructors. It is not possible to declare an in
 
 The members of a static class are not automatically static, and the member declarations must explicitly include a `static` modifier (except for constants and nested types). When a class is nested within a static outer class, the nested class is not a static class unless it explicitly includes a `static` modifier.
 
-##### Referencing static class types
+__Referencing static class types__
 
 A *namespace_or_type_name* ([Namespace and type names](basic-concepts.md#namespace-and-type-names)) is permitted to reference a static class if
 
@@ -848,7 +848,8 @@ A class ***inherits*** the members of its direct base class type. Inheritance me
 *  A derived class can ***hide*** ([Hiding through inheritance](basic-concepts.md#hiding-through-inheritance)) inherited members by declaring new members with the same name or signature. Note however that hiding an inherited member does not remove that member—it merely makes that member inaccessible directly through the derived class.
 *  An instance of a class contains a set of all instance fields declared in the class and its base classes, and an implicit conversion ([Implicit reference conversions](conversions.md#implicit-reference-conversions)) exists from a derived class type to any of its base class types. Thus, a reference to an instance of some derived class can be treated as a reference to an instance of any of its base classes.
 *  A class can declare virtual methods, properties, and indexers, and derived classes can override the implementation of these function members. This enables classes to exhibit polymorphic behavior wherein the actions performed by a function member invocation varies depending on the run-time type of the instance through which that function member is invoked.
-*  The inherited member of a constructed class type are the members of the immediate base class type ([Base classes](classes.md#base-classes)), which is found by substituting the type arguments of the constructed type for each occurrence of the corresponding type parameters in the *base_class_specification*. These members, in turn, are transformed by substituting, for each *type_parameter* in the member declaration, the corresponding *type_argument* of the *base_class_specification*.
+
+The inherited member of a constructed class type are the members of the immediate base class type ([Base classes](classes.md#base-classes)), which is found by substituting the type arguments of the constructed type for each occurrence of the corresponding type parameters in the *class_base* specification. These members, in turn, are transformed by substituting, for each *type_parameter* in the member declaration, the corresponding *type_argument* of the *class_base* specification.
 
 ```csharp
 class B<U>
@@ -1263,7 +1264,7 @@ A *constant_declaration* may include a set of *attributes* ([Attributes](attribu
 
 The *type* of a *constant_declaration* specifies the type of the members introduced by the declaration. The type is followed by a list of *constant_declarator*s, each of which introduces a new member. A *constant_declarator* consists of an *identifier* that names the member, followed by an "`=`" token, followed by a *constant_expression* ([Constant expressions](expressions.md#constant-expressions)) that gives the value of the member.
 
-The *type* specified in a constant declaration must be `sbyte`, `byte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `char`, `float`, `double`, `decimal`, `bool`, `string`, an* enum-type*, or a *reference_type*. Each *constant_expression* must yield a value of the target type or of a type that can be converted to the target type by an implicit conversion ([Implicit conversions](conversions.md#implicit-conversions)).
+The *type* specified in a constant declaration must be `sbyte`, `byte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `char`, `float`, `double`, `decimal`, `bool`, `string`, an *enum_type*, or a *reference_type*. Each *constant_expression* must yield a value of the target type or of a type that can be converted to the target type by an implicit conversion ([Implicit conversions](conversions.md#implicit-conversions)).
 
 The *type* of a constant must be at least as accessible as the constant itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
@@ -1271,7 +1272,7 @@ The value of a constant is obtained in an expression using a *simple_name* ([Sim
 
 A constant can itself participate in a *constant_expression*. Thus, a constant may be used in any construct that requires a *constant_expression*. Examples of such constructs include `case` labels, `goto case` statements, `enum` member declarations, attributes, and other constant declarations.
 
-As described in [Constant expressions](expressions.md#constant-expressions), a *constant_expression* is an expression that can be fully evaluated at compile-time. Since the only way to create a non-null value of a *reference_type* other than `string` is to apply the `new` operator, and since the `new` operator is not permitted in a *constant_expression*, the only possible value for constants of *reference_types* other than `string` is `null`.
+As described in [Constant expressions](expressions.md#constant-expressions), a *constant_expression* is an expression that can be fully evaluated at compile-time. Since the only way to create a non-null value of a *reference_type* other than `string` is to apply the `new` operator, and since the `new` operator is not permitted in a *constant_expression*, the only possible value for constants of *reference_type*s other than `string` is `null`.
 
 When a symbolic name for a constant value is desired, but when the type of that value is not permitted in a constant declaration, or when the value cannot be computed at compile-time by a *constant_expression*, a `readonly` field ([Readonly fields](classes.md#readonly-fields)) may be used instead.
 
@@ -1751,11 +1752,11 @@ The *return_type* of a method declaration specifies the type of the value comput
 
 The *member_name* specifies the name of the method. Unless the method is an explicit interface member implementation ([Explicit interface member implementations](interfaces.md#explicit-interface-member-implementations)), the *member_name* is simply an *identifier*. For an explicit interface member implementation, the *member_name* consists of an *interface_type* followed by a "`.`" and an *identifier*.
 
-The optional *type_parameter_list* specifies the type parameters of the method ([Type parameters](classes.md#type-parameters)). If a *type_parameter_list* is specified the method is a ***generic method***. If the method has an `extern` modifier, a *type-parameter-list *cannot be specified.
+The optional *type_parameter_list* specifies the type parameters of the method ([Type parameters](classes.md#type-parameters)). If a *type_parameter_list* is specified the method is a ***generic method***. If the method has an `extern` modifier, a *type_parameter_list* cannot be specified.
 
 The optional *formal_parameter_list* specifies the parameters of the method ([Method parameters](classes.md#method-parameters)).
 
-The optional *type_parameter_constraints_clauses* specify constraints on individual type parameters ([Type parameter constraints](classes.md#type-parameter-constraints)) and may only be specified if a *type_parameter_list* is also supplied, and the method does not have an `override` modifier.
+The optional *type_parameter_constraints_clause*s specify constraints on individual type parameters ([Type parameter constraints](classes.md#type-parameter-constraints)) and may only be specified if a *type_parameter_list* is also supplied, and the method does not have an `override` modifier.
 
 The *return_type* and each of the types referenced in the *formal_parameter_list* of a method must be at least as accessible as the method itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
@@ -1767,7 +1768,7 @@ The name, the type parameter list and the formal parameter list of a method defi
 
 The name of a method must differ from the names of all other non-methods declared in the same class. In addition, the signature of a method must differ from the signatures of all other methods declared in the same class, and two methods declared in the same class may not have signatures that differ solely by `ref` and `out`.
 
-The method's *type_parameter*s are in scope throughout the *method_declaration*, and can be used to form types throughout that scope in *return_type*, *method_body*, and *type_parameter_constraints_clauses* but not in *attributes*.
+The method's *type_parameter*s are in scope throughout the *method_declaration*, and can be used to form types throughout that scope in *return_type*, *method_body*, and *type_parameter_constraints_clause*s but not in *attributes*.
 
 All formal parameters and type parameters must have different names.
 
@@ -3073,13 +3074,13 @@ Event declarations are subject to the same rules as method declarations ([Method
 
 The *type* of an event declaration must be a *delegate_type* ([Reference types](types.md#reference-types)), and that *delegate_type* must be at least as accessible as the event itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
-An event declaration may include *event_accessor_declaration*s. However, if it does not, for non-extern, non-abstract events, the compiler supplies them automatically ([Field-like events](classes.md#field-like-events)); for extern events, the accessors are provided externally.
+An event declaration may include *event_accessor_declarations*. However, if it does not, for non-extern, non-abstract events, the compiler supplies them automatically ([Field-like events](classes.md#field-like-events)); for extern events, the accessors are provided externally.
 
-An event declaration that omits *event_accessor_declaration*s defines one or more events—one for each of the *variable_declarator*s. The attributes and modifiers apply to all of the members declared by such an *event_declaration*.
+An event declaration that omits *event_accessor_declarations* defines one or more events—one for each of the *variable_declarator*s. The attributes and modifiers apply to all of the members declared by such an *event_declaration*.
 
-It is a compile-time error for an *event_declaration* to include both the `abstract` modifier and brace-delimited *event_accessor_declaration*s.
+It is a compile-time error for an *event_declaration* to include both the `abstract` modifier and brace-delimited *event_accessor_declarations*.
 
-When an event declaration includes an `extern` modifier, the event is said to be an ***external event***. Because an external event declaration provides no actual implementation, it is an error for it to include both the `extern` modifier and *event_accessor_declaration*s.
+When an event declaration includes an `extern` modifier, the event is said to be an ***external event***. Because an external event declaration provides no actual implementation, it is an error for it to include both the `extern` modifier and *event_accessor_declarations*.
 
 It is a compile-time error for a *variable_declarator* of an event declaration with an `abstract` or `external` modifier to include a *variable_initializer*.
 
@@ -3124,7 +3125,7 @@ Here, the `LoginDialog` instance constructor creates two `Button` instances and 
 
 ### Field-like events
 
-Within the program text of the class or struct that contains the declaration of an event, certain events can be used like fields. To be used in this way, an event must not be `abstract` or `extern`, and must not explicitly include *event_accessor_declaration*s. Such an event can be used in any context that permits a field. The field contains a delegate ([Delegates](delegates.md#delegates)) which refers to the list of event handlers that have been added to the event. If no event handlers have been added, the field contains `null`.
+Within the program text of the class or struct that contains the declaration of an event, certain events can be used like fields. To be used in this way, an event must not be `abstract` or `extern`, and must not explicitly include *event_accessor_declarations*. Such an event can be used in any context that permits a field. The field contains a delegate ([Delegates](delegates.md#delegates)) which refers to the list of event handlers that have been added to the event. If no event handlers have been added, the field contains `null`.
 
 In the example
 ```csharp
@@ -3185,9 +3186,9 @@ Within the class `X`, references to `Ev` on` the left-hand side of the `+=` and 
 
 ### Event accessors
 
-Event declarations typically omit *event_accessor_declaration*s, as in the `Button` example above. One situation for doing so involves the case in which the storage cost of one field per event is not acceptable. In such cases, a class can include *event_accessor_declaration*s and use a private mechanism for storing the list of event handlers.
+Event declarations typically omit *event_accessor_declarations*, as in the `Button` example above. One situation for doing so involves the case in which the storage cost of one field per event is not acceptable. In such cases, a class can include *event_accessor_declarations* and use a private mechanism for storing the list of event handlers.
 
-The *event_accessor_declaration*s of an event specify the executable statements associated with adding and removing event handlers.
+The *event_accessor_declarations* of an event specify the executable statements associated with adding and removing event handlers.
 
 The accessor declarations consist of an *add_accessor_declaration* and a *remove_accessor_declaration*. Each accessor declaration consists of the token `add` or `remove` followed by a *block*. The *block* associated with an *add_accessor_declaration* specifies the statements to execute when an event handler is added, and the *block* associated with a *remove_accessor_declaration* specifies the statements to execute when an event handler is removed.
 
@@ -3251,7 +3252,7 @@ The differences between static and instance members are discussed further in [St
 
 A `virtual` event declaration specifies that the accessors of that event are virtual. The `virtual` modifier applies to both accessors of an event.
 
-An `abstract` event declaration specifies that the accessors of the event are virtual, but does not provide an actual implementation of the accessors. Instead, non-abstract derived classes are required to provide their own implementation for the accessors by overriding the event. Because an abstract event declaration provides no actual implementation, it cannot provide brace-delimited *event_accessor_declaration*s.
+An `abstract` event declaration specifies that the accessors of the event are virtual, but does not provide an actual implementation of the accessors. Instead, non-abstract derived classes are required to provide their own implementation for the accessors by overriding the event. Because an abstract event declaration provides no actual implementation, it cannot provide brace-delimited *event_accessor_declarations*.
 
 An event declaration that includes both the `abstract` and `override` modifiers specifies that the event is abstract and overrides a base event. The accessors of such an event are also abstract.
 
@@ -3983,7 +3984,7 @@ The static constructor for a closed class type executes at most once in a given 
 
 If a class contains the `Main` method ([Application Startup](basic-concepts.md#application-startup)) in which execution begins, the static constructor for that class executes before the `Main` method is called.
 
-To initialize a new closed class type, first a new set of static fields ([Static and instance fields](classes.md#static-and-instance-fields)) for that particular closed type is created. Each of the static fields is initialized to its default value ([Default values](variables.md#default-values)). Next, the static field initializers ([Constants](classes.md#constants).5.1) are executed for those static fields. Finally, the static constructor is executed.
+To initialize a new closed class type, first a new set of static fields ([Static and instance fields](classes.md#static-and-instance-fields)) for that particular closed type is created. Each of the static fields is initialized to its default value ([Default values](variables.md#default-values)). Next, the static field initializers ([Static field initialization](classes.md#static-field-initialization)) are executed for those static fields. Finally, the static constructor is executed.
 
 The example
 ```csharp
@@ -4089,7 +4090,7 @@ destructor_body
 
 A *destructor_declaration* may include a set of *attributes* ([Attributes](attributes.md#attributes)).
 
-The *identifier* of a *destructor_declarator* must name the class in which the destructor is declared. If any other name is specified, a compile-time error occurs.
+The *identifier* of a *destructor_declaration* must name the class in which the destructor is declared. If any other name is specified, a compile-time error occurs.
 
 When a destructor declaration includes an `extern` modifier, the destructor is said to be an ***external destructor***. Because an external destructor declaration provides no actual implementation, its *destructor_body* consists of a semicolon. For all other destructors, the *destructor_body* consists of a *block* which specifies the statements to execute in order to destruct an instance of the class. A *destructor_body* corresponds exactly to the *method_body* of an instance method with a `void` return type ([Method body](classes.md#method-body)).
 

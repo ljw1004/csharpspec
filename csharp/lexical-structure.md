@@ -36,7 +36,11 @@ The *input* production defines the lexical structure of a C# source file. Each s
 
 ```antlr
 input
-    : input_section_part*
+    : input_section?
+    ;
+
+input_section
+    : input_section_part+
     ;
 
 input_section_part
@@ -838,8 +842,12 @@ pp_endif
     ;
 
 conditional_section
-    : input_section_part+
-    | skipped_section_part+
+    : input_section
+    | skipped_section
+    ;
+
+skipped_section
+    : skipped_section_part+
     ;
 
 skipped_section_part

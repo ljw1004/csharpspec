@@ -5,7 +5,11 @@ start:    compilation_unit;
 // Lexical grammar
 
 input
-    : input_section_part*
+    : input_section?
+    ;
+
+input_section
+    : input_section_part+
     ;
 
 input_section_part
@@ -373,8 +377,12 @@ pp_endif
     ;
 
 conditional_section
-    : input_section_part+
-    | skipped_section_part+
+    : input_section
+    | skipped_section
+    ;
+
+skipped_section
+    : skipped_section_part+
     ;
 
 skipped_section_part
