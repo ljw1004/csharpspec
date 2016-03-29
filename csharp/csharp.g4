@@ -584,8 +584,7 @@ type_argument_list
     ;
 
 type_arguments
-    : type_argument
-    | type_arguments ',' type_argument
+    : type_argument (',' type_argument)*
     ;
 
 type_argument
@@ -607,8 +606,8 @@ variable_reference
 // Expressions
 
 argument_list
-    : argument
-    | argument_list ',' argument;
+    : argument (',' argument)*
+    ;
 
 argument
     : argument_name? argument_value
@@ -711,8 +710,7 @@ object_initializer
     ;
 
 member_initializer_list
-    : member_initializer
-    | member_initializer_list ',' member_initializer
+    : member_initializer (',' member_initializer)*
     ;
 
 member_initializer
@@ -730,8 +728,7 @@ collection_initializer
     ;
 
 element_initializer_list
-    : element_initializer
-    | element_initializer_list ',' element_initializer
+    : element_initializer (',' element_initializer)*
     ;
 
 element_initializer
@@ -740,8 +737,7 @@ element_initializer
     ;
 
 expression_list
-    : expression
-    | expression_list ',' expression
+    : expression (',' expression)*
     ;
 
 array_creation_expression
@@ -764,8 +760,7 @@ anonymous_object_initializer
     ;
 
 member_declarator_list
-    : member_declarator
-    | member_declarator_list ',' member_declarator
+    : member_declarator (',' member_declarator)*
     ;
 
 member_declarator
@@ -924,8 +919,7 @@ explicit_anonymous_function_signature
     ;
 
 explicit_anonymous_function_parameter_list
-    : explicit_anonymous_function_parameter
-    | explicit_anonymous_function_parameter_list ',' explicit_anonymous_function_parameter
+    : explicit_anonymous_function_parameter (',' explicit_anonymous_function_parameter)*
     ;
 
 explicit_anonymous_function_parameter
@@ -943,8 +937,7 @@ implicit_anonymous_function_signature
     ;
 
 implicit_anonymous_function_parameter_list
-    : implicit_anonymous_function_parameter
-    | implicit_anonymous_function_parameter_list ',' implicit_anonymous_function_parameter
+    : implicit_anonymous_function_parameter (',' implicit_anonymous_function_parameter)*
     ;
 
 implicit_anonymous_function_parameter
@@ -1003,8 +996,7 @@ orderby_clause
     ;
 
 orderings
-    : ordering
-    | orderings ',' ordering
+    : ordering (',' ordering)*
     ;
 
 ordering
@@ -1126,7 +1118,7 @@ local_variable_type
     ;
 
 local_variable_declarators
-    : local_variable_declarator
+    : local_variable_declarator 
     | local_variable_declarators ',' local_variable_declarator
     ;
 

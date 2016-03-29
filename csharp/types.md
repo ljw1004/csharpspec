@@ -532,8 +532,7 @@ type_argument_list
     ;
 
 type_arguments
-    : type_argument
-    | type_arguments ',' type_argument
+    : type_argument (',' type_argument)*
     ;
 
 type_argument
