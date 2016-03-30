@@ -1,6 +1,5 @@
 ﻿' TODO:
 '
-' * Make the hyperlinked grammar show its popups again
 ' * Turn the github repro into a published one, check in html+docx, and add hyperlinks to them in readme.md
 ' * Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)
 ' * Factor into a VB "grammar2html" library, a C# "colorize-csharp" NuGet + command-line util, and md2docx
@@ -52,7 +51,7 @@ Module Module1
             If Not grammar.AreProductionsSameAs(md.Grammar) Then Throw New Exception("Grammar mismatch")
             md.Grammar.Name = grammar.Name ' because grammar name is derived from antlrfn, and can't be known from markdown
             Html.WriteFile(md.Grammar, htmlfn)
-            'Process.Start(htmlfn)
+            Process.Start(htmlfn)
         End If
 
         ' Generate the Specification.docx file

@@ -257,8 +257,8 @@ document.onmouseout = function(e)
     a.href = "#" + t;
   }
 
-  // Only show popup tooltips for grammar links within this page
-  if (a.href.charAt(0) != '#') return;
+  // Only show popup tooltips for grammar links within this page; not for spec links
+  if (a.href.indexOf(".md") > -1) return;
 
   // Only show popup tooltips for "top-level" links (i.e. not for links within the popup tooltip itself)
   var r = a;
