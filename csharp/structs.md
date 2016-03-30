@@ -351,7 +351,7 @@ struct Point
 }
 ```
 
-No instance member function (including the set accessors for the properties `X` and `Y`) can be called until all fields of the struct being constructed have been definitely assigned. The only exception involves automatically implemented properties (§10.7.3). The definite assignment rules (§5.3.3.23) specifically exempt assignment to an auto-property of a struct type within an instance constructor of that struct type: such an assignment is considered a definite assignment of the hidden backing field of the auto-property. Thus, the following is allowed:
+No instance member function (including the set accessors for the properties `X` and `Y`) can be called until all fields of the struct being constructed have been definitely assigned. The only exception involves automatically implemented properties ([Automatically implemented properties](classes.md#automatically-implemented-properties)). The definite assignment rules ([Simple assignment expressions](variables.md#simple-assignment-expressions)) specifically exempt assignment to an auto-property of a struct type within an instance constructor of that struct type: such an assignment is considered a definite assignment of the hidden backing field of the auto-property. Thus, the following is allowed:
 
 ```csharp
 struct Point

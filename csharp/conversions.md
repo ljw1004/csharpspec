@@ -66,9 +66,9 @@ An implicit enumeration conversion permits the *decimal_integer_literal* `0` to 
 
 ### Implicit interpolated string conversions
 
-An implicit interpolated string conversion permits an *interpolated_string_expression* (§7.6.2) to be converted to `System.IFormattable` or `System.FormattableString` (which implements `System.IFormattable`).
+An implicit interpolated string conversion permits an *interpolated_string_expression* ([Interpolated strings](expressions.md#interpolated-strings)) to be converted to `System.IFormattable` or `System.FormattableString` (which implements `System.IFormattable`).
 
-When this conversion is applied a string value is not composed from the interpolated string. Instead an instance of `System.FormattableString` is created, as further described in §7.6.2.
+When this conversion is applied a string value is not composed from the interpolated string. Instead an instance of `System.FormattableString` is created, as further described in [Interpolated strings](expressions.md#interpolated-strings).
 
 ### Implicit nullable conversions
 

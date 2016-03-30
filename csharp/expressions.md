@@ -837,8 +837,8 @@ In case the parameter type sequences `{P1, P2, ..., Pn}` and `{Q1, Q2, ..., Qn}
 
 Given an implicit conversion `C1` that converts from an expression `E` to a type `T1`, and an implicit conversion `C2` that converts from an expression `E` to a type `T2`, `C1` is a ***better conversion*** than `C2` if `E` does not exactly match `T2` and at least one of the following holds:
 
-* `E` exactly matches `T1` (§7.5.3.4)
-* `T1` is a better conversion target than `T2` (§7.5.3.5)
+* `E` exactly matches `T1` ([Exactly matching Expression](expressions.md#exactly-matching-expression))
+* `T1` is a better conversion target than `T2` ([Better conversion target](expressions.md#better-conversion-target))
 
 #### Exactly matching Expression
 
@@ -846,7 +846,7 @@ Given an expression `E` and a type `T`, `E` exactly matches `T` if one of the fo
 
 *  `E` has a type `S`, and an identity conversion exists from `S` to `T`
 *  `E` is an anonymous function, `T` is either a delegate type `D` or an expression tree type `Expression<D>` and one of the following holds:
-   *  An inferred return type `X` exists for `E` in the context of the parameter list of `D` (§7.5.2.12), and an identity conversion exists from `X` to the return type of `D`
+   *  An inferred return type `X` exists for `E` in the context of the parameter list of `D` ([Inferred return type](expressions.md#inferred-return-type)), and an identity conversion exists from `X` to the return type of `D`
    *  Either `E` is non-async and `D` has a return type `Y` or `E` is async and `D` has a return type `Task<Y>`, and one of the following holds:
       * The body of `E` is an expression that exactly matches `Y`
       * The body of `E` is a statement block where every return statement returns an expression that exactly matches `Y`
@@ -1010,7 +1010,7 @@ A *primary_expression* that consists of a *literal* ([Literals](lexical-structur
 
 ### Interpolated strings
 
-An *interpolated_string_expression* consists of a `$` sign followed by a regular or verbatim string literal, wherein holes, delimited by `{` and `}`, enclose expressions and formatting specifications. An interpolated string expression is the result of an *interpolated_string_literal* that has been broken up into individual tokens, as described in §2.4.4.6.
+An *interpolated_string_expression* consists of a `$` sign followed by a regular or verbatim string literal, wherein holes, delimited by `{` and `}`, enclose expressions and formatting specifications. An interpolated string expression is the result of an *interpolated_string_literal* that has been broken up into individual tokens, as described in [Interpolated string literals](lexical-structure.md#interpolated-string-literals).
 
 ```antlr
 interpolated_string_expression
@@ -1044,7 +1044,7 @@ interpolated_verbatim_string_body
 
 The *constant_expression* in an interpolation must have an implicit conversion to `int`.
 
-An *interpolated_string_expression* is classified as a value. If it is immediately converted to `System.IFormattable` or `System.FormattableString` with an implicit interpolated string conversion (§6.1.4), the interpolated string expression has that type. Otherwise, it has the type `string`.
+An *interpolated_string_expression* is classified as a value. If it is immediately converted to `System.IFormattable` or `System.FormattableString` with an implicit interpolated string conversion ([Implicit interpolated string conversions](conversions.md#implicit-interpolated-string-conversions)), the interpolated string expression has that type. Otherwise, it has the type `string`.
 
 If the type of an interpolated string is `System.IFormattable` or `System.FormattableString`, the meaning is a call to `System.Runtime.CompilerServices.FormattableStringFactory.Create`. If the type is `string`, the meaning of the expression is a call to `string.Format`. In both cases, the argument list of the call consists of a format string literal with placeholders for each interpolation, and an argument for each expression corresponding to the place holders.
 
@@ -1157,7 +1157,7 @@ The *member_access* is evaluated and classified as follows:
    *  First, if `E` is a property or indexer access, then the value of the property or indexer access is obtained ([Values of expressions](expressions.md#values-of-expressions)) and `E` is reclassified as a value.
    *  If `I` identifies one or more methods, then the result is a method group with an associated instance expression of `E`. If a type argument list was specified, it is used in calling a generic method ([Method invocations](expressions.md#method-invocations)).
    *  If `I` identifies an instance property,
-      * If `E` is `this`, `I` identifies an automatically implemented property (§10.7.3) without a setter, and the reference occurs within an instance constructor for a class or struct type `T`, then the result is a variable, namely the hidden backing field for the auto-property given by `I` in the instance of `T` given by `this`.
+      * If `E` is `this`, `I` identifies an automatically implemented property ([Automatically implemented properties](classes.md#automatically-implemented-properties)) without a setter, and the reference occurs within an instance constructor for a class or struct type `T`, then the result is a variable, namely the hidden backing field for the auto-property given by `I` in the instance of `T` given by `this`.
       * Otherwise, the result is a property access with an associated instance expression of `E`.
    *  If `T` is a *class_type* and `I` identifies an instance field of that *class_type*:
       * If the value of `E` is `null`, then a `System.NullReferenceException` is thrown.
@@ -2050,7 +2050,7 @@ the assignment on the last line is permitted because `p1` and `p2` are of the sa
 
 The `Equals` and `GetHashcode` methods on anonymous types override the methods inherited from `object`, and are defined in terms of the `Equals` and `GetHashcode` of the properties, so that two instances of the same anonymous type are equal if and only if all their properties are equal.
 
-A member declarator can be abbreviated to a simple name ([Type inference](expressions.md#type-inference)), a member access ([Compile-time checking of dynamic overload resolution](expressions.md#compile-time-checking-of-dynamic-overload-resolution)), a base access ([Base access](expressions.md#base-access)) or a null-conditional member access (§7.7.1.1). This is called a ***projection initializer*** and is shorthand for a declaration of and assignment to a property with the same name. Specifically, member declarators of the forms
+A member declarator can be abbreviated to a simple name ([Type inference](expressions.md#type-inference)), a member access ([Compile-time checking of dynamic overload resolution](expressions.md#compile-time-checking-of-dynamic-overload-resolution)), a base access ([Base access](expressions.md#base-access)) or a null-conditional member access ([Null-conditional expressions as projection initializers](expressions.md#null-conditional-expressions-as-projection-initializers)). This is called a ***projection initializer*** and is shorthand for a declaration of and assignment to a property with the same name. Specifically, member declarators of the forms
 ```csharp
 identifier
 expr.identifier
@@ -2298,19 +2298,19 @@ named_entity_target
     ;
 ```
 
-Grammatically speaking, the *named_entity* operand is always an expression. Because `nameof` is not a reserved keyword, a nameof expression is always syntactically ambiguous with an invocation of the simple name `nameof`. For compatibility reasons, if a name lookup (§7.6.3) of the name `nameof` succeeds, the expression is treated as an *invocation_expression* -- regardless of whether the invocation is legal. Otherwise it is a *nameof_expression*.
+Grammatically speaking, the *named_entity* operand is always an expression. Because `nameof` is not a reserved keyword, a nameof expression is always syntactically ambiguous with an invocation of the simple name `nameof`. For compatibility reasons, if a name lookup ([Simple names](expressions.md#simple-names)) of the name `nameof` succeeds, the expression is treated as an *invocation_expression* -- regardless of whether the invocation is legal. Otherwise it is a *nameof_expression*.
 
-The meaning of the *named_entity* of a *nameof_expression* is the meaning of it as an expression; that is, either as a *simple_name*, a *base*access* or a *member_access*. However, where the lookup described in §7.6.3 and §7.6.5 results in an error because an instance member was found in a static context, a *nameof_expression* produces no such error.
+The meaning of the *named_entity* of a *nameof_expression* is the meaning of it as an expression; that is, either as a *simple_name*, a *base_access* or a *member_access*. However, where the lookup described in [Simple names](expressions.md#simple-names) and [Member access](expressions.md#member-access) results in an error because an instance member was found in a static context, a *nameof_expression* produces no such error.
 
 It is a compile-time error for a *named_entity* designating a method group to have a *type_argument_list*. It is a compile time error for a *named_entity_target* to have the type `dynamic`.
 
-A *nameof_expression* is a constant expression of type `string`, and has no effect at runtime. Specifically, its *named_entity* is not evaluated, and is ignored for the purposes of definite assignment analysis (§5.3.3.20). Its value is the last identifier of the *named_entity* before the optional final *type_argument_list*, transformed in the following way:
+A *nameof_expression* is a constant expression of type `string`, and has no effect at runtime. Specifically, its *named_entity* is not evaluated, and is ignored for the purposes of definite assignment analysis ([General rules for simple expressions](variables.md#general-rules-for-simple-expressions)). Its value is the last identifier of the *named_entity* before the optional final *type_argument_list*, transformed in the following way:
 
 * The prefix "`@`", if used, is removed.
 * Each *unicode_escape_sequence* is transformed into its corresponding Unicode character.
 * Any *formatting_characters* are removed.
 
-These are the same transformations applied in §2.4.2 when testing equality between identifiers.
+These are the same transformations applied in [Identifiers](lexical-structure.md#identifiers) when testing equality between identifiers.
 
 TODO: examples
 
@@ -2430,7 +2430,7 @@ except that `a.b` and `a.b[0]` are evaluated only once.
 
 #### Null-conditional expressions as projection initializers
 
-A null-conditional expression is only allowed as a *member_declarator* in an *anonymous_object_creation_expression* (§7.6.11.6) if it ends with an (optionally null-conditional) member access. Grammatically, this requirement can be expressed as:
+A null-conditional expression is only allowed as a *member_declarator* in an *anonymous_object_creation_expression* ([Anonymous object creation expressions](expressions.md#anonymous-object-creation-expressions)) if it ends with an (optionally null-conditional) member access. Grammatically, this requirement can be expressed as:
 
 ```antlr
 null_conditional_member_access
@@ -2439,11 +2439,11 @@ null_conditional_member_access
     ;
 ```
 
-This is a special case of the grammar for *null_conditional_expression* above. The production for *member_declarator* in §7.6.11.6 then includes only *null_conditional_member_access*.
+This is a special case of the grammar for *null_conditional_expression* above. The production for *member_declarator* in [Anonymous object creation expressions](expressions.md#anonymous-object-creation-expressions) then includes only *null_conditional_member_access*.
 
 #### Null-conditional expressions as statement expressions
 
-A null-conditional expression is only allowed as a *statement_expression* (§8.6) if it ends with an invocation. Grammatically, this requirement can be expressed as:
+A null-conditional expression is only allowed as a *statement_expression* ([Expression statements](statements.md#expression-statements)) if it ends with an invocation. Grammatically, this requirement can be expressed as:
 
 ```antlr
 null_conditional_invocation_expression
@@ -2451,7 +2451,7 @@ null_conditional_invocation_expression
     ;
 ```
 
-This is a special case of the grammar for *null_conditional_expression* above. The production for *statement_expression* in §8.6 then includes only *null_conditional_invocation_expression*.
+This is a special case of the grammar for *null_conditional_expression* above. The production for *statement_expression* in [Expression statements](statements.md#expression-statements) then includes only *null_conditional_invocation_expression*.
 
 
 ### Unary plus operator

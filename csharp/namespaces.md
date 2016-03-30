@@ -143,7 +143,7 @@ A *using_alias_directive* ([Using alias directives](namespaces.md#using-alias-di
 
 A *using_namespace_directive* ([Using namespace directives](namespaces.md#using-namespace-directives)) imports the type members of a namespace.
 
-A *using_static_directive* (§9.4.3) imports the nested types and static members of a type.
+A *using_static_directive* ([Using static directives](namespaces.md#using-static-directives)) imports the nested types and static members of a type.
 
 The scope of a *using_directive* extends over the *namespace_member_declaration*s of its immediately containing compilation unit or namespace body. The scope of a *using_directive* specifically does not include its peer *using_directive*s. Thus, peer *using_directive*s do not affect each other, and the order in which they are written is insignificant.
 
@@ -465,7 +465,7 @@ namespace N2
 
 Above, within member declarations in the `N2` namespace, the static members and nested types of `N1.A` are directly available, and thus the method `N` is able to reference both the `B` and `M` members of `N1.A`.
 
-A *using_static_directive` specifically does not import extension methods directly as static methods, but makes them available for extension method invocation (§7.6.6.2). In the example
+A *using_static_directive` specifically does not import extension methods directly as static methods, but makes them available for extension method invocation ([Extension method invocations](expressions.md#extension-method-invocations)). In the example
 
 ```csharp
 namespace N1 
@@ -497,7 +497,7 @@ A *using_static_directive* only imports members and types declared directly in t
 
 TODO: Example
 
-Ambiguities between multiple *using_namespace_directives* and *using_static_directives* are discussed in §9.4.2.
+Ambiguities between multiple *using_namespace_directives* and *using_static_directives* are discussed in [Using namespace directives](namespaces.md#using-namespace-directives).
 
 ## Namespace members
 
