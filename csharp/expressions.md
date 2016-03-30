@@ -835,34 +835,36 @@ In case the parameter type sequences `{P1, P2, ..., Pn}` and `{Q1, Q2, ..., Qn}
 
 #### Better conversion from expression
 
-Given an implicit conversion `C1` that converts from an expression `E` to a type `T1`, and an implicit conversion `C2` that converts from an expression `E` to a type `T2`, `C1` is a ***better conversion*** than `C2` if at least one of the following holds:
+Given an implicit conversion `C1` that converts from an expression `E` to a type `T1`, and an implicit conversion `C2` that converts from an expression `E` to a type `T2`, `C1` is a ***better conversion*** than `C2` if `E` does not exactly match `T2` and at least one of the following holds:
 
-*  `E` has a type `S` and an identity conversion exists from `S` to `T1` but not from `S` to `T2`
-*  `E` is not an anonymous function and `T1` is a better conversion target than `T2` ([Better conversion target](expressions.md#better-conversion-target))
-*  `E` is an anonymous function, `T1` is either a delegate type `D1` or an expression tree type `Expression<D1>`, `T2` is either a delegate type `D2` or an expression tree type `Expression<D2>` and one of the following holds:
-   *  `D1` is a better conversion target than `D2`
-   *  `D1` and `D2` have identical parameter lists, and one of the following holds:
-      *  `D1` has a return type `Y1`, and `D2` has a return type `Y2`, an inferred return type `X` exists for `E` in the context of that parameter list ([Inferred return type](expressions.md#inferred-return-type)), and the conversion from `X` to `Y1` is better than the conversion from `X` to `Y2`
-      *  `E` is async, `D1` has a return type `Task<Y1>`, and `D2` has a return type `Task<Y2>`, an inferred return type `Task<X>` exists for `E` in the context of that parameter list ([Inferred return type](expressions.md#inferred-return-type)), and the conversion from `X` to `Y1` is better than the conversion from `X` to `Y2`
-      *  `D1` has a return type `Y`, and `D2` is void returning
+* `E` exactly matches `T1` (§7.5.3.4)
+* `T1` is a better conversion target than `T2` (§7.5.3.5)
 
-#### Better conversion from type
+#### Exactly matching Expression
 
-Given a conversion `C1` that converts from a type `S` to a type `T1`, and a conversion `C2` that converts from a type `S` to a type `T2`, `C1` is a ***better conversion*** than `C2` if at least one of the following holds:
+Given an expression `E` and a type `T`, `E` exactly matches `T` if one of the following holds:
 
-*  An identity conversion exists from `S` to `T1` but not from `S` to `T2`
-*  `T1` is a better conversion target than `T2` ([Better conversion target](expressions.md#better-conversion-target))
+*  `E` has a type `S`, and an identity conversion exists from `S` to `T`
+*  `E` is an anonymous function, `T` is either a delegate type `D` or an expression tree type `Expression<D>` and one of the following holds:
+   *  An inferred return type `X` exists for `E` in the context of the parameter list of `D` (§7.5.2.12), and an identity conversion exists from `X` to the return type of `D`
+   *  Either `E` is non-async and `D` has a return type `Y` or `E` is async and `D` has a return type `Task<Y>`, and one of the following holds:
+      * The body of `E` is an expression that exactly matches `Y`
+      * The body of `E` is a statement block where every return statement returns an expression that exactly matches `Y`
 
 #### Better conversion target
 
-Given two different types `T1` and `T2`, `T1` is a better conversion target than `T2` if at least one of the following holds:
+Given two different types `T1` and `T2`, `T1` is a better conversion target than `T2` if no implicit conversion from `T2` to `T1` exists, and at least one of the following holds:
 
-*  An implicit conversion from `T1` to `T2` exists, and no implicit conversion from `T2` to `T1` exists
-*  `T1` is a signed integral type and `T2` is an unsigned integral type. Specifically:
-   *  `T1` is `sbyte` and `T2` is `byte`, `ushort`, `uint`, or `ulong`
-   *  `T1` is `short` and `T2` is `ushort`, `uint`, or `ulong`
-   *  `T1` is `int` and `T2` is `uint`, or `ulong`
-   *  `T1` is `long` and `T2` is `ulong`
+*  An implicit conversion from `T1` to `T2` exists
+*  `T1` is either a delegate type `D1` or an expression tree type `Expression<D1>`, `T2` is either a delegate type `D2` or an expression tree type `Expression<D2>`, `D1` has a return type `S1` and one of the following holds:
+   * `D2` is void returning
+   * `D2` has a return type `S2`, and `S1` is a better conversion target than `S2`
+*  `T1` is `Task<S1>`, `T2` is `Task<S2>`, and `S1` is a better conversion target than `S2`
+*  `T1` is `S1` or `S1?` where `S1` is a signed integral type, and `T2` is `S2` or `S2?` where `S2` is an unsigned integral type. Specifically:
+   * `S1` is `sbyte` and `S2` is `byte`, `ushort`, `uint`, or `ulong`
+   * `S1` is `short` and `S2` is `ushort`, `uint`, or `ulong`
+   * `S1` is `int` and `S2` is `uint`, or `ulong`
+   * `S1` is `long` and `S2` is `ulong`
 
 #### Overloading in generic classes
 
@@ -969,6 +971,7 @@ primary_expression
 
 primary_no_array_creation_expression
     : literal
+    | interpolated_string
     | simple_name
     | parenthesized_expression
     | member_access
@@ -985,6 +988,7 @@ primary_no_array_creation_expression
     | checked_expression
     | unchecked_expression
     | default_value_expression
+    | nameof_expression
     | anonymous_method_expression
     | primary_no_array_creation_expression_unsafe
     ;
@@ -1002,6 +1006,62 @@ object o = (new int[3])[1];
 ### Literals
 
 A *primary_expression* that consists of a *literal* ([Literals](lexical-structure.md#literals)) is classified as a value.
+
+
+### Interpolated strings
+
+An *interpolated_string_expression* consists of a `$` sign followed by a regular or verbatim string literal, wherein holes, delimited by `{` and `}`, enclose expressions and formatting specifications. An interpolated string expression is the result of an *interpolated_string_literal* that has been broken up into individual tokens, as described in §2.4.4.6.
+
+```antlr
+interpolated_string_expression
+    : '$' interpolated_regular_string
+    | '$' interpolated_verbatim_string
+    ;
+
+interpolated_regular_string
+    : interpolated_regular_string_whole
+    | interpolated_regular_string_start interpolated_regular_string_body interpolated_regular_string_end
+    ;
+
+interpolated_regular_string_body
+    : interpolation (interpolated_regular_string_mid interpolation)*
+    ;
+
+interpolation
+    : expression
+    | expression ',' constant_expression
+    ;
+
+interpolated_verbatim_string
+    : interpolated_verbatim_string_whole
+    | interpolated_verbatim_string_start interpolated_verbatim_string_body interpolated_verbatim_string_end
+    ;
+
+interpolated_verbatim_string_body
+    : interpolation (interpolated_verbatim_string_mid interpolation)+
+    ;
+```
+
+The *constant_expression* in an interpolation must have an implicit conversion to `int`.
+
+An *interpolated_string_expression* is classified as a value. If it is immediately converted to `System.IFormattable` or `System.FormattableString` with an implicit interpolated string conversion (§6.1.4), the interpolated string expression has that type. Otherwise, it has the type `string`.
+
+If the type of an interpolated string is `System.IFormattable` or `System.FormattableString`, the meaning is a call to `System.Runtime.CompilerServices.FormattableStringFactory.Create`. If the type is `string`, the meaning of the expression is a call to `string.Format`. In both cases, the argument list of the call consists of a format string literal with placeholders for each interpolation, and an argument for each expression corresponding to the place holders.
+
+The format string literal is constructed as follows, where `N` is the number of interpolations in the *interpolated_string_expression*:
+
+*  If an *interpolated_regular_string_whole* or an *interpolated_verbatim_string_whole* follows the `$` sign, then the format string literal is that token.
+*  Otherwise, the format string literal consists of: 
+   *  First the *interpolated_regular_string_start* or *interpolated_verbatim_string_start*
+   *  Then for each number `I` from `0` to `N-1`: 
+      * The decimal representation of `I`
+      * Then, if the corresponding *interpolation* has a *constant_expression*, a `,` (comma) followed by the decimal representation of the value of the *constant_expression*
+      * Then the *interpolated_regular_string_mid*, *interpolated_regular_string_end*, *interpolated_verbatim_string_mid* or *interpolated_verbatim_string_end* immediately following the corresponding interpolation.
+
+The subsequent arguments are simply the *expressions* from the *interpolations* (if any), in order.
+
+TODO: examples.
+
 
 ### Simple names
 
@@ -1021,7 +1081,7 @@ A *simple_name* is either of the form `I` or of the form `I<A1,...,Ak>`, where `
    *  If `K` is zero and the declaration of `T` includes a type parameter with name `I`, then the *simple_name* refers to that type parameter.
    *  Otherwise, if a member lookup ([Member lookup](expressions.md#member-lookup)) of `I` in `T` with `K` type arguments produces a match:
       * If `T` is the instance type of the immediately enclosing class or struct type and the lookup identifies one or more methods, the result is a method group with an associated instance expression of `this`. If a type argument list was specified, it is used in calling a generic method ([Method invocations](expressions.md#method-invocations)).
-      * Otherwise, if `T` is the instance type of the immediately enclosing class or struct type, if the lookup identifies an instance member, and if the reference occurs within the *block* of an instance constructor, an instance method, or an instance accessor, the result is the same as a member access ([Member access](expressions.md#member-access)) of the form `this.I`. This can only happen when `K` is zero.
+      * Otherwise, if `T` is the instance type of the immediately enclosing class or struct type, if the lookup identifies an instance member, and if the reference occurs within the body of an instance constructor, an instance method, or an instance accessor, the result is the same as a member access ([Member access](expressions.md#member-access)) of the form `this.I`. This can only happen when `K` is zero.
       * Otherwise, the result is the same as a member access ([Member access](expressions.md#member-access)) of the form `T.I` or `T.I<A1,...,Ak>`. In this case, it is a binding-time error for the *simple_name* to refer to an instance member.
 
 *  Otherwise, for each namespace `N`, starting with the namespace in which the *simple_name* occurs, continuing with each enclosing namespace (if any), and ending with the global namespace, the following steps are evaluated until an entity is located:
@@ -1033,65 +1093,13 @@ A *simple_name* is either of the form `I` or of the form `I<A1,...,Ak>`, where `
       * Otherwise, the *namespace_or_type_name* refers to the type constructed with the given type arguments.
    *  Otherwise, if the location where the *simple_name* occurs is enclosed by a namespace declaration for `N`:
       * If `K` is zero and the namespace declaration contains an *extern_alias_directive* or *using_alias_directive* that associates the name `I` with an imported namespace or type, then the *simple_name* refers to that namespace or type.
-      * Otherwise, if the namespaces imported by the *using_namespace_directive*s of the namespace declaration contain exactly one type having name `I` and `K` type parameters, then the *simple_name* refers to that type constructed with the given type arguments.
-      * Otherwise, if the namespaces imported by the *using_namespace_directive*s of the namespace declaration contain more than one type having name `I` and `K` type parameters, then the *simple_name* is ambiguous and an error occurs.
+      * Otherwise, if the namespaces and type declarations imported by the *using_namespace_directive*s and *using_static_directive*s of the namespace declaration contain exactly one accessible type or non-extension static membre having name `I` and `K` type parameters, then the *simple_name* refers to that type or member constructed with the given type arguments.
+      * Otherwise, if the namespaces and types imported by the *using_namespace_directive*s of the namespace declaration contain more than one accessible type or non-extension-method static member having name `I` and `K` type parameters, then the *simple_name* is ambiguous and an error occurs.
 
    Note that this entire step is exactly parallel to the corresponding step in the processing of a *namespace_or_type_name* ([Namespace and type names](basic-concepts.md#namespace-and-type-names)).
 
 *  Otherwise, the *simple_name* is undefined and a compile-time error occurs.
 
-#### Invariant meaning in blocks
-
-For each occurrence of a given identifier as a full *simple_name* (without a type argument list) in an expression or declarator, within the local variable declaration space ([Declarations](basic-concepts.md#declarations)) immediately enclosing that occurrence, every other occurrence of the same identifier as a full *simple_name* in an expression or declarator must refer to the same entity. This rule ensures that the meaning of a name is always the same within a given block, switch block, for-, foreach- or using-statement, or anonymous function.
-
-The example
-```csharp
-class Test
-{
-    double x;
-
-    void F(bool b) {
-        x = 1.0;
-        if (b) {
-            int x;
-            x = 1;
-        }
-    }
-}
-```
-results in a compile-time error because `x` refers to different entities within the outer block (the extent of which includes the nested block in the `if` statement). In contrast, the example
-```csharp
-class Test
-{
-    double x;
-
-    void F(bool b) {
-        if (b) {
-            x = 1.0;
-        }
-        else {
-            int x;
-            x = 1;
-        }
-    }
-}
-```
-is permitted because the name `x` is never used in the outer block.
-
-Note that the rule of invariant meaning applies only to simple names. It is perfectly valid for the same identifier to have one meaning as a simple name and another meaning as right operand of a member access ([Member access](expressions.md#member-access)). For example:
-```csharp
-struct Point
-{
-    int x, y;
-
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-```
-
-The example above illustrates a common pattern of using the names of fields as parameter names in an instance constructor. In the example, the simple names `x` and `y` refer to the parameters, but that does not prevent the member access expressions `this.x` and `this.y` from accessing the fields.
 
 ### Parenthesized expressions
 
@@ -1148,7 +1156,9 @@ The *member_access* is evaluated and classified as follows:
 *  If `E` is a property access, indexer access, variable, or value, the type of which is `T`, and a member lookup ([Member lookup](expressions.md#member-lookup)) of `I` in `T` with `K` type arguments produces a match, then `E.I` is evaluated and classified as follows:
    *  First, if `E` is a property or indexer access, then the value of the property or indexer access is obtained ([Values of expressions](expressions.md#values-of-expressions)) and `E` is reclassified as a value.
    *  If `I` identifies one or more methods, then the result is a method group with an associated instance expression of `E`. If a type argument list was specified, it is used in calling a generic method ([Method invocations](expressions.md#method-invocations)).
-   *  If `I` identifies an instance property, then the result is a property access with an associated instance expression of `E`.
+   *  If `I` identifies an instance property,
+      * If `E` is `this`, `I` identifies an automatically implemented property (§10.7.3) without a setter, and the reference occurs within an instance constructor for a class or struct type `T`, then the result is a variable, namely the hidden backing field for the auto-property given by `I` in the instance of `T` given by `this`.
+      * Otherwise, the result is a property access with an associated instance expression of `E`.
    *  If `T` is a *class_type* and `I` identifies an instance field of that *class_type*:
       * If the value of `E` is `null`, then a `System.NullReferenceException` is thrown.
       * Otherwise, if the field is `readonly` and the reference occurs outside an instance constructor of the class in which the field is declared, then the result is a value, namely the value of the field `I` in the object referenced by `E`.
@@ -1308,7 +1318,7 @@ The search for `C` proceeds as follows:
 
 *  Starting with the closest enclosing namespace declaration, continuing with each enclosing namespace declaration, and ending with the containing compilation unit, successive attempts are made to find a candidate set of extension methods:
    * If the given namespace or compilation unit directly contains non-generic type declarations `Ci` with eligible extension methods `Mj`, then the set of those extension methods is the candidate set.
-   * If namespaces imported by using namespace directives in the given namespace or compilation unit directly contain non-generic type declarations `Ci` with eligible extension methods `Mj`, then the set of those extension methods is the candidate set.
+   * If types `Ci` imported by *using_static_declarations* and directly declared in namespaces imported by *using_namespace_directive*s in the given namespace or compilation unit directly contain eligible extension methods `Mj`, then the set of those extension methods is the candidate set.
 *  If no candidate set is found in any enclosing namespace declaration or compilation unit, a compile-time error occurs.
 *  Otherwise, overload resolution is applied to the candidate set as described in ([Overload resolution](expressions.md#overload-resolution)). If no single best method is found, a compile-time error occurs.
 *  `C` is the type within which the best method is declared as an extension method.
@@ -1603,7 +1613,7 @@ The run-time processing of an *object_creation_expression* of the form `new T(A)
 
 #### Object initializers
 
-An ***object initializer*** specifies values for zero or more fields or properties of an object.
+An ***object initializer*** specifies values for zero or more fields, properties or indexed elements of an object.
 
 ```antlr
 object_initializer
@@ -1616,7 +1626,12 @@ member_initializer_list
     ;
 
 member_initializer
-    : identifier '=' initializer_value
+    : initializer_target '=' initializer_value
+    ;
+
+initializer_target
+    : identifier
+    | '[' argument_list ']'
     ;
 
 initializer_value
@@ -1625,13 +1640,17 @@ initializer_value
     ;
 ```
 
-An object initializer consists of a sequence of member initializers, enclosed by `{` and `}` tokens and separated by commas. Each member initializer must name an accessible field or property of the object being initialized, followed by an equals sign and an expression or an object initializer or collection initializer. It is an error for an object initializer to include more than one member initializer for the same field or property. It is not possible for the object initializer to refer to the newly created object it is initializing.
+An object initializer consists of a sequence of member initializers, enclosed by `{` and `}` tokens and separated by commas. Each *member_initializer* designates a target for the initialization. An *identifier* must name an accessible field or property of the object being initialized, whereas an *argument_list* enclosed in square brackets must specify arguments for an accessible indexer on the object being initialized. It is an error for an object initializer to include more than one member initializer for the same field or property.
 
-A member initializer that specifies an expression after the equals sign is processed in the same way as an assignment ([Simple assignment](expressions.md#simple-assignment)) to the field or property.
+Each *initializer_target* is followed by an equals sign and either an expression, an object initializer or a collection initializer. It is not possible for expressions within the object initializer to refer to the newly created object it is initializing.
+
+A member initializer that specifies an expression after the equals sign is processed in the same way as an assignment ([Simple assignment](expressions.md#simple-assignment)) to the target.
 
 A member initializer that specifies an object initializer after the equals sign is a ***nested object initializer***, i.e. an initialization of an embedded object. Instead of assigning a new value to the field or property, the assignments in the nested object initializer are treated as assignments to members of the field or property. Nested object initializers cannot be applied to properties with a value type, or to read-only fields with a value type.
 
-A member initializer that specifies a collection initializer after the equals sign is an initialization of an embedded collection. Instead of assigning a new collection to the field or property, the elements given in the initializer are added to the collection referenced by the field or property. The field or property must be of a collection type that satisfies the requirements specified in [Collection initializers](expressions.md#collection-initializers).
+A member initializer that specifies a collection initializer after the equals sign is an initialization of an embedded collection. Instead of assigning a new collection to the target field, property or indexer, the elements given in the initializer are added to the collection referenced by the target. The target must be of a collection type that satisfies the requirements specified in [Collection initializers](expressions.md#collection-initializers).
+
+The arguments to an index initializer will always be evaluated exactly once. Thus, even if the arguments end up never getting used (e.g. because of an empty nested initializer), they will be evaluated for their side effects.
 
 The following class represents a point with two coordinates:
 ```csharp
@@ -1716,6 +1735,35 @@ __r.P2.Y = 3;
 Rectangle r = __r;
 ```
 
+Given an appropriate definition of C, the following example:
+```csharp
+var c = new C {
+    x = true,
+    y = { a = "Hello" },
+    z = { 1, 2, 3 },
+    ["x"] = 5,
+    [0,0] = { "a", "b" },
+    [1,2] = {}
+};
+```
+is equivalent to this series of assignments:
+```csharp
+C __c = new C();
+__c.x = true;
+__c.y.a = "Hello";
+__c.z.Add(1); 
+__c.z.Add(2);
+__c.z.Add(3);
+string __i1 = "x";
+__c[__i1] = 5;
+int __i2 = 0, __i3 = 0;
+__c[__i2,__i3].Add("a");
+__c[__i2,__i3].Add("b");
+int __i4 = 1, __i5 = 2;
+var c = __c;
+```
+where `__c`, etc., are generated variables that are invisible and inaccessible to the source code. Note that the arguments for `[0,0]` are evaluated only once, and the arguments for `[1,2]` are evaluated once even though they are never used.
+
 #### Collection initializers
 
 A collection initializer specifies the elements of a collection.
@@ -1747,7 +1795,7 @@ The following is an example of an object creation expression that includes a col
 List<int> digits = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 ```
 
-The collection object to which a collection initializer is applied must be of a type that implements `System.Collections.IEnumerable` or a compile-time error occurs. For each specified element in order, the collection initializer invokes an `Add` method on the target object with the expression list of the element initializer as argument list, applying normal overload resolution for each invocation. Thus, the collection object must contain an applicable `Add` method for each element initializer.
+The collection object to which a collection initializer is applied must be of a type that implements `System.Collections.IEnumerable` or a compile-time error occurs. For each specified element in order, the collection initializer invokes an `Add` method on the target object with the expression list of the element initializer as argument list, applying normal member lookup and overload resolution for each invocation. Thus, the collection object must have an applicable instance or extension method with the name `Add` for each element initializer.
 
 The following class represents a contact with a name and a list of phone numbers:
 ```csharp
@@ -1952,6 +2000,7 @@ member_declarator
     : simple_name
     | member_access
     | base_access
+    | null_conditional_member_access
     | identifier '=' expression
     ;
 ```
@@ -2001,7 +2050,7 @@ the assignment on the last line is permitted because `p1` and `p2` are of the sa
 
 The `Equals` and `GetHashcode` methods on anonymous types override the methods inherited from `object`, and are defined in terms of the `Equals` and `GetHashcode` of the properties, so that two instances of the same anonymous type are equal if and only if all their properties are equal.
 
-A member declarator can be abbreviated to a simple name ([Type inference](expressions.md#type-inference)), a member access ([Compile-time checking of dynamic overload resolution](expressions.md#compile-time-checking-of-dynamic-overload-resolution)) or a base access ([Base access](expressions.md#base-access)). This is called a ***projection initializer*** and is shorthand for a declaration of and assignment to a property with the same name. Specifically, member declarators of the forms
+A member declarator can be abbreviated to a simple name ([Type inference](expressions.md#type-inference)), a member access ([Compile-time checking of dynamic overload resolution](expressions.md#compile-time-checking-of-dynamic-overload-resolution)), a base access ([Base access](expressions.md#base-access)) or a null-conditional member access (§7.7.1.1). This is called a ***projection initializer*** and is shorthand for a declaration of and assignment to a property with the same name. Specifically, member declarators of the forms
 ```csharp
 identifier
 expr.identifier
@@ -2225,17 +2274,58 @@ If the *type* in a *default_value_expression* evaluates at run-time to a referen
 
 A *default_value_expression* is a constant expression ([Constant expressions](expressions.md#constant-expressions)) if the type is a reference type or a type parameter that is known to be a reference type ([Type parameter constraints](classes.md#type-parameter-constraints)). In addition, a *default_value_expression* is a constant expression if the type is one of the following value types: `sbyte`, `byte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `char`, `float`, `double`, `decimal`, `bool`, or any enumeration type.
 
+
+### Nameof expressions
+
+A *nameof_expression* is used to obtain the name of a program entity as a constant string.
+
+```antlr
+nameof_expression
+    : 'nameof' '(' named_entity ')'
+    ;
+
+named_entity
+    : simple_name
+    | named_entity_target '.' identifier type_argument_list?
+    ;
+
+named_entity_target
+    : 'this'
+    | 'base'
+    | named_entity 
+    | predefined_type 
+    | qualified_alias_member
+    ;
+```
+
+Grammatically speaking, the *named_entity* operand is always an expression. Because `nameof` is not a reserved keyword, a nameof expression is always syntactically ambiguous with an invocation of the simple name `nameof`. For compatibility reasons, if a name lookup (§7.6.3) of the name `nameof` succeeds, the expression is treated as an *invocation_expression* -- regardless of whether the invocation is legal. Otherwise it is a *nameof_expression*.
+
+The meaning of the *named_entity* of a *nameof_expression* is the meaning of it as an expression; that is, either as a *simple_name*, a *base*access* or a *member_access*. However, where the lookup described in §7.6.3 and §7.6.5 results in an error because an instance member was found in a static context, a *nameof_expression* produces no such error.
+
+It is a compile-time error for a *named_entity* designating a method group to have a *type_argument_list*. It is a compile time error for a *named_entity_target* to have the type `dynamic`.
+
+A *nameof_expression* is a constant expression of type `string`, and has no effect at runtime. Specifically, its *named_entity* is not evaluated, and is ignored for the purposes of definite assignment analysis (§5.3.3.20). Its value is the last identifier of the *named_entity* before the optional final *type_argument_list*, transformed in the following way:
+
+* The prefix "`@`", if used, is removed.
+* Each *unicode_escape_sequence* is transformed into its corresponding Unicode character.
+* Any *formatting_characters* are removed.
+
+These are the same transformations applied in §2.4.2 when testing equality between identifiers.
+
+TODO: examples
+
 ### Anonymous method expressions
 
 An *anonymous_method_expression* is one of two ways of defining an anonymous function. These are further described in [Anonymous function expressions](expressions.md#anonymous-function-expressions).
 
 ## Unary operators
 
-The `+`, `-`, `!`, `~`, `++`, `--`, cast, and `await` operators are called the unary operators.
+The `?`, `+`, `-`, `!`, `~`, `++`, `--`, cast, and `await` operators are called the unary operators.
 
 ```antlr
 unary_expression
     : primary_expression
+    | null_conditional_expression
     | '+' unary_expression
     | '-' unary_expression
     | '!' unary_expression
@@ -2249,6 +2339,120 @@ unary_expression
 ```
 
 If the operand of a *unary_expression* has the compile-time type `dynamic`, it is dynamically bound ([Dynamic binding](expressions.md#dynamic-binding)). In this case the compile-time type of the *unary_expression* is `dynamic`, and the resolution described below will take place at run-time using the run-time type of the operand.
+
+### Null-conditional operator
+
+The null-conditional operator applies a list of operations to its operand only if that operand is non-null. Otherwise the result of applying the operator is `null`.
+
+```antlr
+null_conditional_expression
+    : primary_expression null_conditional_operations
+    ;
+
+null_conditional_operations
+    : null_conditional_operations? '?' '.' identifier type_argument_list?
+    | null_conditional_operations? '?' '[' argument_list ']'
+    | null_conditional_operations '.' identifier type_argument_list?
+    | null_conditional_operations '[' argument_list ']'
+    | null_conditional_operations '(' argument_list? ')'
+    ;
+```
+
+The list of operations can include member access and element access operations (which may themselves be null-conditional), as well as invocation.
+
+For example, the expression `a.b?[0]?.c()` is a *null_conditional_expression* with a *primary_expression* `a.b` and *null_conditional_operations* `?[0]` (null-conditional element access), `?.c` (null-conditional member access) and `()` (invocation).
+
+For a *null_conditional_expression* `E` with a *primary_expression* `P`, let `E0` be the expression obtained by textually removing the leading `?` from each of the *null_conditional_operations* of `E` that have one. Conceptually, `E0` is the expression that will be evaluated if none of the null checks represented by the `?`s do find a `null`.
+
+Also, let `E1` be the expression obtained by textually removing the leading `?` from just the first of the *null_conditional_operations* in `E`. This may lead to a *primary-expression* (if there was just one `?`) or to another *null_conditional_expression*.
+
+For example, if `E` is the expression `a.b?[0]?.c()`, then `E0` is the expression `a.b[0].c()` and `E1` is the expression `a.b[0]?.c()`.
+
+If `E0` is classified as nothing, then `E` is classified as nothing. Otherwise E is classified as a value.
+
+`E0` and `E1` are used to determine the meaning of `E`:
+
+*  If `E` occurs as a *statement_expression* the meaning of `E` is the same as the statement
+
+   ```csharp
+   if ((object)P != null) E1;
+   ```
+
+   except that P is evaluated only once.
+
+*  Otherwise, if `E0` is classified as nothing a compile-time error occurs.
+
+*  Otherwise, let `T0` be the type of `E0`.
+
+   *  If `T0` is a type parameter that is not known to be a reference type or a non-nullable value type, a compile-time error occurs.
+
+   *  If `T0` is a non-nullable value type, then the type of `E` is `T0?`, and the meaning of `E` is the same as
+
+      ```csharp
+      ((object)P == null) ? (T0?)null : E1
+      ```
+
+      except that `P` is evaluated only once.
+
+   *  Otherwise the type of E is T0, and the meaning of E is the same as
+
+      ```csharp
+      ((object)P == null) ? null : E1
+      ```
+
+      except that `P` is evaluated only once.
+
+If `E1` is itself a *null_conditional_expression*, then these rules are applied again, nesting the tests for `null` until there are no further `?`'s, and the expression has been reduced all the way down to the primary-expression `E0`.
+
+For example, if the expression `a.b?[0]?.c()` occurs as a statement-expression, as in the statement:
+```csharp
+a.b?[0]?.c();
+```
+its meaning is equivalent to:
+```csharp
+if (a.b != null) a.b[0]?.c();
+```
+which again is equivalent to:
+```csharp
+if (a.b != null) if (a.b[0] != null) a.b[0].c();
+```
+Except that `a.b` and `a.b[0]` are evaluated only once.
+
+If it occurs in a context where its value is used, as in:
+```csharp
+var x = a.b?[0]?.c();
+```
+and assuming that the type of the final invocation is not a non-nullable value type, its meaning is equivalent to:
+```csharp
+var x = (a.b == null) ? null : (a.b[0] == null) ? null : a.b[0].c();
+```
+except that `a.b` and `a.b[0]` are evaluated only once.
+
+#### Null-conditional expressions as projection initializers
+
+A null-conditional expression is only allowed as a *member_declarator* in an *anonymous_object_creation_expression* (§7.6.11.6) if it ends with an (optionally null-conditional) member access. Grammatically, this requirement can be expressed as:
+
+```antlr
+null_conditional_member_access
+    : primary_expression null_conditional_operations? '?' '.' identifier type_argument_list?
+    | primary_expression null_conditional_operations '.' identifier type_argument_list?
+    ;
+```
+
+This is a special case of the grammar for *null_conditional_expression* above. The production for *member_declarator* in §7.6.11.6 then includes only *null_conditional_member_access*.
+
+#### Null-conditional expressions as statement expressions
+
+A null-conditional expression is only allowed as a *statement_expression* (§8.6) if it ends with an invocation. Grammatically, this requirement can be expressed as:
+
+```antlr
+null_conditional_invocation_expression
+    : primary_expression null_conditional_operations '(' argument_list? ')'
+    ;
+```
+
+This is a special case of the grammar for *null_conditional_expression* above. The production for *statement_expression* in §8.6 then includes only *null_conditional_invocation_expression*.
+
 
 ### Unary plus operator
 
@@ -2401,7 +2605,6 @@ await_expression
 An *await_expression* is only allowed in the body of an async function ([Iterators](classes.md#iterators)). Within the nearest enclosing async function, an *await_expression* may not occur in these places:
 
 *  Inside a nested (non-async) anonymous function
-*  In a catch or finally block of a *try_statement*
 *  Inside the block of a *lock_statement*
 *  In an unsafe context
 
@@ -4616,6 +4819,7 @@ A constant expression must be the `null` literal or a value with one of  the fol
 *  Cast expressions, provided the target type is one of the types listed above.
 *  `checked` and `unchecked` expressions
 *  Default value expressions
+*  Nameof expressions
 *  The predefined `+`, `-`, `!`, and `~` unary operators.
 *  The predefined `+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `&`, `|`, `^`, `&&`, `||`, `==`, `!=`, `<`, `>`, `<=`, and `>=` binary operators, provided each operand is of a type listed above.
 *  The `?:` conditional operator.

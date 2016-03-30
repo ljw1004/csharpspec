@@ -14,13 +14,13 @@ In the example
 ```csharp
 class A
 {
-    public static int x;
-    int y;
+public static int x;
+int y;
 
-    void F(int[] v, int a, ref int b, out int c) {
-        int i = 1;
-        c = a + b++;
-    }
+void F(int[] v, int a, ref int b, out int c) {
+int i = 1;
+c = a + b++;
+}
 }
 ```
 `x` is a static variable, `y` is an instance variable, `v[0]` is an array element, `a` is a value parameter, `b` is a reference parameter, `c` is an output parameter, and `i` is a local variable.
@@ -272,11 +272,11 @@ for ( for_initializer ; for_condition ; for_iterator ) embedded_statement
 is done as if the statement were written:
 ```csharp
 {
-    for_initializer ;
-    while ( for_condition ) {
-        embedded_statement ;
-        for_iterator ;
-    }
+for_initializer ;
+while ( for_condition ) {
+embedded_statement ;
+for_iterator ;
+}
 }
 ```
 
@@ -358,10 +358,10 @@ finally *finally_block*
 is done as if the statement were a `try`-`finally` statement enclosing a `try`-`catch` statement:
 ```csharp
 try {
-    try try_block
-    catch(...) catch_block_1
-    ...
-    catch(...) catch_block_n
+try try_block
+catch(...) catch_block_1
+...
+catch(...) catch_block_n
 }
 finally finally_block
 ```
@@ -370,31 +370,31 @@ The following example demonstrates how the different blocks of a `try` statement
 ```csharp
 class A
 {
-    static void F() {
-        int i, j;
-        try {
-            goto LABEL;
-            // neither i nor j definitely assigned
-            i = 1;
-            // i definitely assigned
-        }
+static void F() {
+int i, j;
+try {
+goto LABEL;
+// neither i nor j definitely assigned
+i = 1;
+// i definitely assigned
+}
 
-        catch {
-            // neither i nor j definitely assigned
-            i = 3;
-            // i definitely assigned
-        }
+catch {
+// neither i nor j definitely assigned
+i = 3;
+// i definitely assigned
+}
 
-        finally {
-            // neither i nor j definitely assigned
-            j = 5;
-            // j definitely assigned
-        }
-        // i and j definitely assigned
-      LABEL:;
-        // j definitely assigned
+finally {
+// neither i nor j definitely assigned
+j = 5;
+// j definitely assigned
+}
+// i and j definitely assigned
+LABEL:;
+// j definitely assigned
 
-    }
+}
 }
 ```
 
@@ -441,13 +441,14 @@ yield return expr ;
 
 #### General rules for simple expressions
 
-The following rule applies to these kinds of expressions: literals ([Literals](expressions.md#literals)), simple names ([Simple names](expressions.md#simple-names)), member access expressions ([Member access](expressions.md#member-access)), non-indexed base access expressions ([Base access](expressions.md#base-access)), `typeof` expressions ([The typeof operator](expressions.md#the-typeof-operator)), and default value expressions ([Default value expressions](expressions.md#default-value-expressions)).
+The following rule applies to these kinds of expressions: literals ([Literals](expressions.md#literals)), simple names ([Simple names](expressions.md#simple-names)), member access expressions ([Member access](expressions.md#member-access)), non-indexed base access expressions ([Base access](expressions.md#base-access)), `typeof` expressions ([The typeof operator](expressions.md#the-typeof-operator)), default value expressions ([Default value expressions](expressions.md#default-value-expressions)) and `nameof` expressions (§7.6.15).
 
 *  The definite assignment state of *v* at the end of such an expression is the same as the definite assignment state of *v* at the beginning of the expression.
 
 #### General rules for expressions with embedded expressions
 
-The following rules apply to these kinds of expressions: parenthesized expressions ([Parenthesized expressions](expressions.md#parenthesized-expressions)), element access expressions ([Element access](expressions.md#element-access)), base access expressions with indexing ([Base access](expressions.md#base-access)), increment and decrement expressions ([Postfix increment and decrement operators](expressions.md#postfix-increment-and-decrement-operators), [Prefix increment and decrement operators](expressions.md#prefix-increment-and-decrement-operators)), cast expressions ([Cast expressions](expressions.md#cast-expressions)), unary `+`, `-`, `~`, `*` expressions, binary `+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `is`, `as`, `&`, `|`, `^` expressions ([Arithmetic operators](expressions.md#arithmetic-operators), [Shift operators](expressions.md#shift-operators), [Relational and type-testing operators](expressions.md#relational-and-type-testing-operators), [Logical operators](expressions.md#logical-operators)), compound assignment expressions ([Compound assignment](expressions.md#compound-assignment)), `checked` and `unchecked` expressions ([The checked and unchecked operators](expressions.md#the-checked-and-unchecked-operators)), plus array and delegate creation expressions ([The new operator](expressions.md#the-new-operator)).
+The following rules apply to these kinds of expressions: parenthesized expressions ([Parenthesized expressions](expressions.md#parenthesized-expressions)), element access expressions ([Element access](expressions.md#element-access)), base access expressions with indexing ([Base access](expressions.md#base-access)), increment and decrement expressions ([Postfix increment and decrement operators](expressions.md#postfix-increment-and-decrement-operators), [Prefix increment and decrement operators](expressions.md#prefix-increment-and-decrement-operators)), cast expressions ([Cast expressions](expressions.md#cast-expressions)), unary `+`, `-`, `~`, `*` expressions, binary `+`, `-`, `*`, `/`, `%`, `<<`, `>
+    >`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `is`, `as`, `&`, `|`, `^` expressions ([Arithmetic operators](expressions.md#arithmetic-operators), [Shift operators](expressions.md#shift-operators), [Relational and type-testing operators](expressions.md#relational-and-type-testing-operators), [Logical operators](expressions.md#logical-operators)), compound assignment expressions ([Compound assignment](expressions.md#compound-assignment)), `checked` and `unchecked` expressions ([The checked and unchecked operators](expressions.md#the-checked-and-unchecked-operators)), plus array and delegate creation expressions ([The new operator](expressions.md#the-new-operator)).
 
 Each of these expressions has one or more sub-expressions that are unconditionally evaluated in a fixed order. For example, the binary `%` operator evaluates the left hand side of the operator, then the right hand side. An indexing operation evaluates the indexed expression, and then evaluates each of the index expressions, in order from left to right. For an expression *expr*, which has sub-expressions *e1, e2, ..., eN*, evaluated in that order:
 
@@ -479,7 +480,10 @@ new type ( arg1 , arg2 , ... , argN )
 For an expression *expr* of the form `w = expr_rhs`:
 
 *  The definite assignment state of *v* before *expr_rhs* is the same as the definite assignment state of *v* before *expr*.
-*  If *w* is the same variable as *v*, then the definite assignment state of *v* after *expr* is definitely assigned. Otherwise, the definite assignment state of *v* after *expr* is the same as the definite assignment state of *v* after *expr_rhs*.
+*  The definite assignment state of *v* after *expr* is determined by:
+   * If *w* is the same variable as *v*, then the definite assignment state of *v* after *expr* is definitely assigned.
+   * Otherwise, if the assignment occurs within the instance constructor of a struct type, if *w* is a property access designating an automatically implemented property *P* on the instance being constructed and *v* is the hidden backing field of *P*, then the definite assignment state of *v* after *expr* is definitely assigned.
+   * Otherwise, the definite assignment state of *v* after *expr* is the same as the definite assignment state of *v* after *expr_rhs*.
 
 #### && (conditional AND) expressions
 

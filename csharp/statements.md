@@ -108,8 +108,6 @@ A *block* consists of an optional *statement_list* ([Statement lists](statements
 
 A block may contain declaration statements ([Declaration statements](statements.md#declaration-statements)). The scope of a local variable or constant declared in a block is the block.
 
-Within a block, the meaning of a name used in an expression context must always be the same ([Invariant meaning in blocks](expressions.md#invariant-meaning-in-blocks)).
-
 A block is executed as follows:
 
 *  If the block is empty, control is transferred to the end point of the block.
@@ -346,6 +344,7 @@ expression_statement
 
 statement_expression
     : invocation_expression
+    | null_conditional_invocation_expression
     | object_creation_expression
     | assignment
     | post_increment_expression
@@ -562,8 +561,6 @@ Like the string equality operators ([String equality operators](expressions.md#s
 When the governing type of a `switch` statement is `string`, the value `null` is permitted as a case label constant.
 
 The *statement_list*s of a *switch_block* may contain declaration statements ([Declaration statements](statements.md#declaration-statements)). The scope of a local variable or constant declared in a switch block is the switch block.
-
-Within a switch block, the meaning of a name used in an expression context must always be the same ([Invariant meaning in blocks](expressions.md#invariant-meaning-in-blocks)).
 
 The statement list of a given switch section is reachable if the `switch` statement is reachable and at least one of the following is true:
 
@@ -1039,7 +1036,7 @@ When an exception is thrown, control is transferred to the first `catch` clause 
 
 *  In the current function member, each `try` statement that encloses the throw point is examined. For each statement `S`, starting with the innermost `try` statement and ending with the outermost `try` statement, the following steps are evaluated:
 
-   * If the `try` block of `S` encloses the throw point and if S has one or more `catch` clauses, the `catch` clauses are examined in order of appearance to locate a suitable handler for the exception. The first `catch` clause that specifies the exception type or a base type of the exception type is considered a match. A general `catch` clause ([The try statement](statements.md#the-try-statement)) is considered a match for any exception type. If a matching `catch` clause is located, the exception propagation is completed by transferring control to the block of that `catch` clause.
+   * If the `try` block of `S` encloses the throw point and if S has one or more `catch` clauses, the `catch` clauses are examined in order of appearance to locate a suitable handler for the exception, according to the rules specified in Section §8.10. If a matching `catch` clause is located, the exception propagation is completed by transferring control to the block of that `catch` clause.
 
    * Otherwise, if the `try` block or a `catch` block of `S` encloses the throw point and if `S` has a `finally` block, control is transferred to the `finally` block. If the `finally` block throws another exception, processing of the current exception is terminated. Otherwise, when control reaches the end point of the `finally` block, processing of the current exception is continued.
 
@@ -1059,22 +1056,21 @@ The `try` statement provides a mechanism for catching exceptions that occur duri
 
 ```antlr
 try_statement
-    : 'try' block catch_clauses
+    : 'try' block catch_clause+
     | 'try' block finally_clause
-    | 'try' block catch_clauses finally_clause
+    | 'try' block catch_clause+ finally_clause
     ;
 
-catch_clauses
-    : specific_catch_clause+ general_catch_clause?
-    | specific_catch_clause* general_catch_clause
+catch_clause
+    : 'catch' exception_specifier? exception_filter?  block
     ;
 
-specific_catch_clause
-    : 'catch' '(' class_type identifier? ')' block
+exception_specifier
+    : '(' type identifier? ')'
     ;
 
-general_catch_clause
-    : 'catch' block
+exception_filter
+    : 'when' '(' expression ')'
     ;
 
 finally_clause
@@ -1088,17 +1084,17 @@ There are three possible forms of `try` statements:
 *  A `try` block followed by a `finally` block.
 *  A `try` block followed by one or more `catch` blocks followed by a `finally` block.
 
-When a `catch` clause specifies a *class_type*, the type must be `System.Exception`, a type that derives from `System.Exception` or a type parameter type that has `System.Exception` (or a subclass thereof) as its effective base class.
+When a `catch` clause specifies an *exception_specifier*, the type must be `System.Exception`, a type that derives from `System.Exception` or a type parameter type that has `System.Exception` (or a subclass thereof) as its effective base class.
 
-When a `catch` clause specifies both a *class_type* and an *identifier*, an ***exception variable*** of the given name and type is declared. The exception variable corresponds to a local variable with a scope that extends over the `catch` block. During execution of the `catch` block, the exception variable represents the exception currently being handled. For purposes of definite assignment checking, the exception variable is considered definitely assigned in its entire scope.
+When a `catch` clause specifies both an *exception_specifier* with an *identifier*, an ***exception variable*** of the given name and type is declared. The exception variable corresponds to a local variable with a scope that extends over the `catch` clause. During execution of the *exception_filter* and *block*, the exception variable represents the exception currently being handled. For purposes of definite assignment checking, the exception variable is considered definitely assigned in its entire scope.
 
-Unless a `catch` clause includes an exception variable name, it is impossible to access the exception object in the `catch` block.
+Unless a `catch` clause includes an exception variable name, it is impossible to access the exception object in the filter and `catch` block.
 
-A `catch` clause that specifies neither an exception type nor an exception variable name is called a general `catch` clause. A `try` statement can only have one general `catch` clause, and if one is present it must be the last `catch` clause.
+A `catch` clause that does not specify an *exception_specifier* is called a general `catch` clause.
 
 Some programming languages may support exceptions that are not representable as an object derived from `System.Exception`, although such exceptions could never be generated by C# code. A general `catch` clause may be used to catch such exceptions. Thus, a general `catch` clause is semantically different from one that specifies the type `System.Exception`, in that the former may also catch exceptions from other languages.
 
-In order to locate a handler for an exception, `catch` clauses are examined in lexical order. A compile-time error occurs if a `catch` clause specifies a type that is the same as, or is derived from, a type that was specified in an earlier `catch` clause for the same `try`. Without this restriction, it would be possible to write unreachable `catch` clauses.
+In order to locate a handler for an exception, `catch` clauses are examined in lexical order. If a `catch` clause specifies a type but no exception filter, it is a compile-time error for a later `catch` clause in the same `try` statement to specify a type that is the same as, or is derived from, that type. If a `catch` clause specifies no type and no filter, it must be the last `catch` clause for that `try` statement.
 
 Within a `catch` block, a `throw` statement ([The throw statement](statements.md#the-throw-statement)) with no expression can be used to re-throw the exception that was caught by the `catch` block. Assignments to an exception variable do not alter the exception that is re-thrown.
 
@@ -1157,9 +1153,10 @@ A `try` statement is executed as follows:
    *  Control is transferred to the end point of the `try` statement.
 
 *  If an exception is propagated to the `try` statement during execution of the `try` block:
-   *  The `catch` clauses, if any, are examined in order of appearance to locate a suitable handler for the exception. The first `catch` clause that specifies the exception type or a base type of the exception type is considered a match. A general `catch` clause is considered a match for any exception type. If a matching `catch` clause is located:
-      *  If the matching `catch` clause declares an exception variable, the exception object is assigned to the exception variable.
-      *  Control is transferred to the matching `catch` block.
+   *  The `catch` clauses, if any, are examined in order of appearance to locate a suitable handler for the exception. If a `catch` clause does not specify a type, or specifies the exception type or a base type of the exception type:
+      *  If the `catch` clause declares an exception variable, the exception object is assigned to the exception variable.
+      *  If the `catch` clause declares an exception filter, the filter is evaluated. If it evaluates to `false`, the catch clause is not a match, and the search continues through any subsequent `catch` clauses for a suitable handler.
+      *  Otherwise, the `catch` clause is considered a match, and control is transferred to the matching `catch` block.
       *  When and if control reaches the end point of the `catch` block:
          * If the `try` statement has a `finally` block, the `finally` block is executed.
          * Control is transferred to the end point of the `try` statement.

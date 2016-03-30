@@ -27,6 +27,7 @@ extern_alias_directive
 using_directive
     : using_alias_directive
     | using_namespace_directive
+    | using_static_directive
     ;
 
 using_alias_directive
@@ -35,6 +36,10 @@ using_alias_directive
 
 using_namespace_directive
     : 'using' namespace_name ';'
+    ;
+
+using_static_directive
+    : 'using' 'static' type_name ';'
     ;
 
 namespace_member_declaration
@@ -221,6 +226,7 @@ primary_expression
 
 primary_no_array_creation_expression
     : literal
+    | interpolated_string
     | simple_name
     | parenthesized_expression
     | member_access
@@ -237,8 +243,37 @@ primary_no_array_creation_expression
     | checked_expression
     | unchecked_expression
     | default_value_expression
+    | nameof_expression
     | anonymous_method_expression
     | primary_no_array_creation_expression_unsafe
+    ;
+
+interpolated_string_expression
+    : '$' interpolated_regular_string
+    | '$' interpolated_verbatim_string
+    ;
+
+interpolated_regular_string
+    : interpolated_regular_string_whole
+    | interpolated_regular_string_start interpolated_regular_string_body interpolated_regular_string_end
+    ;
+
+interpolated_regular_string_body
+    : interpolation (interpolated_regular_string_mid interpolation)*
+    ;
+
+interpolation
+    : expression
+    | expression ',' constant_expression
+    ;
+
+interpolated_verbatim_string
+    : interpolated_verbatim_string_whole
+    | interpolated_verbatim_string_start interpolated_verbatim_string_body interpolated_verbatim_string_end
+    ;
+
+interpolated_verbatim_string_body
+    : interpolation (interpolated_verbatim_string_mid interpolation)+
     ;
 
 simple_name
@@ -305,7 +340,12 @@ member_initializer_list
     ;
 
 member_initializer
-    : identifier '=' initializer_value
+    : initializer_target '=' initializer_value
+    ;
+
+initializer_target
+    : identifier
+    | '[' argument_list ']'
     ;
 
 initializer_value
@@ -358,6 +398,7 @@ member_declarator
     : simple_name
     | member_access
     | base_access
+    | null_conditional_member_access
     | identifier '=' expression
     ;
 
@@ -393,8 +434,26 @@ default_value_expression
     : 'default' '(' type ')'
     ;
 
+nameof_expression
+    : 'nameof' '(' named_entity ')'
+    ;
+
+named_entity
+    : simple_name
+    | named_entity_target '.' identifier type_argument_list?
+    ;
+
+named_entity_target
+    : 'this'
+    | 'base'
+    | named_entity 
+    | predefined_type 
+    | qualified_alias_member
+    ;
+
 unary_expression
     : primary_expression
+    | null_conditional_expression
     | '+' unary_expression
     | '-' unary_expression
     | '!' unary_expression
@@ -404,6 +463,27 @@ unary_expression
     | cast_expression
     | await_expression
     | unary_expression_unsafe
+    ;
+
+null_conditional_expression
+    : primary_expression null_conditional_operations
+    ;
+
+null_conditional_operations
+    : null_conditional_operations? '?' '.' identifier type_argument_list?
+    | null_conditional_operations? '?' '[' argument_list ']'
+    | null_conditional_operations '.' identifier type_argument_list?
+    | null_conditional_operations '[' argument_list ']'
+    | null_conditional_operations '(' argument_list? ')'
+    ;
+
+null_conditional_member_access
+    : primary_expression null_conditional_operations? '?' '.' identifier type_argument_list?
+    | primary_expression null_conditional_operations '.' identifier type_argument_list?
+    ;
+
+null_conditional_invocation_expression
+    : primary_expression null_conditional_operations '(' argument_list? ')'
     ;
 
 pre_increment_expression
@@ -742,6 +822,7 @@ expression_statement
 
 statement_expression
     : invocation_expression
+    | null_conditional_invocation_expression
     | object_creation_expression
     | assignment
     | post_increment_expression
@@ -849,22 +930,21 @@ throw_statement
     ;
 
 try_statement
-    : 'try' block catch_clauses
+    : 'try' block catch_clause+
     | 'try' block finally_clause
-    | 'try' block catch_clauses finally_clause
+    | 'try' block catch_clause+ finally_clause
     ;
 
-catch_clauses
-    : specific_catch_clause+ general_catch_clause?
-    | specific_catch_clause* general_catch_clause
+catch_clause
+    : 'catch' exception_specifier? exception_filter?  block
     ;
 
-specific_catch_clause
-    : 'catch' '(' class_type identifier? ')' block
+exception_specifier
+    : '(' type identifier? ')'
     ;
 
-general_catch_clause
-    : 'catch' block
+exception_filter
+    : 'when' '(' expression ')'
     ;
 
 finally_clause
@@ -1062,6 +1142,7 @@ member_name
 
 method_body
     : block
+    | '=>' expression ';'
     | ';'
     ;
 
@@ -1094,7 +1175,7 @@ parameter_array
     ;
 
 property_declaration
-    : attributes? property_modifier* type member_name '{' accessor_declarations '}'
+    : attributes? property_modifier* type member_name property_body
     ;
 
 property_modifier
@@ -1110,6 +1191,15 @@ property_modifier
     | 'abstract'
     | 'extern'
     | property_modifier_unsafe
+    ;
+
+property_body
+    : '{' accessor_declarations '}' property_initializer?
+    | '=>' expression ';'
+    ;
+
+property_initializer
+    : '=' variable_initializer
     ;
 
 accessor_declarations
@@ -1172,7 +1262,7 @@ remove_accessor_declaration
     ;
 
 indexer_declaration
-    : attributes? indexer_modifier* indexer_declarator '{' accessor_declarations '}'
+    : attributes? indexer_modifier* indexer_declarator indexer_body
     ;
 
 indexer_modifier
@@ -1192,6 +1282,11 @@ indexer_modifier
 indexer_declarator
     : type 'this' '[' formal_parameter_list ']'
     | type interface_type '.' 'this' '[' formal_parameter_list ']'
+    ;
+
+indexer_body
+    : '{' accessor_declarations '}' 
+    | '=>' expression ';'
     ;
 
 operator_declaration
@@ -1235,6 +1330,7 @@ conversion_operator_declarator
 
 operator_body
     : block
+    | '=>' expression ';'
     | ';'
     ;
 
@@ -1805,6 +1901,7 @@ token
     | real_literal
     | character_literal
     | string_literal
+    | interpolated_string_literal
     | operator_or_punctuator
     ;
 
@@ -2001,6 +2098,161 @@ single_verbatim_string_literal_character
 
 quote_escape_sequence
     : '""'
+    ;
+
+interpolated_string_literal
+    : '$' interpolated_regular_string_literal
+    | '$' interpolated_verbatim_string_literal
+    ;
+
+interpolated_regular_string_literal
+    : interpolated_regular_string_whole
+    | interpolated_regular_string_start  interpolated_regular_string_literal_body interpolated_regular_string_end
+    ;
+
+interpolated_regular_string_literal_body
+    : regular_balanced_text
+    | interpolated_regular_string_literal_body interpolated_regular_string_mid regular_balanced_text
+    ;
+
+interpolated_regular_string_whole
+    : '"' interpolated_regular_string_character* '"'
+    ;
+
+interpolated_regular_string_start
+    : '"' interpolated_regular_string_character* '{'
+    ;
+
+interpolated_regular_string_mid
+    : interpolation_format? '}' interpolated_regular_string_characters_after_brace? '{'
+    ;
+
+interpolated_regular_string_end
+    : interpolation_format? '}' interpolated_regular_string_characters_after_brace? '"'
+    ;
+
+interpolated_regular_string_characters_after_brace
+    : interpolated_regular_string_character_no_brace
+    | interpolated_regular_string_characters_after_brace interpolated_regular_string_character
+    ;
+
+interpolated_regular_string_character
+    : single_interpolated_regular_string_character
+    | simple_escape_sequence
+    | hexadecimal_escape_sequence
+    | unicode_escape_sequence
+    | open_brace_escape_sequence
+    | close_brace_escape_sequence
+    ;
+
+interpolated_regular_string_character_no_brace
+    : '<Any interpolated_regular_string_character except close_brace_escape_sequence and any hexadecimal_escape_sequence or unicode_escape_sequence designating } (U+007D)>'
+    ;
+
+single_interpolated_regular_string_character
+    : '<Any character except \" (U+0022), \\ (U+005C), { (U+007B), } (U+007D), and new_line_character>'
+    ;
+
+open_brace_escape_sequence
+    : '{{'
+    ;
+
+    close_brace_escape_sequence
+    : '}}'
+    ;
+    
+regular_balanced_text
+    : regular_balanced_text_part+
+    ;
+
+regular_balanced_text_part
+    : single_regular_balanced_text_character
+    | delimited_comment
+    | '@' identifier_or_keyword
+    | string_literal
+    | interpolated_string_literal
+    | '(' regular_balanced_text ')'
+    | '[' regular_balanced_text ']'
+    | '{' regular_balanced_text '}'
+    ;
+    
+single_regular_balanced_text_character
+    : '<Any character except / (U+002F), @ (U+0040), \" (U+0022), $ (U+0024), ( (U+0028), ) (U+0029), [ (U+005B), ] (U+005D), { (U+007B), } (U+007D) and new_line_character>'
+    | '</ (U+002F), if not directly followed by / (U+002F) or * (U+002A)>'
+    ;
+    
+interpolation_format
+    : interpolation_format_character+
+    ;
+    
+interpolation_format_character
+    : '<Any character except \" (U+0022), : (U+003A), { (U+007B) and } (U+007D)>'
+    ;
+    
+interpolated_verbatim_string_literal
+    : interpolated_verbatim_string_whole
+    | interpolated_verbatim_string_start interpolated_verbatim_string_literal_body interpolated_verbatim_string_end
+    ;
+
+interpolated_verbatim_string_literal_body
+    : verbatim_balanced_text
+    | interpolated_verbatim_string_literal_body interpolated_verbatim_string_mid verbatim_balanced_text
+    ;
+    
+interpolated_verbatim_string_whole
+    : '@"' interpolated_verbatim_string_character* '"'
+    ;
+    
+interpolated_verbatim_string_start
+    : '@"' interpolated_verbatim_string_character* '{'
+    ;
+    
+interpolated_verbatim_string_mid
+    : interpolation_format? '}' interpolated_verbatim_string_characters_after_brace? '{'
+    ;
+    
+interpolated_verbatim_string_end
+    : interpolation_format? '}' interpolated_verbatim_string_characters_after_brace? '"'
+    ;
+    
+interpolated_verbatim_string_characters_after_brace
+    : interpolated_verbatim_string_character_no_brace
+    | interpolated_verbatim_string_characters_after_brace interpolated_verbatim_string_character
+    ;
+    
+interpolated_verbatim_string_character
+    : single_interpolated_verbatim_string_character
+    | quote_escape_sequence
+    | open_brace_escape_sequence
+    | close_brace_escape_sequence
+    ;
+    
+interpolated_verbatim_string_character_no_brace
+    : '<Any interpolated_verbatim_string_character except close_brace_escape_sequence>'
+    ;
+    
+single_interpolated_verbatim_string_character
+    : '<Any character except \" (U+0022), { (U+007B) and } (U+007D)>'
+    ;
+    
+verbatim_balanced_text
+    : verbatim_balanced_text_part+
+    ;
+
+verbatim_balanced_text_part
+    : single_verbatim_balanced_text_character
+    | comment
+    | '@' identifier_or_keyword
+    | string_literal
+    | interpolated_string_literal
+    | '(' verbatim_balanced_text ')'
+    | '[' verbatim_balanced_text ']'
+    | '{' verbatim_balanced_text '}'
+    ;
+    
+single_verbatim_balanced_text_character
+    : '<Any character except / (U+002F), @ (U+0040), \" (U+0022), $ (U+0024), ( (U+0028), ) (U+0029), [ (U+005B), ] (U+005D), { (U+007B) and } (U+007D)>'
+    | '</ (U+002F), if not directly followed by / (U+002F) or * (U+002A)>'
     ;
 
 null_literal

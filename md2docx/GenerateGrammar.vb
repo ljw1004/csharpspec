@@ -733,8 +733,10 @@ Class Antlr
                         t &= "\" : pos += 2
                     ElseIf s.Substring(pos, 2) = "\'" Then
                         t &= "'" : pos += 2
+                    ElseIf s.Substring(pos, 2) = "\""" Then
+                        t &= """" : pos += 2
                     ElseIf s.Substring(pos, 1) = "\" Then
-                        Throw New Exception("Terminals may not include \ except in \\ or \'")
+                        Throw New Exception(" ThenTerminals may Not include \ except In \\ Or \'")
                     Else
                         t &= s(pos) : pos += 1
                     End If

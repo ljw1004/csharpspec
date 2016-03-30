@@ -1738,6 +1738,7 @@ member_name
 
 method_body
     : block
+    | '=>' expression ';'
     | ';'
     ;
 ```
@@ -1769,9 +1770,11 @@ The optional *type_parameter_constraints_clause*s specify constraints on individ
 
 The *return_type* and each of the types referenced in the *formal_parameter_list* of a method must be at least as accessible as the method itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
-For `abstract` and `extern` methods, the *method_body* consists simply of a semicolon. For `partial` methods the *method_body* may consist of either a semicolon or a *block*. For all other methods, the *method_body* consists of a *block*, which specifies the statements to execute when the method is invoked.
+The *method_body* is either a semicolon, a ***statement body*** or an ***expression body***. A statement body consists of a *block*, which specifies the statements to execute when the method is invoked. An expression body consists of `=>` followed by an *expression* and a semicolon, and denotes a single expression to perform when the method is invoked. 
 
-If the *method_body* consists of a semicolon, the the declaration may not include the `async` modifier.
+For `abstract` and `extern` methods, the *method_body* consists simply of a semicolon. For `partial` methods the *method_body* may consist of either a semicolon, a block body or an expression body. For all other methods, the *method_body* is either a block body or an expression body.
+
+If the *method_body* consists of a semicolon, then the declaration may not include the `async` modifier.
 
 The name, the type parameter list and the formal parameter list of a method define the signature ([Signatures and overloading](basic-concepts.md#signatures-and-overloading)) of the method. Specifically, the signature of a method consists of its name, the number of type parameters and the number, modifiers, and types of its formal parameters. For these purposes, any type parameter of the method that occurs in the type of a formal parameter is identified not by its name, but by its ordinal position in the type argument list of the method.The return type is not part of a method's signature, nor are the names of the type parameters or the formal parameters.
 
@@ -2504,16 +2507,18 @@ static class Program
 
 ### Method body
 
-The *method_body* of a method declaration consists of either a *block* or a semicolon.
-
-Abstract and external method declarations do not provide a method implementation, so their method bodies simply consist of a semicolon. For any other method, the method body is a block ([Blocks](statements.md#blocks)) that contains the statements to execute when that method is invoked.
+The *method_body* of a method declaration consists of either a block body, an expression body or a semicolon.
 
 The ***result type*** of a method is `void` if the return type is `void`, or if the method is async and the return type is `System.Threading.Tasks.Task`. Otherwise, the result type of a non-async method is its return type, and the result type of an async method with return type `System.Threading.Tasks.Task<T>` is `T`.
 
-When the result type of a method is `void`, `return` statements ([The return statement](statements.md#the-return-statement)) in that method's body are not permitted to specify an expression. If execution of the method body of a void method completes normally (that is, control flows off the end of the method body), that method simply returns to its current caller.
-
-When the result type of a method is not `void`, each `return` statement in that method's body must specify an expression that is implicitly convertible to the result type. The endpoint of the method body of a value-returning method must not be reachable. In other words, in a value-returning method, control is not permitted to flow off the end of the method body.
-
+When a method has a `void` result type and a block body, `return` statements ([The return statement](statements.md#the-return-statement)) in the block are not permitted to specify an expression. If execution of the block of a void method completes normally (that is, control flows off the end of the method body), that method simply returns to its current caller.
+    
+When a method has a `void` result and an expression body, the expression `E` must be a *statement_expression*, and the body is exactly equivalent to a block body of the form `{ E; }`.
+    
+When a method has a non-void result type and a block body, each `return` statement in the block must specify an expression that is implicitly convertible to the result type. The endpoint of a block body of a value-returning method must not be reachable. In other words, in a value-returning method with a block body, control is not permitted to flow off the end of the method body.
+    
+When a method has a non-void result type and an expression body, the expression must be implicitly convertible to the result type, and the body is exactly equivalent to a block body of the form `{ return E; }`.
+    
 In the example
 ```csharp
 class A
@@ -2532,9 +2537,11 @@ class A
             return 0;
         }
     }
+
+    public int I(bool b) => b ? 1 : 0;
 }
 ```
-the value-returning `F` method results in a compile-time error because control can flow off the end of the method body. The `G` and `H` methods are correct because all possible execution paths end in a return statement that specifies a return value.
+the value-returning `F` method results in a compile-time error because control can flow off the end of the method body. The `G` and `H` methods are correct because all possible execution paths end in a return statement that specifies a return value. The `I` method is correct, because its body is equivalent to a statement block with just a single return statement in it.
 
 ### Method overloading
 
@@ -2548,7 +2555,7 @@ Properties are declared using *property_declaration*s:
 
 ```antlr
 property_declaration
-    : attributes? property_modifier* type member_name '{' accessor_declarations '}'
+    : attributes? property_modifier* type member_name property_body
     ;
 
 property_modifier
@@ -2566,9 +2573,13 @@ property_modifier
     | property_modifier_unsafe
     ;
 
-member_name
-    : identifier
-    | interface_type '.' identifier
+property_body
+    : '{' accessor_declarations '}' property_initializer?
+    | '=>' expression ';'
+    ;
+
+property_initializer
+    : '=' variable_initializer
     ;
 ```
 
@@ -2580,7 +2591,11 @@ The *type* of a property declaration specifies the type of the property introduc
 
 The *type* of a property must be at least as accessible as the property itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
-The *accessor_declarations*, which must be enclosed in "`{`" and "`}`" tokens, declare the accessors ([Accessors](classes.md#accessors)) of the property. The accessors specify the executable statements associated with reading and writing the property.
+A *property_body* may either consist of an ***accessor body*** or an ***expression body***. In an accessor body,  *accessor_declarations*, which must be enclosed in "`{`" and "`}`" tokens, declare the accessors ([Accessors](classes.md#accessors)) of the property. The accessors specify the executable statements associated with reading and writing the property.
+
+An expression body consisting of `=>` followed by an *expression* `E` and a semicolon is exactly equivalent to the statement body `{ get { return E; } }`, and can therefore only be used to specify getter-only properties where the result of the getter is given by a single expression.
+
+A *property_initializer* may only be given for an automatically implemented property (§10.7.3), and causes the initialization of the underlying field of such properties with the value given by the *expression*.
 
 Even though the syntax for accessing a property is the same as that for a field, a property is not classified as a variable. Thus, it is not possible to pass a property as a `ref` or `out` argument.
 
@@ -2643,7 +2658,7 @@ The use of *accessor_modifier*s is governed by the following restrictions:
    * If the property or indexer has a declared accessibility of `internal` or `protected`, the *accessor_modifier* must be `private`.
    * If the property or indexer has a declared accessibility of `private`, no *accessor_modifier* may be used.
 
-For `abstract` and `extern` properties, the *accessor_body* for each accessor specified is simply a semicolon. A non-abstract, non-extern property may be an ***automatically implemented property***, in which case both get and set accessors must be given, both with a semicolon body ([Automatically implemented properties](classes.md#automatically-implemented-properties)). For the accessors of any other non-abstract, non-extern property, the *accessor_body* is a *block* which specifies the statements to be executed when the corresponding accessor is invoked.
+For `abstract` and `extern` properties, the *accessor_body* for each accessor specified is simply a semicolon. A non-abstract, non-extern property may have each *accessor_body* be a semicolon, in which case it is an ***automatically implemented property*** ([Automatically implemented properties](classes.md#automatically-implemented-properties)). An automatically implemented property must have at least a get accessor. For the accessors of any other non-abstract, non-extern property, the *accessor_body* is a *block* which specifies the statements to be executed when the corresponding accessor is invoked.
 
 A `get` accessor corresponds to a parameterless method with a return value of the property type. Except as the target of an assignment, when a property is referenced in an expression, the `get` accessor of the property is invoked to compute the value of the property ([Values of expressions](expressions.md#values-of-expressions)). The body of a `get` accessor must conform to the rules for value-returning methods described in [Method body](classes.md#method-body). In particular, all `return` statements in the body of a `get` accessor must specify an expression that is implicitly convertible to the property type. Furthermore, the endpoint of a `get` accessor must not be reachable.
 
@@ -2857,35 +2872,52 @@ the underlying `TextWriter` for the output device is created. But if the applica
 
 ### Automatically implemented properties
 
-When a property is specified as an automatically implemented property, a hidden backing field is automatically available for the property, and the accessors are implemented to read from and write to that backing field.
+An automatically implemented property (or ***auto-property*** for short), is a non-abstract non-extern property with semicolon-only accessor bodies. Auto-properties must have a get accessor and can optionally have a set accessor.
+
+When a property is specified as an automatically implemented property, a hidden backing field is automatically available for the property, and the accessors are implemented to read from and write to that backing field. If the auto-property has no set accessor, the backing field is considered `readonly` (§10.5.2). Just like a `readonly` field, a getter-only auto-property can also be assigned to in the body of a constructor of the enclosing class. Such an assignment assigns directly to the readonly backing field of the property.
+
+An auto-property may optionally have a *property_initializer*, which is applied directly to the backing field as a *variable_initializer* (§10.5.5).
 
 The following example:
 ```csharp
 public class Point {
-    public int X { get; set; } // automatically implemented
-    public int Y { get; set; } // automatically implemented
+    public int X { get; set; } = 0;
+    public int Y { get; set; } = 0;
 }
 ```
 is equivalent to the following declaration:
 ```csharp
 public class Point {
-    private int x;
-    private int y;
-    public int X { get { return x; } set { x = value; } }
-    public int Y { get { return y; } set { y = value; } }
+    private int __x = 0;
+    private int __y = 0;
+    public int X { get { return __x; } set { __x = value; } }
+    public int Y { get { return __y; } set { __y = value; } }
 }
 ```
 
-Because the backing field is inaccessible, it can be read and written only through the property accessors, even within the containing type. This means that automatically implemented read-only or write-only properties do not make sense, and are disallowed. It is however possible to set the access level of each accessor differently. Thus, the effect of a read-only property with a private backing field can be mimicked like this:
+The following example:
 ```csharp
-public class ReadOnlyPoint {
-    public int X { get; private set; }
-    public int Y { get; private set; }
-    public ReadOnlyPoint(int x, int y) { X = x; Y = y; }
+public class ReadOnlyPoint
+{
+	public int X { get; }
+	public int Y { get; }
+	public ReadOnlyPoint(int x, int y) { X = x; Y = y; }
+}
+```
+is equivalent to the following declaration:
+```csharp
+public class ReadOnlyPoint
+{
+	private readonly int __x;
+	private readonly int __y;
+	public int X { get { return __x; } }
+	public int Y { get { return __y; } }
+    public ReadOnlyPoint(int x, int y) { __x = x; __y = y; }
 }
 ```
 
-This restriction also means that definite assignment of struct types with auto-implemented properties can only be achieved using the standard constructor of the struct, since assigning to the property itself requires the struct to be definitely assigned. This means that user-defined constructors must call the default constructor.
+Notice that the assignments to the readonly field are legal, because they occur within the constructor.
+
 
 ### Accessibility
 
@@ -3287,7 +3319,7 @@ An ***indexer*** is a member that enables an object to be indexed in the same wa
 
 ```antlr
 indexer_declaration
-    : attributes? indexer_modifier* indexer_declarator '{' accessor_declarations '}'
+    : attributes? indexer_modifier* indexer_declarator indexer_body
     ;
 
 indexer_modifier
@@ -3308,6 +3340,11 @@ indexer_declarator
     : type 'this' '[' formal_parameter_list ']'
     | type interface_type '.' 'this' '[' formal_parameter_list ']'
     ;
+
+indexer_body
+    : '{' accessor_declarations '}' 
+    | '=>' expression ';'
+    ;
 ```
 
 An *indexer_declaration* may include a set of *attributes* ([Attributes](attributes.md#attributes)) and a valid combination of the four access modifiers ([Access modifiers](classes.md#access-modifiers)), the `new` ([The new modifier](classes.md#the-new-modifier)), `virtual` ([Virtual methods](classes.md#virtual-methods)), `override` ([Override methods](classes.md#override-methods)), `sealed` ([Sealed methods](classes.md#sealed-methods)), `abstract` ([Abstract methods](classes.md#abstract-methods)), and `extern` ([External methods](classes.md#external-methods)) modifiers.
@@ -3322,7 +3359,9 @@ The *formal_parameter_list* specifies the parameters of the indexer. The formal 
 
 The *type* of an indexer and each of the types referenced in the *formal_parameter_list* must be at least as accessible as the indexer itself ([Accessibility constraints](basic-concepts.md#accessibility-constraints)).
 
-The *accessor_declarations* ([Accessors](classes.md#accessors)), which must be enclosed in "`{`" and "`}`" tokens, declare the accessors of the indexer. The accessors specify the executable statements associated with reading and writing indexer elements.
+An *indexer_body* may either consist of an ***accessor body*** or an ***expression body***. In an accessor body, *accessor_declarations*, which must be enclosed in "`{`" and "`}`" tokens, declare the accessors (§10.7.2) of the property. The accessors specify the executable statements associated with reading and writing the property.
+
+An expression body consisting of "`=>`" followed by an expression `E` and a semicolon is exactly equivalent to the statement body `{ get { return E; } }`, and can therefore only be used to specify getter-only indexers where the result of the getter is given by a single expression.
 
 Even though the syntax for accessing an indexer element is the same as that for an array element, an indexer element is not classified as a variable. Thus, it is not possible to pass an indexer element as a `ref` or `out` argument.
 
@@ -3339,6 +3378,7 @@ Indexers and properties are very similar in concept, but differ in the following
 *  A `set` accessor of a property corresponds to a method with a single parameter named `value`, whereas a `set` accessor of an indexer corresponds to a method with the same formal parameter list as the indexer, plus an additional parameter named `value`.
 *  It is a compile-time error for an indexer accessor to declare a local variable with the same name as an indexer parameter.
 *  In an overriding property declaration, the inherited property is accessed using the syntax `base.P`, where `P` is the property name. In an overriding indexer declaration, the inherited indexer is accessed using the syntax `base[E]`, where `E` is a comma separated list of expressions.
+*  There is no concept of an "automatically implemented indexer". It is an error to have a non-abstract, non-external indexer with semicolon accessors.
 
 Aside from these differences, all rules defined in [Accessors](classes.md#accessors) and [Automatically implemented properties](classes.md#automatically-implemented-properties) apply to indexer accessors as well as to property accessors.
 
@@ -3501,13 +3541,16 @@ conversion_operator_declarator
 
 operator_body
     : block
+    | '=>' expression ';'
     | ';'
     ;
 ```
 
 There are three categories of overloadable operators: Unary operators ([Unary operators](classes.md#unary-operators)), binary operators ([Binary operators](classes.md#binary-operators)), and conversion operators ([Conversion operators](classes.md#conversion-operators)).
 
-When an operator declaration includes an `extern` modifier, the operator is said to be an ***external operator***. Because an external operator provides no actual implementation, its *operator_body* consists of a semi-colon. For all other operators, the *operator_body* consists of a *block*, which specifies the statements to execute when the operator is invoked. The *block* of an operator must conform to the rules for value-returning methods described in [Method body](classes.md#method-body).
+The *operator_body* is either a semicolon, a ***statement body*** or an ***expression body***. A statement body consists of a *block*, which specifies the statements to execute when the operator is invoked. The *block* must conform to the rules for value-returning methods described in §10.6.10. An expression body consists of `=>` followed by an expression and a semicolon, and denotes a single expression to perform when the operator is invoked.
+
+For `extern` operators, the *operator_body* consists simply of a semicolon. For all other operators, the *operator_body* is either a block body or an expression body.
 
 The following rules apply to all operator declarations:
 
