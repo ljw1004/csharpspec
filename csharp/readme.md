@@ -163,4 +163,4 @@ __Version 5__
     * [Recommended tags](documentation-comments.md)
     * [Processing the documentation file](documentation-comments.md)
     * [An example](documentation-comments.md)
-* [Grammar](http://ljw1004.github.io/csharpspec/csharp/csharp.html)
+* [Grammar](http://ljw1004.github.io/csharpspec/csharp/csharp.html) (also available to download in ANTLR format: [csharp.g4](http://ljw1004.github.io/csharpspec/csharp/csharp.g4))
