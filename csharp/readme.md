@@ -1,6 +1,6 @@
 C# Language Specification
 ===========================
-__Version 5__
+__Version 6__
 
 (This document is also available for download: [csharp.pdf](http://ljw1004.github.io/csharpspec/csharp/CSharp%20Language%20Specification.pdf) and [csharp.docx](http://ljw1004.github.io/csharpspec/csharp/CSharp%20Language%20Specification.docx))
 
