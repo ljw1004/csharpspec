@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1EEA00D2-4667-40C2-8C3A-3537BBB96B09}"
 	ProjectSection(SolutionItems) = preProject
 		..\csharp\CSharp Language Specification.docx = ..\csharp\CSharp Language Specification.docx
+		..\csharp\CSharp Language Specification.pdf = ..\csharp\CSharp Language Specification.pdf
 		..\csharp\csharp.html = ..\csharp\csharp.html
 		..\LICENSE = ..\LICENSE
 		..\readme.md = ..\readme.md
