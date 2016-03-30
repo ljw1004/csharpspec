@@ -319,7 +319,7 @@ function p(a)
                         --></script>
                     </head>
                     <body onclick="p()">
-                        <div id="popup" style="visibility:hidden; position:absolute; right:0; width: auto; top:0; height:auto;"></div>
+                        <div id="popup" style="visibility:hidden; position:absolute; left:16em; width: auto; top:0; height:auto;"></div>
                         <h1>Grammar <%= GrammarName %></h1>
                         <%= From production In Productions Select
                             <div class="p">

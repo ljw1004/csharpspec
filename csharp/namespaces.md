@@ -44,8 +44,7 @@ namespace_declaration
     ;
 
 qualified_identifier
-    : identifier
-    | qualified_identifier '.' identifier
+    : identifier ('.' identifier)*
     ;
 
 namespace_body

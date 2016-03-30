@@ -48,8 +48,11 @@ Module Module1
             Dim htmlfn = IO.Path.ChangeExtension(antlrfn, ".html")
             Dim grammar = Antlr.ReadFile(antlrfn)
             If Not grammar.AreProductionsSameAs(md.Grammar) Then Throw New Exception("Grammar mismatch")
-            md.Grammar.Name = grammar.Name ' because grammar name is derived from antlrfn, and can't be known from markdown
-            Html.WriteFile(md.Grammar, htmlfn)
+            For Each p In grammar.Productions
+                p.Link = md.Grammar.Productions.FirstOrDefault(Function(mdp) mdp?.ProductionName = p.ProductionName)?.Link
+                p.LinkName = md.Grammar.Productions.FirstOrDefault(Function(mdp) mdp?.ProductionName = p.ProductionName)?.LinkName
+            Next
+            Html.WriteFile(grammar, htmlfn)
             Process.Start(htmlfn)
         End If
 
