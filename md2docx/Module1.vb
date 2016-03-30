@@ -1,6 +1,5 @@
 ﻿' TODO:
 '
-' * Restore grammar from places where I removed duplicates, and reference the original location
 ' * Make the hyperlinked grammar show its popups again
 ' * Turn the github repro into a published one, check in html+docx, and add hyperlinks to them in readme.md
 ' * Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)

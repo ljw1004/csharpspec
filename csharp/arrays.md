@@ -13,7 +13,7 @@ The element type of an array can be any type, including an array type.
 An array type is written as a *non_array_type* followed by one or more *rank_specifier*s:
 
 ```antlr
-   array_type
+array_type
     : non_array_type rank_specifier+
     ;
 

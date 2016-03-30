@@ -131,6 +131,10 @@ type_parameters
     : attributes? type_parameter
     | type_parameters ',' attributes? type_parameter
     ;
+
+type_parameter
+    : identifier
+    ;
 ```
 
 Each type parameter in a class declaration defines a name in the declaration space ([Declarations](basic-concepts.md#declarations)) of that class. Thus, it cannot have the same name as another type parameter or a member declared in that class. A type parameter cannot have the same name as the type itself.
@@ -1256,6 +1260,14 @@ constant_modifier
     | 'protected'
     | 'internal'
     | 'private'
+    ;
+
+constant_declarators
+    : constant_declarator (',' constant_declarator)*
+    ;
+
+constant_declarator
+    : identifier '=' constant_expression
     ;
 ```
 
@@ -2552,6 +2564,11 @@ property_modifier
     | 'abstract'
     | 'extern'
     | property_modifier_unsafe
+    ;
+
+member_name
+    : identifier
+    | interface_type '.' identifier
     ;
 ```
 

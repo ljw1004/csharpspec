@@ -84,6 +84,7 @@ Class MarkdownSpec
                     Dim g = Antlr.ReadString(code, "")
                     For Each p In g.Productions
                         p.Link = url : p.LinkName = title
+                        If p.ProductionName IsNot Nothing AndAlso Grammar.Productions.Any(Function(dupe) dupe.ProductionName = p.ProductionName) Then Console.WriteLine($"Duplicate grammar for {p.ProductionName}")
                         Grammar.Productions.Add(p)
                     Next
                 End If

@@ -1137,8 +1137,7 @@ local_constant_declaration
     ;
 
 constant_declarators
-    : constant_declarator
-    | constant_declarators ',' constant_declarator
+    : constant_declarator (',' constant_declarator)*
     ;
 
 constant_declarator

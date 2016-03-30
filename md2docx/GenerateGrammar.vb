@@ -136,6 +136,8 @@ Class Html
             Dim choices = If(p.EBNF.Kind = EBNFKind.Choice, CType(p.EBNF.Children, IEnumerable(Of EBNF)), {p.EBNF})
             If flatten(choices).Where(Function(e) e.Kind = EBNFKind.Choice).Count > 0 Then Throw New Exception("nested choice not implemented")
             Me.Productions(p.ProductionName) = choices
+            ' In cases where the MD defined a production multiple times (which is allowed),
+            ' the above statement means we'll only hyperlink to the final version of it
             If p.Link IsNot Nothing Then Me.ProductionReferences(p.ProductionName) = Tuple.Create(p.Link, p.LinkName)
         Next
         Dim InvalidReferences As New HashSet(Of String)

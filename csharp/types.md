@@ -293,6 +293,7 @@ non_array_type
 rank_specifier
     : '[' dim_separator* ']'
     ;
+
 dim_separator
     : ','
     ;
