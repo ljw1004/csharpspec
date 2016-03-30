@@ -3928,7 +3928,7 @@ A `join` clause that explicitly specifies a range variable type
 join T x in e on k1 equals k2
 ```
 is translated into
-```csharp
+```
 join x in ( e ) . Cast < T > ( ) on k1 equals k2
 ```
 

@@ -128,9 +128,9 @@ Module Colorizer
         Public Shared Shadows Iterator Function Colorize(ebnf As EBNF) As IEnumerable(Of ColorizedWord)
             Select Case ebnf.Kind
                 Case EBNFKind.Terminal
-                    Yield Col("'" & ebnf.s.Replace("\", "\\").Replace("'", "\'") & "'", "Terminal")
+                    Yield Col("'" & ebnf.s.Replace("\", "\\").Replace("'", "\'").Replace("\""", """") & "'", "Terminal")
                 Case EBNFKind.ExtendedTerminal
-                    Yield Col(ebnf.s.Replace("\", "\\").Replace("'", "\'"), "ExtendedTerminal")
+                    Yield Col(ebnf.s, "ExtendedTerminal")
                 Case EBNFKind.Reference
                     Yield Col(ebnf.s, "Production")
                 Case EBNFKind.OneOrMoreOf, EBNFKind.ZeroOrMoreOf, EBNFKind.ZeroOrOneOf
