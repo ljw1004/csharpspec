@@ -688,8 +688,7 @@ fixed_statement
     ;
 
 fixed_pointer_declarators
-    : fixed_pointer_declarator
-    | fixed_pointer_declarators ',' fixed_pointer_declarator
+    : fixed_pointer_declarator (','  fixed_pointer_declarator)*
     ;
 
 fixed_pointer_declarator

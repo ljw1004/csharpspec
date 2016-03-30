@@ -664,8 +664,7 @@ for_iterator
     ;
 
 statement_expression_list
-    : statement_expression
-    | statement_expression_list ',' statement_expression
+    : statement_expression (',' statement_expression)*
     ;
 ```
 

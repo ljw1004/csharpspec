@@ -42,20 +42,14 @@ Class Grammar
 
     Public Function AreProductionsSameAs(copy As Grammar) As Boolean
 
-        Dim ToDictionary = Function(g As Grammar, allowDuplicates As Boolean)
+        Dim ToDictionary = Function(g As Grammar)
                                Dim d As New Dictionary(Of String, Production)
                                For Each p In g.Productions
-                                   If p.ProductionName Is Nothing Then Continue For
-                                   If d.ContainsKey(p.ProductionName) Then
-                                       Dim p1 = Antlr.ToString(d(p.ProductionName)), p2 = Antlr.ToString(p)
-                                       If p1 <> p2 Then Console.WriteLine($"INCONSISTENT for '{p}'{vbCrLf}FIRST:{vbCrLf}{p1}{vbCrLf}SECOND:{vbCrLf}{p2}")
-                                       If Not allowDuplicates Then Console.WriteLine("DUPLICATES for '{p}'")
-                                   End If
-                                   d(p.ProductionName) = p
+                                   If p.ProductionName IsNot Nothing Then d(p.ProductionName) = p
                                Next
                                Return d
                            End Function
-        Dim dme = ToDictionary(Me, False), dcopy = ToDictionary(copy, True)
+        Dim dme = ToDictionary(Me), dcopy = ToDictionary(copy)
         Dim ok = True
 
         For Each p In dme.Keys

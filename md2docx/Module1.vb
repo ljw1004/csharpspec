@@ -1,6 +1,5 @@
 ﻿' TODO:
 '
-' * Be more aggressive about trimming plural grammar products, particularly in the namespaces, and change plurals into the "A (',' A)*" pattern
 ' * Restore grammar from places where I removed duplicates, and reference the original location
 ' * Make the hyperlinked grammar show its popups again
 ' * Turn the github repro into a published one, check in html+docx, and add hyperlinks to them in readme.md

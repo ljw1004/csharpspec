@@ -1076,8 +1076,7 @@ warning_action
     ;
 
 warning_list
-    : decimal_digit+
-    | warning_list whitespace? ',' whitespace? decimal_digit+
+    : decimal_digit+ (whitespace? ',' whitespace? decimal_digit+)*
     ;
 ```
 

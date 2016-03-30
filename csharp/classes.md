@@ -147,8 +147,7 @@ class_base
     ;
 
 interface_type_list
-    : interface_type
-    | interface_type_list ',' interface_type
+    : interface_type (',' interface_type)*
     ;
 ```
 
@@ -1330,13 +1329,11 @@ field_modifier
     ;
 
 variable_declarators
-    : variable_declarator
-    | variable_declarators ',' variable_declarator
+    : variable_declarator (',' variable_declarator)*
     ;
 
 variable_declarator
-    : identifier
-    | identifier '=' variable_initializer
+    : identifier ('=' variable_initializer)?
     ;
 
 variable_initializer
@@ -1784,8 +1781,7 @@ formal_parameter_list
     ;
 
 fixed_parameters
-    : fixed_parameter
-    | fixed_parameters ',' fixed_parameter
+    : fixed_parameter (',' fixed_parameter)*
     ;
 
 fixed_parameter

@@ -204,8 +204,7 @@ attribute_target
     ;
 
 attribute_list
-    : attribute
-    | attribute_list ',' attribute
+    : attribute (',' attribute)*
     ;
 
 attribute
@@ -223,8 +222,7 @@ attribute_arguments
     ;
 
 positional_argument_list
-    : positional_argument
-    | positional_argument_list ',' positional_argument
+    : positional_argument (',' positional_argument)*
     ;
 
 positional_argument
@@ -232,8 +230,7 @@ positional_argument
     ;
 
 named_argument_list
-    : named_argument
-    | named_argument_list ',' named_argument
+    : named_argument (','  named_argument)*
     ;
 
 named_argument

@@ -458,8 +458,7 @@ warning_action
     ;
 
 warning_list
-    : decimal_digit+
-    | warning_list whitespace? ',' whitespace? decimal_digit+
+    : decimal_digit+ (whitespace? ',' whitespace? decimal_digit+)*
     ;
 
 
@@ -1221,8 +1220,7 @@ for_iterator
     ;
 
 statement_expression_list
-    : statement_expression
-    | statement_expression_list ',' statement_expression
+    : statement_expression (',' statement_expression)*
     ;
 
 foreach_statement
@@ -1313,7 +1311,7 @@ yield_statement
 // Namespaces
 
 compilation_unit
-    : extern_alias_directives? using_directives? global_attributes? namespace_member_declarations?
+    : extern_alias_directive* using_directive* global_attributes? namespace_member_declaration*
     ;
 
 namespace_declaration
@@ -1326,19 +1324,11 @@ qualified_identifier
     ;
 
 namespace_body
-    : '{' extern_alias_directives? using_directives? namespace_member_declarations? '}'
-    ;
-
-extern_alias_directives
-    : extern_alias_directive+
+    : '{' extern_alias_directive* using_directive* namespace_member_declaration* '}'
     ;
 
 extern_alias_directive
     : 'extern' 'alias' identifier ';'
-    ;
-
-using_directives
-    : using_directive+
     ;
 
 using_directive
@@ -1352,10 +1342,6 @@ using_alias_directive
 
 using_namespace_directive
     : 'using' namespace_name ';'
-    ;
-
-namespace_member_declarations
-    : namespace_member_declaration+
     ;
 
 namespace_member_declaration
@@ -1412,8 +1398,7 @@ class_base
     ;
 
 interface_type_list
-    : interface_type
-    | interface_type_list ',' interface_type
+    : interface_type (',' interface_type)*
     ;
 
 type_parameter_constraints_clause
@@ -1494,13 +1479,11 @@ field_modifier
     ;
 
 variable_declarators
-    : variable_declarator
-    | variable_declarators ',' variable_declarator
+    : variable_declarator (',' variable_declarator)*
     ;
 
 variable_declarator
-    : identifier
-    | identifier '=' variable_initializer
+    : identifier ('=' variable_initializer)?
     ;
 
 variable_initializer
@@ -1554,8 +1537,7 @@ formal_parameter_list
     ;
 
 fixed_parameters
-    : fixed_parameter
-    | fixed_parameters ',' fixed_parameter
+    : fixed_parameter (',' fixed_parameter)*
     ;
 
 fixed_parameter
@@ -1822,8 +1804,7 @@ array_initializer
     ;
 
 variable_initializer_list
-    : variable_initializer
-    | variable_initializer_list ',' variable_initializer
+    : variable_initializer (',' variable_initializer)*
     ;
 
 
@@ -1927,8 +1908,7 @@ enum_member_declarations
     ;
 
 enum_member_declaration
-    : attributes? identifier
-    | attributes? identifier '=' constant_expression
+    : attributes? identifier ('=' constant_expression)?
     ;
 
 
@@ -1994,8 +1974,7 @@ attribute_target
     ;
 
 attribute_list
-    : attribute
-    | attribute_list ',' attribute
+    : attribute (',' attribute)*
     ;
 
 attribute
@@ -2013,8 +1992,7 @@ attribute_arguments
     ;
 
 positional_argument_list
-    : positional_argument
-    | positional_argument_list ',' positional_argument
+    : positional_argument (',' positional_argument)*
     ;
 
 positional_argument
@@ -2022,8 +2000,7 @@ positional_argument
     ;
 
 named_argument_list
-    : named_argument
-    | named_argument_list ',' named_argument
+    : named_argument (','  named_argument)*
     ;
 
 named_argument
@@ -2153,8 +2130,7 @@ fixed_statement
     ;
 
 fixed_pointer_declarators
-    : fixed_pointer_declarator
-    | fixed_pointer_declarators ',' fixed_pointer_declarator
+    : fixed_pointer_declarator (','  fixed_pointer_declarator)*
     ;
 
 fixed_pointer_declarator

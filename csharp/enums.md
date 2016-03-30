@@ -77,8 +77,7 @@ enum_member_declarations
     ;
 
 enum_member_declaration
-    : attributes? identifier
-    | attributes? identifier '=' constant_expression
+    : attributes? identifier ('=' constant_expression)?
     ;
 ```
 

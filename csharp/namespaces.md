@@ -10,17 +10,17 @@ A *compilation_unit* defines the overall structure of a source file. A compilati
 
 ```antlr
 compilation_unit
-    : extern_alias_directives? using_directives? global_attributes? namespace_member_declarations?
+    : extern_alias_directive* using_directive* global_attributes? namespace_member_declaration*
     ;
 ```
 
 A C# program consists of one or more compilation units, each contained in a separate source file. When a C# program is compiled, all of the compilation units are processed together. Thus, compilation units can depend on each other, possibly in a circular fashion.
 
-The *using_directives* of a compilation unit affect the *global_attributes* and *namespace_member_declarations* of that compilation unit, but have no effect on other compilation units.
+The *using_directive*s of a compilation unit affect the *global_attributes* and *namespace_member_declaration*s of that compilation unit, but have no effect on other compilation units.
 
 The *global_attributes* ([Attributes](attributes.md#attributes)) of a compilation unit permit the specification of attributes for the target assembly and module. Assemblies and modules act as physical containers for types. An assembly may consist of several physically separate modules.
 
-The *namespace_member_declarations* of each compilation unit of a program contribute members to a single declaration space called the global namespace. For example:
+The *namespace_member_declaration*s of each compilation unit of a program contribute members to a single declaration space called the global namespace. For example:
 
 File `A.cs`:
 ```csharp
@@ -49,7 +49,7 @@ qualified_identifier
     ;
 
 namespace_body
-    : '{' extern_alias_directives? using_directives? namespace_member_declarations? '}'
+    : '{' extern_alias_directive* using_directive* namespace_member_declaration* '}'
     ;
 ```
 
@@ -57,7 +57,7 @@ A *namespace_declaration* may occur as a top-level declaration in a *compilation
 
 Namespaces are implicitly `public` and the declaration of a namespace cannot include any access modifiers.
 
-Within a *namespace_body*, the optional *using_directives* import the names of other namespaces and types, allowing them to be referenced directly instead of through qualified names. The optional *namespace_member_declarations* contribute members to the declaration space of the namespace. Note that all *using_directives* must appear before any member declarations.
+Within a *namespace_body*, the optional *using_directive*s import the names of other namespaces and types, allowing them to be referenced directly instead of through qualified names. The optional *namespace_member_declaration*s contribute members to the declaration space of the namespace. Note that all *using_directive*s must appear before any member declarations.
 
 The *qualified_identifier* of a *namespace_declaration* may be a single identifier or a sequence of identifiers separated by "`.`" tokens. The latter form permits a program to define a nested namespace without lexically nesting several namespace declarations. For example,
 
@@ -101,16 +101,12 @@ the two namespace declarations above contribute to the same declaration space, i
 An *extern_alias_directive* introduces an identifier that serves as an alias for a namespace. The specification of the aliased namespace is external to the source code of the program and applies also to nested namespaces of the aliased namespace.
 
 ```antlr
-extern_alias_directives
-    : extern_alias_directive+
-    ;
-
 extern_alias_directive
     : 'extern' 'alias' identifier ';'
     ;
 ```
 
-The scope of an *extern_alias_directive* extends over the *using_directives*, *global_attributes* and *namespace_member_declarations* of its immediately containing compilation unit or namespace body.
+The scope of an *extern_alias_directive* extends over the *using_directive*s, *global_attributes* and *namespace_member_declaration*s of its immediately containing compilation unit or namespace body.
 
 Within a compilation unit or namespace body that contains an *extern_alias_directive*, the identifier introduced by the *extern_alias_directive* can be used to reference the aliased namespace. It is a compile-time error for the *identifier* to be the word `global`.
 
@@ -137,10 +133,6 @@ The program declares the existence of the extern aliases `X` and `Y`, but the ac
 ***Using directives*** facilitate the use of namespaces and types defined in other namespaces. Using directives impact the name resolution process of *namespace_or_type_name*s ([Namespace and type names](basic-concepts.md#namespace-and-type-names)) and *simple_name*s ([Simple names](expressions.md#simple-names)), but unlike declarations, using directives do not contribute new members to the underlying declaration spaces of the compilation units or namespaces within which they are used.
 
 ```antlr
-using_directives
-    : using_directive+
-    ;
-
 using_directive
     : using_alias_directive
     | using_namespace_directive
@@ -151,7 +143,7 @@ A *using_alias_directive* ([Using alias directives](namespaces.md#using-alias-di
 
 A *using_namespace_directive* ([Using namespace directives](namespaces.md#using-namespace-directives)) imports the type members of a namespace.
 
-The scope of a *using_directive* extends over the *namespace_member_declarations* of its immediately containing compilation unit or namespace body. The scope of a *using_directive* specifically does not include its peer *using_directive*s. Thus, peer *using_directive*s do not affect each other, and the order in which they are written is insignificant.
+The scope of a *using_directive* extends over the *namespace_member_declaration*s of its immediately containing compilation unit or namespace body. The scope of a *using_directive* specifically does not include its peer *using_directive*s. Thus, peer *using_directive*s do not affect each other, and the order in which they are written is insignificant.
 
 ### Using alias directives
 
@@ -243,7 +235,7 @@ namespace N3
 ```
 the reference to `R.A` in the declaration of `B` causes a compile-time error because `R` refers to `N3.R`, not `N1.N2`.
 
-The order in which *using_alias_directive*s are written has no significance, and resolution of the *namespace_or_type_name* referenced by a *using_alias_directive* is not affected by the *using_alias_directive* itself or by other *using_directive*s in the immediately containing compilation unit or namespace body. In other words, the *namespace_or_type_name* of a *using_alias_directive* is resolved as if the immediately containing compilation unit or namespace body had no *using_directive*s. A *using_alias_directive* may however be affected by *extern_alias_directives* in the immediately containing compilation unit or namespace body. In the example
+The order in which *using_alias_directive*s are written has no significance, and resolution of the *namespace_or_type_name* referenced by a *using_alias_directive* is not affected by the *using_alias_directive* itself or by other *using_directive*s in the immediately containing compilation unit or namespace body. In other words, the *namespace_or_type_name* of a *using_alias_directive* is resolved as if the immediately containing compilation unit or namespace body had no *using_directive*s. A *using_alias_directive* may however be affected by *extern_alias_directive*s in the immediately containing compilation unit or namespace body. In the example
 ```csharp
 namespace N1.N2 {}
 
@@ -414,17 +406,13 @@ The *namespace_name* referenced by a *using_namespace_directive* is resolved in 
 A *namespace_member_declaration* is either a *namespace_declaration* ([Namespace declarations](namespaces.md#namespace-declarations)) or a *type_declaration* ([Type declarations](namespaces.md#type-declarations)).
 
 ```antlr
-namespace_member_declarations
-    : namespace_member_declaration+
-    ;
-
 namespace_member_declaration
     : namespace_declaration
     | type_declaration
     ;
 ```
 
-A compilation unit or a namespace body can contain *namespace_member_declarations*, and such declarations contribute new members to the underlying declaration space of the containing compilation unit or namespace body.
+A compilation unit or a namespace body can contain *namespace_member_declaration*s, and such declarations contribute new members to the underlying declaration space of the containing compilation unit or namespace body.
 
 ## Type declarations
 
