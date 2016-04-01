@@ -1833,7 +1833,7 @@ If optional parameters occur in an implementing partial method declaration ([Par
 
 A *parameter_array* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), a `params` modifier, an *array_type*, and an *identifier*. A parameter array declares a single parameter of the given array type with the given name. The *array_type* of a parameter array must be a single-dimensional array type ([Array types](arrays.md#array-types)). In a method invocation, a parameter array permits either a single argument of the given array type to be specified, or it permits zero or more arguments of the array element type to be specified. Parameter arrays are described further in [Parameter arrays](classes.md#parameter-arrays).
 
-A *parameter_array* may occur after an optional parameter, but cannot have a default value – the omission of arguments for a *parameter_array* would instead result in the creation of an empty array.
+A *parameter_array* may occur after an optional parameter, but cannot have a default value - the omission of arguments for a *parameter_array* would instead result in the creation of an empty array.
 
 The following example illustrates different kinds of parameters:
 ```csharp
@@ -1948,7 +1948,7 @@ class Test
     static void SplitPath(string path, out string dir, out string name) {
         int i = path.Length;
         while (i > 0) {
-            char ch = path[i – 1];
+            char ch = path[i - 1];
             if (ch == '\\' || ch == '/' || ch == ':') break;
             i--;
         }
@@ -2465,7 +2465,7 @@ public static class Extensions
     }
 
     public static T[] Slice<T>(this T[] source, int index, int count) {
-        if (index < 0 || count < 0 || source.Length – index < count)
+        if (index < 0 || count < 0 || source.Length - index < count)
             throw new ArgumentException();
         T[] result = new T[count];
         Array.Copy(source, index, result, 0, count);
@@ -3159,13 +3159,13 @@ public class Button: Control
 ```
 `Click` is used as a field within the `Button` class. As the example demonstrates, the field can be examined, modified, and used in delegate invocation expressions. The `OnClick` method in the `Button` class "raises" the `Click` event. The notion of raising an event is precisely equivalent to invoking the delegate represented by the event—thus, there are no special language constructs for raising events. Note that the delegate invocation is preceded by a check that ensures the delegate is non-null.
 
-Outside the declaration of the `Button` class, the `Click` member can only be used on the left-hand side of the `+=` and `–=` operators, as in
+Outside the declaration of the `Button` class, the `Click` member can only be used on the left-hand side of the `+=` and `-=` operators, as in
 ```csharp
 b.Click += new EventHandler(...);
 ```
 which appends a delegate to the invocation list of the `Click` event, and
 ```csharp
-b.Click –= new EventHandler(...);
+b.Click -= new EventHandler(...);
 ```
 which removes a delegate from the invocation list of the `Click` event.
 
@@ -3195,7 +3195,7 @@ class X
     }
 }
 ```
-Within the class `X`, references to `Ev` on` the left-hand side of the `+=` and `–=` operators cause the add and remove accessors to be invoked. All other references to `Ev` are compiled to reference the hidden field `__Ev` instead ([Member access](expressions.md#member-access)). The name "`__Ev`" is arbitrary; the hidden field could have any name or no name at all.
+Within the class `X`, references to `Ev` on` the left-hand side of the `+=` and `-=` operators cause the add and remove accessors to be invoked. All other references to `Ev` are compiled to reference the hidden field `__Ev` instead ([Member access](expressions.md#member-access)). The name "`__Ev`" is arbitrary; the hidden field could have any name or no name at all.
 
 ### Event accessors
 
@@ -3413,7 +3413,7 @@ class CountPrimes
 
 Note that the syntax for accessing elements of the `BitArray` is precisely the same as for a `bool[]`.
 
-The following example shows a 26 * 10 grid class that has an indexer with two parameters. The first parameter is required to be an upper- or lowercase letter in the range A–Z, and the second is required to be an integer in the range 0–9.
+The following example shows a 26 * 10 grid class that has an indexer with two parameters. The first parameter is required to be an upper- or lowercase letter in the range A-Z, and the second is required to be an integer in the range 0-9.
 
 ```csharp
 using System;
@@ -3840,7 +3840,7 @@ class B: A
         items.Add("default");
     }
 
-    public B(int n): base(n – 1) {
+    public B(int n): base(n - 1) {
         max = n;
     }
 }
@@ -3880,10 +3880,10 @@ class B: A
         items.Add("default");
     }
 
-    public B(int n): base(n – 1) {
+    public B(int n): base(n - 1) {
         sqrt2 = Math.Sqrt(2.0);      // Variable initializer
         items = new ArrayList(100);  // Variable initializer
-        A(n – 1);                    // Invoke A(int) constructor
+        A(n - 1);                    // Invoke A(int) constructor
         max = n;
     }
 }
