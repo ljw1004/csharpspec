@@ -80,7 +80,7 @@ This tag provides a mechanism to indicate that a fragment of text within a descr
 
 __Syntax:__
 
-```csharp
+```xml
 <c>text</c>
 ```
 
@@ -102,7 +102,7 @@ This tag is used to set one or more lines of source code or program output in so
 
 __Syntax:__
 
-```csharp
+```xml
 <code>source code or program output</code>
 ```
 
@@ -132,7 +132,7 @@ This tag allows example code within a comment, to specify how a method or other 
 
 __Syntax:__
 
-```csharp
+```xml
 <example>description</example>
 ```
 
@@ -146,7 +146,7 @@ This tag provides a way to document the exceptions a method can throw.
 
 __Syntax:__
 
-```csharp
+```xml
 <exception cref="member">description</exception>
 ```
 
@@ -178,7 +178,7 @@ This tag allows including information from an XML document that is external to t
 
 __Syntax:__
 
-```csharp
+```
 <include file="filename" path="xpath" />
 ```
 
@@ -281,7 +281,7 @@ This tag is for use inside other tags, such as `<summary>` ([<remark>](documenta
 
 __Syntax:__
 
-```csharp
+```xml
 <para>content</para>
 ```
 
@@ -305,7 +305,7 @@ This tag is used to describe a parameter for a method, constructor, or indexer.
 
 __Syntax:__
 
-```csharp
+```xml
 <param name="name">description</param>
 ```
 
@@ -333,7 +333,7 @@ This tag is used to indicate that a word is a parameter. The documentation file 
 
 __Syntax:__
 
-```csharp
+```xml
 <paramref name="name"/>
 ```
 
@@ -359,7 +359,7 @@ This tag allows the security accessibility of a member to be documented.
 
 __Syntax:__
 
-```csharp
+```xml
 <permission cref="member">description</permission>
 ```
 
@@ -385,7 +385,7 @@ This tag is used to specify extra information about a type. (Use `<summary>` ([<
 
 __Syntax:__
 
-```csharp
+```xml
 <remark>description</remark>
 ```
 
@@ -409,7 +409,7 @@ This tag is used to describe the return value of a method.
 
 __Syntax:__
 
-```csharp
+```xml
 <returns>description</returns>
 ```
 
@@ -432,7 +432,7 @@ This tag allows a link to be specified within text. Use `<seealso>` ([<seealso>]
 
 __Syntax:__
 
-```csharp
+```xml
 <see cref="member"/>
 ```
 
@@ -465,7 +465,7 @@ This tag allows an entry to be generated for the See Also section. Use `<see>` (
 
 __Syntax:__
 
-```csharp
+```xml
 <seealso cref="member"/>
 ```
 
@@ -489,7 +489,7 @@ This tag can be used to describe a type or a member of a type. Use `<remark>` ([
 
 __Syntax:__
 
-```csharp
+```xml
 <summary>description</summary>
 ```
 
@@ -509,7 +509,7 @@ This tag allows a property to be described.
 
 __Syntax:__
 
-```csharp
+```xml
 <value>property description</value>
 ```
 
@@ -532,7 +532,7 @@ This tag is used to describe a generic type parameter for a class, struct, inter
 
 __Syntax:__
 
-```csharp
+```xml
 <typeparam name="name">description</typeparam>
 ```
 
@@ -554,7 +554,7 @@ This tag is used to indicate that a word is a type parameter. The documentation 
 
 __Syntax:__
 
-```csharp
+```xml
 <typeparamref name="name"/>
 ```
 

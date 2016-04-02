@@ -164,10 +164,10 @@ The following table summarizes C#'s numeric types.
 
 | __Category__      | __Bits__ | __Type__  | __Range/Precision__ |
 |-------------------|----------|-----------|---------------------|
-| Signed integral   | 8        | `sbyte`   | –128...127 |
-|                   | 16       | `short`   | –32,768...32,767 |
-|                   | 32       | `int`     | –2,147,483,648...2,147,483,647 |
-|                   | 64       | `long`    | –9,223,372,036,854,775,808...9,223,372,036,854,775,807 |
+| Signed integral   | 8        | `sbyte`   | -128...127 |
+|                   | 16       | `short`   | -32,768...32,767 |
+|                   | 32       | `int`     | -2,147,483,648...2,147,483,647 |
+|                   | 64       | `long`    | -9,223,372,036,854,775,808...9,223,372,036,854,775,807 |
 | Unsigned integral | 8        | `byte`    | 0...255 |
 |                   | 16       | `ushort`  | 0...65,535 |
 |                   | 32       | `uint`    | 0...4,294,967,295 |
@@ -264,7 +264,7 @@ The following table summarizes C#'s operators, listing the operator categories i
 |                                  | `x / y`           | Division |
 |                                  | `x % y`           | Remainder |
 | Additive                         | `x + y`           | Addition, string concatenation, delegate combination |
-|                                  | `x – y`           | Subtraction, delegate removal |
+|                                  | `x - y`           | Subtraction, delegate removal |
 | Shift                            | `x << y`          | Shift left |
 |                                  | `x >> y`          | Shift right |
 | Relational and type testing      | `x < y`           | Less than |
@@ -513,7 +513,7 @@ static void Main(string[] args) {
         Console.WriteLine(e.Message);
     }
     finally {
-        Console.WriteLine(“Good bye!”);
+        Console.WriteLine("Good bye!");
     }
 }
 ```

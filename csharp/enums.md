@@ -92,7 +92,7 @@ enum Color: uint
 }
 ```
 
-results in a compile-time error because the constant values `-1`, `-2`, and `–3` are not in the range of the underlying integral type `uint`.
+results in a compile-time error because the constant values `-1`, `-2`, and `-3` are not in the range of the underlying integral type `uint`.
 
 Multiple enum members may share the same associated value. The example
 

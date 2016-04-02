@@ -515,11 +515,11 @@ public struct DBBool
     public static readonly DBBool False = new DBBool(-1);
     public static readonly DBBool True = new DBBool(1);
 
-    // Private field that stores –1, 0, 1 for False, Null, True.
+    // Private field that stores -1, 0, 1 for False, Null, True.
 
     sbyte value;
 
-    // Private instance constructor. The value parameter must be –1, 0, or 1.
+    // Private instance constructor. The value parameter must be -1, 0, or 1.
 
     DBBool(int value) {
         this.value = (sbyte)value;
