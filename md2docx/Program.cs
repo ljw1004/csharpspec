@@ -1,5 +1,8 @@
 ﻿// TODO:
 //
+// * Something goofy is going on with the TOC in the Word document. The field codes are broken, so it
+//   isn't recognized as a field. And if I edit the field in Word (e.g. to add page numbers) then all
+//   within-spec section links get broken. Also, md2docx should only generate level 1+2 TOC headings.
 // * Make a better "report error" thing, and distinguish fatal from non-fatal (e.g. duplicate section title)
 
 using Grammar2Html;
