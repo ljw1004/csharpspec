@@ -303,7 +303,8 @@ static class Antlr
                 {
                     if (s.Substring(pos, 2) == "\\\\") { t += "\\"; pos += 2; }
                     else if (s.Substring(pos, 2) == "\\'") { t += "'"; pos += 2; }
-                    else if (s.Substring(pos, 1) == "\\") throw new Exception("Terminals may not include \\ except in \\\\ or \\'");
+                    else if (s.Substring(pos, 2) == "\\\"") { t += "\""; pos += 2; }
+                    else if (s.Substring(pos, 1) == "\\") throw new Exception("Terminals may not include \\ except in \\\\ or \\' or \\\"");
                     else { t += s[pos]; pos++; }
                 }
                 if (t.Contains("\r") || t.Contains("\n")) throw new Exception("Terminals must be single-line");
