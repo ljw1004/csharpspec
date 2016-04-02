@@ -3,7 +3,7 @@
   "version": 1,
   "targets": {
     ".NETFramework,Version=v4.6": {
-      "csharp2colorized/1.0.1": {
+      "csharp2colorized/1.0.3": {
         "dependencies": {
           "Microsoft.CodeAnalysis": "1.2.1"
         },
@@ -75,10 +75,10 @@
           "lib/net45/FSharpVSPowerTools.Core.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis/1.2.0-rc": {
+      "Microsoft.CodeAnalysis/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.2.1]",
+          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.2.1]"
         }
       },
       "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
@@ -86,11 +86,11 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.Common/1.2.1": {
         "dependencies": {
           "Microsoft.CodeAnalysis.Analyzers": "1.1.0",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.2.0-rc3-23811"
+          "System.Reflection.Metadata": "1.2.0"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -99,9 +99,9 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.CSharp/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -110,10 +110,10 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.CSharp": "[1.2.1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
@@ -122,9 +122,9 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.VisualBasic/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.VisualBasic/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "1.2.0-rc"
+          "Microsoft.CodeAnalysis.Common": "1.2.1"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
@@ -133,10 +133,10 @@
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.VisualBasic": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.VisualBasic": "[1.2.1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
@@ -145,9 +145,9 @@
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.Workspaces.Common/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.Workspaces.Common/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.2.0-rc]",
+          "Microsoft.CodeAnalysis.Common": "[1.2.1]",
           "Microsoft.Composition": "1.0.27"
         },
         "compile": {
@@ -225,15 +225,15 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Reflection.Metadata/1.2.0-rc3-23811": {
+      "System.Reflection.Metadata/1.2.0": {
         "dependencies": {
           "System.Collections.Immutable": "1.1.37"
         },
         "compile": {
-          "lib/dotnet5.2/System.Reflection.Metadata.dll": {}
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
         },
         "runtime": {
-          "lib/dotnet5.2/System.Reflection.Metadata.dll": {}
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
         }
       },
       "System.Resources.ResourceManager/4.0.0": {
@@ -270,7 +270,7 @@
       }
     },
     ".NETFramework,Version=v4.6/win": {
-      "csharp2colorized/1.0.1": {
+      "csharp2colorized/1.0.3": {
         "dependencies": {
           "Microsoft.CodeAnalysis": "1.2.1"
         },
@@ -342,10 +342,10 @@
           "lib/net45/FSharpVSPowerTools.Core.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis/1.2.0-rc": {
+      "Microsoft.CodeAnalysis/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.2.1]",
+          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.2.1]"
         }
       },
       "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
@@ -353,11 +353,11 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.Common/1.2.1": {
         "dependencies": {
           "Microsoft.CodeAnalysis.Analyzers": "1.1.0",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.2.0-rc3-23811"
+          "System.Reflection.Metadata": "1.2.0"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -366,9 +366,9 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.CSharp/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -377,10 +377,10 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.CSharp": "[1.2.1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
@@ -389,9 +389,9 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.VisualBasic/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.VisualBasic/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "1.2.0-rc"
+          "Microsoft.CodeAnalysis.Common": "1.2.1"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
@@ -400,10 +400,10 @@
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.VisualBasic": "[1.2.0-rc]",
-          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.0-rc]"
+          "Microsoft.CodeAnalysis.VisualBasic": "[1.2.1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.2.1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
@@ -412,9 +412,9 @@
           "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.Workspaces.Common/1.2.0-rc": {
+      "Microsoft.CodeAnalysis.Workspaces.Common/1.2.1": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.2.0-rc]",
+          "Microsoft.CodeAnalysis.Common": "[1.2.1]",
           "Microsoft.Composition": "1.0.27"
         },
         "compile": {
@@ -492,15 +492,15 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Reflection.Metadata/1.2.0-rc3-23811": {
+      "System.Reflection.Metadata/1.2.0": {
         "dependencies": {
           "System.Collections.Immutable": "1.1.37"
         },
         "compile": {
-          "lib/dotnet5.2/System.Reflection.Metadata.dll": {}
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
         },
         "runtime": {
-          "lib/dotnet5.2/System.Reflection.Metadata.dll": {}
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
         }
       },
       "System.Resources.ResourceManager/4.0.0": {
@@ -538,11 +538,11 @@
     }
   },
   "libraries": {
-    "csharp2colorized/1.0.1": {
-      "sha512": "ooF4E3jILOGywPcsJ8JePqLvD5NSaGSGqCXJPWmZr2t+BXCpTgGOmKeRdSe2M93dyGf1mbsFE1fg58d8gxchwQ==",
+    "csharp2colorized/1.0.3": {
+      "sha512": "M0DIq9GOnot54laPcd8AckOR1FU0xEHNhHm70iaqR0Ka8LA/XhdbEqs+s029KLSWsB+p+1Q7wPTisUpoe3BQKA==",
       "type": "package",
       "files": [
-        "csharp2colorized.1.0.1.nupkg.sha512",
+        "csharp2colorized.1.0.3.nupkg.sha512",
         "csharp2colorized.nuspec",
         "lib/net45/csharp2colorized.dll",
         "lib/net45/csharp2colorized.pdb",
@@ -671,11 +671,11 @@
         "lib/net45/FSharpVSPowerTools.Core.xml"
       ]
     },
-    "Microsoft.CodeAnalysis/1.2.0-rc": {
-      "sha512": "cxMkr88db0Y3kdkFzNvd5SpjdbXMOLW0M5svJVl4SoIWNGcHnUsW1RD5dwFF9BRw3XH8GCXiWe8HiFi6+Z6/mA==",
+    "Microsoft.CodeAnalysis/1.2.1": {
+      "sha512": "QUYlq3H3jyYO+j4XBsq+HTVtQ17zxMTNkEjV8XSmGZQVC+j5SEps3t/ifYdGbOsmz6yJtGMSWRVavHa0z4wjpQ==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.nuspec",
         "ThirdPartyNotices.rtf"
       ]
@@ -695,11 +695,11 @@
         "tools/uninstall.ps1"
       ]
     },
-    "Microsoft.CodeAnalysis.Common/1.2.0-rc": {
-      "sha512": "j3f1iWl/bnXtmloAGY9ZWxW/tXEN/z6QDvxsRnyC2b1bRmNLZ3Jo5B4LyCBawvJTodCCYPu9Tc/gwSM/lXMC/w==",
+    "Microsoft.CodeAnalysis.Common/1.2.1": {
+      "sha512": "6ISPRzxfBJoWHb2YXnTcmjDRXgT0sqg7ZZXAhtH5PeQsdgCIXSOLcghqamnHbyMDlebC3V2in10BoHMVSRJOWw==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.Common.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Common.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.Common.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.dll",
@@ -708,11 +708,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.CSharp/1.2.0-rc": {
-      "sha512": "EbxOxDdyqBdFUtxij05R1O0HsgjzLn3zht7o10sII/6CRdugvlLCnwXWEvoCGk5pWe2LTD5tFC7WkRXSa4z/+w==",
+    "Microsoft.CodeAnalysis.CSharp/1.2.1": {
+      "sha512": "7ihGOkZEkMUGmd/xWFxOjPrcRMgvjx42JLSu2u9s4SwenRMTm2C1umkbsc4zgbmRUMC7W8B5PqRwjuy4vatS2A==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.CSharp.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.dll",
@@ -721,11 +721,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.0-rc": {
-      "sha512": "gE+BbTWAM28Vtyy8yC3wbRrYs9x6D/jfEMe7lYosD+S+GXZmqYUntZ9RzQfdALvFcxb9lp1OnnzTK8aVtSav9Q==",
+    "Microsoft.CodeAnalysis.CSharp.Workspaces/1.2.1": {
+      "sha512": "SSeNF4LVMLkryHXE8u7kHOlzL0yi5RFSEDUdGoewdqgKVFkN9wHyTsouMi06G6EGyuw/E/l6SG+Ji/idslC3wQ==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.Workspaces.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
@@ -734,11 +734,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.Workspaces.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.VisualBasic/1.2.0-rc": {
-      "sha512": "eJ9UPL3AGauwB8VMBpoIBps9rKRxegQuMZE2ydtwtbpjHPGkRgqND1IIaVoHT65pAjfoe9ZB5+43OYEFh1lu0Q==",
+    "Microsoft.CodeAnalysis.VisualBasic/1.2.1": {
+      "sha512": "ZwNjviCLCsk+WuOymee50x0bXMGRgQLuV42vY17QwgPT6h1EWVORCvUZSvtXNwlVrlHtlZRKgXx+WQKcDqanfA==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.VisualBasic.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.VisualBasic.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.VisualBasic.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll",
@@ -747,11 +747,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.0-rc": {
-      "sha512": "nMylBv+nL6Fzev1nn9oS4b621qJMdMY8kr8DRUaUgBHkrdNl0IRTtyjtkHeaS/2r+a2+kssms2ztU2XbkbdVxA==",
+    "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.2.1": {
+      "sha512": "EhXTgaDQhnG6qXVMXrfq6orsv8zZ4JOcz9WqRdGf4/ClZtrZMxb/iygr7BTHXe4OfBoYxtOdox0ddH0X2MYyWg==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.VisualBasic.Workspaces.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
@@ -760,11 +760,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.Workspaces.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.Workspaces.Common/1.2.0-rc": {
-      "sha512": "K77nqW5DEghjx00qCkZMMuYzLtvMBCV1rUBdEQurT/42tf1Or+1tQR++13GU+ZOiZHbb3Hd+GYhj2cV33jLMSA==",
+    "Microsoft.CodeAnalysis.Workspaces.Common/1.2.1": {
+      "sha512": "gw9n8NwH0s1I3g6LZMK7LEVDb+lZjqWIGaeMYX4EFhSSX7y9Eyz6mgn2v7kei3GH5J4j8qgwHoRLU3jipoNStA==",
       "type": "package",
       "files": [
-        "Microsoft.CodeAnalysis.Workspaces.Common.1.2.0-rc.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Workspaces.Common.1.2.1.nupkg.sha512",
         "Microsoft.CodeAnalysis.Workspaces.Common.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll",
@@ -978,16 +978,16 @@
         "ref/wpa81/_._"
       ]
     },
-    "System.Reflection.Metadata/1.2.0-rc3-23811": {
-      "sha512": "gAOQV1dsGyQfQUuzsCYFLMlI6BhfK1/2aA7JGf6gJphaLgjU4dV4hzjbE0iZXgo61VUuda2LtCBrWWZBw5897Q==",
+    "System.Reflection.Metadata/1.2.0": {
+      "sha512": "ubQKFCNYPwhqPXPLjRKCvTDR2UvL5L5+Tm181D/5kl/df7264AuXDi2j2Bf5DxplBxevq8eUH9LRomcFCXTQKw==",
       "type": "package",
       "files": [
-        "System.Reflection.Metadata.1.2.0-rc3-23811.nupkg.sha512",
+        "System.Reflection.Metadata.1.2.0.nupkg.sha512",
         "System.Reflection.Metadata.nuspec",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
-        "lib/dotnet5.2/System.Reflection.Metadata.dll",
-        "lib/dotnet5.2/System.Reflection.Metadata.xml",
+        "lib/netstandard1.1/System.Reflection.Metadata.dll",
+        "lib/netstandard1.1/System.Reflection.Metadata.xml",
         "lib/portable-net45+win8/System.Reflection.Metadata.dll",
         "lib/portable-net45+win8/System.Reflection.Metadata.xml"
       ]
@@ -1171,8 +1171,8 @@
       "DocumentFormat.OpenXml >= 2.5.0",
       "FSharp.Core >= 4.0.0.1",
       "FSharp.Formatting >= 2.14.0",
-      "Microsoft.CodeAnalysis >= 1.2.0-rc",
-      "csharp2colorized >= 1.0.1"
+      "Microsoft.CodeAnalysis >= 1.2.1",
+      "csharp2colorized >= 1.0.3"
     ],
     ".NETFramework,Version=v4.6": []
   }

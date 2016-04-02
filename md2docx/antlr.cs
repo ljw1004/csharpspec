@@ -91,18 +91,18 @@ static class Antlr
     }
 
 
-    public static IEnumerable<ColorizedLine> Colorize(string antlr)
+    public static IEnumerable<ColorizedLine> ColorizeAntlr(string antlr)
     {
         var grammar = ReadString(antlr, "dummyGrammarName");
-        return CSharp2Colorized.CSharp2Colorized.Words2Lines(Colorize(grammar));
+        return Colorize.Words2Lines(ColorizeAntlr(grammar));
     }
 
-    private static IEnumerable<ColorizedWord> Colorize(Grammar grammar)
+    private static IEnumerable<ColorizedWord> ColorizeAntlr(Grammar grammar)
     {
-        foreach (var p in grammar.Productions) foreach (var word in Colorize(p)) yield return word;
+        foreach (var p in grammar.Productions) foreach (var word in ColorizeAntlr(p)) yield return word;
     }
 
-    private static IEnumerable<ColorizedWord> Colorize(Production p)
+    private static IEnumerable<ColorizedWord> ColorizeAntlr(Production p)
     {
         if (p.EBNF == null && string.IsNullOrEmpty(p.Comment))
         {
@@ -119,14 +119,14 @@ static class Antlr
             yield return Col(":", "PlainText");
             if (p.RuleStartsOnNewLine) { yield return null; yield return Col("\t| ", "PlainText"); }
             else yield return Col(" ", "PlainText");
-            foreach (var word in Colorize(p.EBNF)) yield return word;
+            foreach (var word in ColorizeAntlr(p.EBNF)) yield return word;
             yield return Col(";", "PlainText");
             if (!string.IsNullOrEmpty(p.Comment)) yield return Col("  //" + p.Comment, "Comment");
             yield return null;
         }
     }
 
-    public static IEnumerable<ColorizedWord> Colorize(EBNF ebnf)
+    public static IEnumerable<ColorizedWord> ColorizeAntlr(EBNF ebnf)
     {
         var lastWasTab = false;
         EBNF prevElement = null;
@@ -148,13 +148,13 @@ static class Antlr
                 if (ebnf.Children[0].Kind == EBNFKind.Choice || ebnf.Children[0].Kind == EBNFKind.Sequence)
                 {
                     yield return Col("( ", "PlainText");
-                    foreach (var word in Colorize(ebnf.Children[0])) yield return word;
+                    foreach (var word in ColorizeAntlr(ebnf.Children[0])) yield return word;
                     yield return Col(" )", "PlainText");
                     yield return Col(op, "PlainText");
                 }
                 else
                 {
-                    foreach (var word in Colorize(ebnf.Children[0])) yield return word;
+                    foreach (var word in ColorizeAntlr(ebnf.Children[0])) yield return word;
                     yield return Col(op, "PlainText");
                 }
                 break;
@@ -162,7 +162,7 @@ static class Antlr
                 foreach (var c in ebnf.Children)
                 {
                     if (prevElement != null) yield return Col(lastWasTab ? "| " : "| ", "PlainText");
-                    foreach (var word in Colorize(c)) { yield return word; lastWasTab = (word?.Text == "\t"); }
+                    foreach (var word in ColorizeAntlr(c)) { yield return word; lastWasTab = (word?.Text == "\t"); }
                     prevElement = c;
                 }
                 break;
@@ -173,13 +173,13 @@ static class Antlr
                     if (c.Kind == EBNFKind.Choice)
                     {
                         yield return Col("( ", "PlainText");
-                        foreach (var word in Colorize(c)) yield return word;
+                        foreach (var word in ColorizeAntlr(c)) yield return word;
                         yield return Col(" )", "PlainText");
                         lastWasTab = false;
                     }
                     else
                     {
-                        foreach (var word in Colorize(c)) { yield return word; lastWasTab = (word?.Text == "\t"); }
+                        foreach (var word in ColorizeAntlr(c)) { yield return word; lastWasTab = (word?.Text == "\t"); }
                     }
                     prevElement = c;
                 }
