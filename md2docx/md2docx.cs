@@ -480,10 +480,10 @@ class MarkdownSpec
                 var runs = new List<Run>();
                 var onFirstLine = true;
                 IEnumerable<ColorizedLine> lines;
-                if (lang == "csharp" || lang == "c#" || lang == "cs") lines = CSharp2Colorized.CSharp2Colorized.ColorizeCSharp(code);
-                else if (lang == "vb" || lang == "vbnet" || lang == "vb.net") lines = CSharp2Colorized.CSharp2Colorized.ColorizeVB(code);
-                else if (lang == "" || lang == "xml") lines = CSharp2Colorized.CSharp2Colorized.ColorizePlainText(code);
-                else if (lang == "antlr") lines = Antlr.Colorize(code);
+                if (lang == "csharp" || lang == "c#" || lang == "cs") lines = Colorize.CSharp(code);
+                else if (lang == "vb" || lang == "vbnet" || lang == "vb.net") lines = Colorize.VB(code);
+                else if (lang == "" || lang == "xml") lines = Colorize.PlainText(code);
+                else if (lang == "antlr") lines = Antlr.ColorizeAntlr(code);
                 else throw new NotSupportedException($"unrecognized language {lang}");
                 foreach (var line in lines)
                 {
