@@ -76,7 +76,7 @@ The documentation generator must accept and process any tag that is valid accord
 
 ### `<c>`
 
-This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` ([<code>](documentation-comments.md#code)).
+This tag provides a mechanism to indicate that a fragment of text within a description should be set in a special font such as that used for a block of code. For lines of actual code, use `<code>` ([`<code>`](documentation-comments.md#code)).
 
 __Syntax:__
 
@@ -98,7 +98,7 @@ public class Point
 
 ### `<code>`
 
-This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` ([<c>](documentation-comments.md#c)).
+This tag is used to set one or more lines of source code or program output in some special font. For small code fragments in narrative, use `<c>` ([`<c>`](documentation-comments.md#c)).
 
 __Syntax:__
 
@@ -128,7 +128,7 @@ public void Translate(int xor, int yor) {
 
 ### `<example>`
 
-This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` ([<code>](documentation-comments.md#code)) as well.
+This tag allows example code within a comment, to specify how a method or other library member may be used. Ordinarily, this would also involve use of the tag `<code>` ([`<code>`](documentation-comments.md#code)) as well.
 
 __Syntax:__
 
@@ -138,7 +138,7 @@ __Syntax:__
 
 __Example:__
 
-See `<code>` ([<code>](documentation-comments.md#code)) for an example.
+See `<code>` ([`<code>`](documentation-comments.md#code)) for an example.
 
 ### `<exception>`
 
@@ -277,7 +277,7 @@ public class MyClass
 
 ### `<para>`
 
-This tag is for use inside other tags, such as `<summary>` ([<remark>](documentation-comments.md#remark)) or `<returns>` ([<returns>](documentation-comments.md#returns)), and permits structure to be added to text.
+This tag is for use inside other tags, such as `<summary>` ([`<remark>`](documentation-comments.md#remark)) or `<returns>` ([`<returns>`](documentation-comments.md#returns)), and permits structure to be added to text.
 
 __Syntax:__
 
@@ -381,7 +381,7 @@ public static void Test() {
 
 ### `<remark>`
 
-This tag is used to specify extra information about a type. (Use `<summary>` ([<summary>](documentation-comments.md#summary)) to describe the type itself and the members of a type.)
+This tag is used to specify extra information about a type. (Use `<summary>` ([`<summary>`](documentation-comments.md#summary)) to describe the type itself and the members of a type.)
 
 __Syntax:__
 
@@ -428,7 +428,7 @@ public override string ToString() {
 
 ### `<see>`
 
-This tag allows a link to be specified within text. Use `<seealso>` ([<seealso>](documentation-comments.md#seealso)) to indicate text that is to appear in a See Also section.
+This tag allows a link to be specified within text. Use `<seealso>` ([`<seealso>`](documentation-comments.md#seealso)) to indicate text that is to appear in a See Also section.
 
 __Syntax:__
 
@@ -461,7 +461,7 @@ public void Translate(int xor, int yor) {
 
 ### `<seealso>`
 
-This tag allows an entry to be generated for the See Also section. Use `<see>` ([<see>](documentation-comments.md#see)) to specify a link from within text.
+This tag allows an entry to be generated for the See Also section. Use `<see>` ([`<see>`](documentation-comments.md#see)) to specify a link from within text.
 
 __Syntax:__
 
@@ -485,7 +485,7 @@ public override bool Equals(object o) {
 
 ### `<summary>`
 
-This tag can be used to describe a type or a member of a type. Use `<remark>` ([<remark>](documentation-comments.md#remark)) to describe the type itself.
+This tag can be used to describe a type or a member of a type. Use `<remark>` ([`<remark>`](documentation-comments.md#remark)) to describe the type itself.
 
 __Syntax:__
 
