@@ -53,26 +53,26 @@ Note carefully that the documentation file does not provide full information abo
 The documentation generator must accept and process any tag that is valid according to the rules of XML. The following tags provide commonly used functionality in user documentation. (Of course, other tags are possible.)
 
 
-| __Tag__          | __Section__ | __Purpose__                                            |
-|------------------|-------------|--------------------------------------------------------|
-| `<c>`            | 19.2.1      | Set text in a code-like font                           | 
-| `<code>`         | 19.2.2      | Set one or more lines of source code or program output |
-| `<example>`      | 19.2.3      | Indicate an example                                    |
-| `<exception>`    | 19.2.4      | Identifies the exceptions a method can throw           |
-| `<include>`      | 19.2.5      | Includes XML from an external file                     |
-| `<list>`         | 19.2.6      | Create a list or table                                 |
-| `<para>`         | 19.2.7      | Permit structure to be added to text                   |
-| `<param>`        | 19.2.8      | Describe a parameter for a method or constructor       |
-| `<paramref>`     | 19.2.9      | Identify that a word is a parameter name               |
-| `<permission>`   | 19.2.10     | Document the security accessibility of a member        |
-| `<remark>`       | 19.2.11     | Describe additional information about a type           |
-| `<returns>`      | 19.2.12     | Describe the return value of a method                  |
-| `<see>`          | 19.2.13     | Specify a link                                         |
-| `<seealso>`      | 19.2.14     | Generate a See Also entry                              |
-| `<summary>`      | 19.2.15     | Describe a type or a member of a type                  |
-| `<value>`        | 19.2.16     | Describe a property                                    |
-| `<typeparam>`    |             | Describe a generic type parameter                      |
-| `<typeparamref>` |             | Identify that a word is a type parameter name          |
+| __Tag__          | __Section__                                            | __Purpose__                                            |
+|------------------|--------------------------------------------------------|--------------------------------------------------------|
+| `<c>`            | [`<c>`](documentation-comments.md#c)                   | Set text in a code-like font                           | 
+| `<code>`         | [`<code>`](documentation-comments.md#code)             | Set one or more lines of source code or program output |
+| `<example>`      | [`<example>`](documentation-comments.md#example)       | Indicate an example                                    |
+| `<exception>`    | [`<exception>`](documentation-comments.md#exception)   | Identifies the exceptions a method can throw           |
+| `<include>`      | [`<include>`](documentation-comments.md#include)       | Includes XML from an external file                     |
+| `<list>`         | [`<list>`](documentation-comments.md#list)             | Create a list or table                                 |
+| `<para>`         | [`<para>`](documentation-comments.md#para)             | Permit structure to be added to text                   |
+| `<param>`        | [`<param>`](documentation-comments.md#param)           | Describe a parameter for a method or constructor       |
+| `<paramref>`     | [`<paramref>`](documentation-comments.md#paramref)     | Identify that a word is a parameter name               |
+| `<permission>`   | [`<permission>`](documentation-comments.md#permission) | Document the security accessibility of a member        |
+| `<remark>`       | [`<remark>`](documentation-comments.md#remark)         | Describe additional information about a type           |
+| `<returns>`      | [`<returns>`](documentation-comments.md#returns)       | Describe the return value of a method                  |
+| `<see>`          | [`<see>`](documentation-comments.md#see)               | Specify a link                                         |
+| `<seealso>`      | [`<seealso>`](documentation-comments.md#seealso)       | Generate a See Also entry                              |
+| `<summary>`      | [`<summary>`](documentation-comments.md#summary)       | Describe a type or a member of a type                  |
+| `<value>`        | [`<value>`](documentation-comments.md#value)           | Describe a property                                    |
+| `<typeparam>`    |                                                        | Describe a generic type parameter                      |
+| `<typeparamref>` |                                                        | Identify that a word is a type parameter name          |
 
 ### `<c>`
 
