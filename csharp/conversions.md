@@ -144,12 +144,12 @@ The following example illustrates implicit dynamic conversions:
 object o  = "object"
 dynamic d = "dynamic";
 
-string s1 = o; // Fails at compile-time - no conversion exists
+string s1 = o; // Fails at compile-time -- no conversion exists
 string s2 = d; // Compiles and succeeds at run-time
-int i     = d; // Compiles but fails at run-time - no conversion exists
+int i     = d; // Compiles but fails at run-time -- no conversion exists
 ```
 
-The assignments to `s2` and `i` both employ implicit dynamic conversions, where the binding of the operations is suspended until run-time. At run-time, implicit conversions are sought from the run-time type of `d` - `string` - to the target type. A conversion is found to `string` but not to `int`.
+The assignments to `s2` and `i` both employ implicit dynamic conversions, where the binding of the operations is suspended until run-time. At run-time, implicit conversions are sought from the run-time type of `d` -- `string` -- to the target type. A conversion is found to `string` but not to `int`.
 
 ### Implicit constant expression conversions
 
@@ -343,7 +343,7 @@ var c1 = (C)o; // Compiles, but explicit reference conversion fails
 var c2 = (C)d; // Compiles and user defined conversion succeeds
 ```
 
-The best conversion of `o` to `C` is found at compile-time to be an explicit reference conversion. This fails at run-time, because `"1"` is not in fact a `C`. The conversion of `d` to `C` however, as an explicit dynamic conversion, is suspended to run-time, where a user defined conversion from the run-time type of `d` - `string` - to `C` is found, and succeeds.
+The best conversion of `o` to `C` is found at compile-time to be an explicit reference conversion. This fails at run-time, because `"1"` is not in fact a `C`. The conversion of `d` to `C` however, as an explicit dynamic conversion, is suspended to run-time, where a user defined conversion from the run-time type of `d` -- `string` -- to `C` is found, and succeeds.
 
 ### Explicit conversions involving type parameters
 
@@ -760,9 +760,9 @@ class Test
     static void G() {
         D1 d1 = F;            // Ok
         D2 d2 = F;            // Ok
-        D3 d3 = F;            // Error - not applicable
-        D4 d4 = F;            // Error - not applicable in normal form
-        D5 d5 = F;            // Error - applicable but not compatible
+        D3 d3 = F;            // Error -- not applicable
+        D4 d4 = F;            // Error -- not applicable in normal form
+        D5 d5 = F;            // Error -- applicable but not compatible
 
     }
 }

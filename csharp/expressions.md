@@ -70,17 +70,17 @@ Console.WriteLine(d);  // dynamic binding to Console.WriteLine(int)
 
 The first two calls are statically bound: the overload of `Console.WriteLine` is picked based on the compile-time type of their argument. Thus, the binding-time is compile-time.
 
-The third call is dynamically bound: the overload of `Console.WriteLine` is picked based on the run-time type of its argument. This happens because the argument is a dynamic expression - its compile-time type is `dynamic`. Thus, the binding-time for the third call is run-time.
+The third call is dynamically bound: the overload of `Console.WriteLine` is picked based on the run-time type of its argument. This happens because the argument is a dynamic expression -- its compile-time type is `dynamic`. Thus, the binding-time for the third call is run-time.
 
 ### Dynamic binding
 
 The purpose of dynamic binding is to allow C# programs to interact with ***dynamic objects***, i.e. objects that do not follow the normal rules of the C# type system. Dynamic objects may be objects from other programming languages with different types systems, or they may be objects that are programmatically setup to implement their own binding semantics for different operations.
 
-The mechanism by which a dynamic object implements its own semantics is implementation defined. A given interface - again implementation defined - is implemented by dynamic objects to signal to the C# run-time that they have special semantics. Thus, whenever operations on a dynamic object are dynamically bound, their own binding semantics, rather than those of C# as specified in this document, take over.
+The mechanism by which a dynamic object implements its own semantics is implementation defined. A given interface -- again implementation defined -- is implemented by dynamic objects to signal to the C# run-time that they have special semantics. Thus, whenever operations on a dynamic object are dynamically bound, their own binding semantics, rather than those of C# as specified in this document, take over.
 
 While the purpose of dynamic binding is to allow interoperation with dynamic objects, C# allows dynamic binding on all objects, whether they are dynamic or not. This allows for a smoother integration of dynamic objects, as the results of operations on them may not themselves be dynamic objects, but are still of a type unknown to the programmer at compile-time. Also dynamic binding can help eliminate error-prone reflection-based code even when no objects involved are dynamic objects.
 
-The following sections describe for each construct in the language exactly when dynamic binding is applied, what compile time checking - if any - is applied, and what the compile-time result and expression classification is.
+The following sections describe for each construct in the language exactly when dynamic binding is applied, what compile time checking -- if any -- is applied, and what the compile-time result and expression classification is.
 
 ### Types of constituent expressions
 
@@ -114,23 +114,23 @@ When an expression contains multiple operators, the ***precedence*** of the oper
 
 The following table summarizes all operators in order of precedence from highest to lowest:
 
-| __Section__ | __Category__                     | __Operators__ | 
-|-------------|----------------------------------|---------------|
-| 7.6         | Primary                          | `x.y`  `f(x)`  `a[x]`  `x++`  `x--`  `new`  `typeof`  `default`  `checked`  `unchecked`  `delegate` | 
-| 7.7         | Unary                            | `+`  `*`  `!`  `~`  `++x`  `--x`  `(T)x` | 
-| 7.8         | Multiplicative                   | `*`  `/`  `%` | 
-| 7.8         | Additive                         | `+`  `-`      | 
-| 7.9         | Shift                            | `<<`  `>>`    | 
-| 7.10        | Relational and type testing      | `<`  `>`  `<=`  `>=`  `is`  `as` | 
-| 7.10        | Equality                         | `==`  `!=`    | 
-| 7.11        | Logical AND                      | `&`           | 
-| 7.11        | Logical XOR                      | `^`           | 
-| 7.11        | Logical OR                       | `|`           | 
-| 7.12        | Conditional AND                  | `&&`          | 
-| 7.12        | Conditional OR                   | `||`          | 
-| 7.13        | Null coalescing                  | `??`          | 
-| 7.14        | Conditional                      | `?:`          | 
-| 7.17, 7.15  | Assignment and lambda expression | `=`  `*=`  `/=`  `%=`  `+=`  `-=`  `<<=`  `>>=`  `&=`  `^=`  `|=`  `=>` | 
+| __Section__                                                                                   | __Category__                | __Operators__ | 
+|-----------------------------------------------------------------------------------------------|-----------------------------|---------------|
+| [Primary expressions](expressions.md#primary-expressions)                                     | Primary                     | `x.y`  `f(x)`  `a[x]`  `x++`  `x--`  `new`  `typeof`  `default`  `checked`  `unchecked`  `delegate` | 
+| [Unary operators](expressions.md#unary-operators)                                             | Unary                       | `+`  `*`  `!`  `~`  `++x`  `--x`  `(T)x` | 
+| [Arithmetic operators](expressions.md#arithmetic-operators)                                   | Multiplicative              | `*`  `/`  `%` | 
+| [Arithmetic operators](expressions.md#arithmetic-operators)                                   | Additive                    | `+`  `-`      | 
+| [Shift operators](expressions.md#shift-operators)                                             | Shift                       | `<<`  `>>`    | 
+| [Relational and type-testing operators](expressions.md#relational-and-type-testing-operators) | Relational and type testing | `<`  `>`  `<=`  `>=`  `is`  `as` | 
+| [Relational and type-testing operators](expressions.md#relational-and-type-testing-operators) | Equality                    | `==`  `!=`    | 
+| [Logical operators](expressions.md#logical-operators)                                         | Logical AND                 | `&`           | 
+| [Logical operators](expressions.md#logical-operators)                                         | Logical XOR                 | `^`           | 
+| [Logical operators](expressions.md#logical-operators)                                         | Logical OR                  | `|`           | 
+| [Conditional logical operators](expressions.md#conditional-logical-operators)                 | Conditional AND             | `&&`          | 
+| [Conditional logical operators](expressions.md#conditional-logical-operators)                 | Conditional OR              | `||`          | 
+| [The null coalescing operator](expressions.md#the-null-coalescing-operator)                   | Null coalescing             | `??`          | 
+| [Conditional operator](expressions.md#conditional-operator)                                   | Conditional                 | `?:`          | 
+| [Assignment operators](expressions.md#assignment-operators), [Anonymous function expressions](expressions.md#anonymous-function-expressions)  | Assignment and lambda expression | `=`  `*=`  `/=`  `%=`  `+=`  `-=`  `<<=`  `>>=`  `&=`  `^=`  `|=`  `=>` | 
 
 When an operand occurs between two operators with the same precedence, the associativity of the operators controls the order in which the operations are performed:
 

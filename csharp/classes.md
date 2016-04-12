@@ -302,7 +302,7 @@ The value type constraint specifies that a type argument used for the type param
 
 Pointer types are never allowed to be type arguments and are not considered to satisfy either the reference type or value type constraints.
 
-If a constraint is a class type, an interface type, or a type parameter, that type specifies a minimal "base type" that every type argument used for that type parameter must support. Whenever a constructed type or generic method is used, the type argument is checked against the constraints on the type parameter at compile-time. The type argument supplied must satisfy the conditions described in section 4.4.4.
+If a constraint is a class type, an interface type, or a type parameter, that type specifies a minimal "base type" that every type argument used for that type parameter must support. Whenever a constructed type or generic method is used, the type argument is checked against the constraints on the type parameter at compile-time. The type argument supplied must satisfy the conditions described in [Satisfying constraints](types.md#satisfying-constraints).
 
 A *class_type* constraint must satisfy the following rules:
 
@@ -1836,7 +1836,7 @@ If optional parameters occur in an implementing partial method declaration ([Par
 
 A *parameter_array* consists of an optional set of *attributes* ([Attributes](attributes.md#attributes)), a `params` modifier, an *array_type*, and an *identifier*. A parameter array declares a single parameter of the given array type with the given name. The *array_type* of a parameter array must be a single-dimensional array type ([Array types](arrays.md#array-types)). In a method invocation, a parameter array permits either a single argument of the given array type to be specified, or it permits zero or more arguments of the array element type to be specified. Parameter arrays are described further in [Parameter arrays](classes.md#parameter-arrays).
 
-A *parameter_array* may occur after an optional parameter, but cannot have a default value - the omission of arguments for a *parameter_array* would instead result in the creation of an empty array.
+A *parameter_array* may occur after an optional parameter, but cannot have a default value -- the omission of arguments for a *parameter_array* would instead result in the creation of an empty array.
 
 The following example illustrates different kinds of parameters:
 ```csharp
