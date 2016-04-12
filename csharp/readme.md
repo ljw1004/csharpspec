@@ -159,17 +159,8 @@ __Version 6__
     * [Stack allocation](unsafe-code.md#stack-allocation)
     * [Dynamic memory allocation](unsafe-code.md#dynamic-memory-allocation)
 * [Documentation comments](documentation-comments.md)
-<<<<<<< HEAD
-    * [Introduction](documentation-comments.md)
-    * [Recommended tags](documentation-comments.md)
-    * [Processing the documentation file](documentation-comments.md)
-    * [An example](documentation-comments.md)
-* Grammar: right-click and save [csharp.html](csharp.html?raw=true) then view it on your desktop. Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). Note: the web browsable version of [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html) is still on C#5.
-
-=======
     * [Introduction](documentation-comments.md#introduction)
     * [Recommended tags](documentation-comments.md#recommended-tags)
     * [Processing the documentation file](documentation-comments.md#processing-the-documentation-file)
     * [An example](documentation-comments.md#an-example)
-* [Grammar](http://ljw1004.github.io/csharpspec/csharp/csharp.html) (also available to download in ANTLR format: [csharp.g4](http://ljw1004.github.io/csharpspec/csharp/csharp.g4))
->>>>>>> refs/remotes/origin/gh-pages
+* Grammar: right-click and save [csharp.html](csharp.html?raw=true) then view it on your desktop. Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). Note: the web browsable version of [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html) is still on C#5.
