@@ -340,6 +340,7 @@ class MarkdownSpec
         public Dictionary<string, SectionRef> sections;
         public StrongBox<int> maxBookmarkId;
         public string filename;
+        public string currentSection;
 
         public IEnumerable<OpenXmlCompositeElement> Paragraphs()
             => Paragraphs2Paragraphs(mddoc.Paragraphs);
@@ -365,7 +366,10 @@ class MarkdownSpec
                 p.Append(Spans2Elements(spans));
                 p.AppendChild(new BookmarkEnd { Id = maxBookmarkId.Value.ToString() });
                 yield return p;
-                Console.WriteLine(new string(' ', level * 4 - 4) + sr.Number + " " + sr.Title);
+                //
+                var i = sr.Url.IndexOf("#");
+                currentSection = $"{sr.Url.Substring(0, i)} {new string('#', level)} {sr.Title} [{sr.Number}]";
+                Console.WriteLine(currentSection); // new string(' ', level * 4 - 4) + sr.Number + " " + sr.Title);
                 yield break;
             }
 
@@ -584,6 +588,8 @@ class MarkdownSpec
                 var align = mdt.Item2;
                 var rows = mdt.Item3;
                 var table = new Table();
+                if (header == null) Console.WriteLine("ERROR - github requires all tables to have header rows");
+                if (!header.Any(cell => cell.Length > 0)) header = null; // even if Github requires an empty header, we can at least cull it from Docx
                 var tstyle = new TableStyle { Val = "TableGrid" };
                 var tindent = new TableIndentation { Width = 360, Type = TableWidthUnitValues.Dxa };
                 var tborders = new TableBorders();
