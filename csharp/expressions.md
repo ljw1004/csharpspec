@@ -2497,6 +2497,7 @@ The predefined multiplication operators are listed below. The operators all comp
 
    The product is computed according to the rules of IEEE 754 arithmetic. The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaN's. In the table, `x` and `y` are positive finite values. `z` is the result of `x * y`. If the result is too large for the destination type, `z` is infinity. If the result is too small for the destination type, `z` is zero.
 
+   |      |      |      |     |     |      |      |     |
    |:----:|-----:|:----:|:---:|:---:|:----:|:----:|:----|
    |      | +y   | -y   | +0  | -0  | +inf | -inf | NaN | 
    | +x   | +z   | -z   | +0  | -0  | +inf | -inf | NaN | 
@@ -2548,6 +2549,7 @@ The predefined division operators are listed below. The operators all compute th
 
    The quotient is computed according to the rules of IEEE 754 arithmetic. The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaN's. In the table, `x` and `y` are positive finite values. `z` is the result of `x / y`. If the result is too large for the destination type, `z` is infinity. If the result is too small for the destination type, `z` is zero.
 
+   |      |      |      |      |      |      |      |      |
    |:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
    |      | +y   | -y   | +0   | -0   | +inf | -inf | NaN  | 
    | +x   | +z   | -z   | +inf | -inf | +0   | -0   | NaN  | 
@@ -2597,6 +2599,7 @@ The predefined remainder operators are listed below. The operators all compute t
 
    The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaN's. In the table, `x` and `y` are positive finite values. `z` is the result of `x % y` and is computed as `x - n * y`, where `n` is the largest possible integer that is less than or equal to `x / y`. This method of computing the remainder is analogous to that used for integer operands, but differs from the IEEE 754 definition (in which `n` is the integer closest to `x / y`).
 
+   |      |      |      |      |      |      |      |      |
    |:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
    |      | +y   | -y   | +0   | -0   | +inf | -inf | NaN  | 
    | +x   | +z   | +z   | NaN  | NaN  | x    | x    | NaN  | 
@@ -2644,7 +2647,8 @@ The predefined addition operators are listed below. For numeric and enumeration 
 
    The sum is computed according to the rules of IEEE 754 arithmetic. The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaN's. In the table, `x` and `y` are nonzero finite values, and `z` is the result of `x + y`. If `x` and `y` have the same magnitude but opposite signs, `z` is positive zero. If `x + y` is too large to represent in the destination type, `z` is an infinity with the same sign as `x + y`.
 
-   |:-----|:-----|:-----|:-----|:-----|:-----|:-----|
+   |      |      |      |      |      |      |      |
+   |:----:|:----:|:----:|:----:|:----:|:----:|:----:|
    |      | y    | +0   | -0   | +inf | -inf | NaN  | 
    | x    | z    | x    | x    | +inf | -inf | NaN  | 
    | +0   | y    | +0   | +0   | +inf | -inf | NaN  | 
@@ -2736,6 +2740,7 @@ The predefined subtraction operators are listed below. The operators all subtrac
 
    The difference is computed according to the rules of IEEE 754 arithmetic. The following table lists the results of all possible combinations of nonzero finite values, zeros, infinities, and NaNs. In the table, `x` and `y` are nonzero finite values, and `z` is the result of `x - y`. If `x` and `y` are equal, `z` is positive zero. If `x - y` is too large to represent in the destination type, `z` is an infinity with the same sign as `x - y`.
 
+   |      |      |      |      |      |      |     |
    |:----:|:----:|:----:|:----:|:----:|:----:|:---:|
    | NaN  | y    | +0   | -0   | +inf | -inf | NaN | 
    | x    | z    | x    | x    | -inf | +inf | NaN | 
