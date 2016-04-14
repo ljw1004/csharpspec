@@ -18,6 +18,23 @@ class MarkdownSpec
     private IEnumerable<string> files;
     public Grammar Grammar = new Grammar();
     public List<SectionRef> Sections = new List<SectionRef>();
+    public List<ProductionRef> Productions = new List<ProductionRef>();
+
+    public class ProductionRef
+    {
+        public string Code;                  // the complete antlr code block in which it's found
+        public List<string> ProductionNames; // all production names in it
+        public string BookmarkName;          // _Grm00023
+        public static int count = 1;
+
+        public ProductionRef(string code, IEnumerable<Production> productions)
+        {
+            Code = code;
+            ProductionNames = new List<string>(from p in productions where p.ProductionName != null select p.ProductionName);
+            BookmarkName = $"_Grm{count:00000}"; count++;
+        }
+    }
+
 
     public class SectionRef
     {
@@ -99,6 +116,7 @@ class MarkdownSpec
                     string code = mdc.Item1, lang = mdc.Item2;
                     if (lang != "antlr") continue;
                     var g = Antlr.ReadString(code, "");
+                    Productions.Add(new ProductionRef(code, g.Productions));
                     foreach (var p in g.Productions)
                     {
                         p.Link = url; p.LinkName = title;
@@ -297,7 +315,7 @@ class MarkdownSpec
                 for (int i = 0; i < Sections.Count; i++)
                 {
                     var section = Sections[i];
-                    if (section.Level > 3) continue;
+                    if (section.Level > 2) continue;
                     var p = new Paragraph();
                     if (i == 0) p.AppendChild(tocRunFirst);
                     p.AppendChild(new Hyperlink(new Run(new Text(section.Number + " " + section.Title))) { Anchor = section.BookmarkName });
@@ -308,7 +326,6 @@ class MarkdownSpec
                 if (tocSec != null) body.InsertBefore(tocSec, afterToc);
             }
 
-            var sectionDictionary = Sections.ToDictionary(sr => sr.Url);
             var maxBookmarkId = new StrongBox<int>(1 + body.Descendants<BookmarkStart>().Max(bookmark => int.Parse(bookmark.Id)));
             foreach (var src in Sources())
             {
@@ -317,7 +334,8 @@ class MarkdownSpec
                     mddoc = Markdown.Parse(src.Item2),
                     filename = Path.GetFileName(src.Item1),
                     wdoc = resultDoc,
-                    sections = sectionDictionary,
+                    sections = Sections.ToDictionary(sr => sr.Url),
+                    productions = Productions,
                     maxBookmarkId = maxBookmarkId
                 };
                 foreach (var p in converter.Paragraphs())
@@ -338,6 +356,7 @@ class MarkdownSpec
         public MarkdownDocument mddoc;
         public WordprocessingDocument wdoc;
         public Dictionary<string, SectionRef> sections;
+        public List<ProductionRef> productions;
         public StrongBox<int> maxBookmarkId;
         public string filename;
         public string currentSection;
@@ -502,83 +521,27 @@ class MarkdownSpec
                         runs.Add(run);
                     }
                 }
-                var style = new ParagraphStyleId { Val = (lang == "antlr" ? "Grammar" : "Code") };
-                yield return new Paragraph(runs) { ParagraphProperties = new ParagraphProperties(style) };
+                if (lang == "antlr")
+                {
+                    var p = new Paragraph() { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = "Grammar" }) };
+                    var prodref = productions.Single(prod => prod.Code == code);
+                    maxBookmarkId.Value += 1;
+                    p.AppendChild(new BookmarkStart { Name = prodref.BookmarkName, Id = maxBookmarkId.Value.ToString() });
+                    p.Append(runs);
+                    p.AppendChild(new BookmarkEnd { Id = maxBookmarkId.Value.ToString() });
+                    yield return p;
+                }
+                else
+                {
+                    var p = new Paragraph() { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = "Code" }) };
+                    p.Append(runs);
+                    yield return p;
+                }
             }
 
             else if (md.IsQuotedBlock)
             {
-                var mdq = md as MarkdownParagraph.QuotedBlock;
-                var quoteds = mdq.Item;
-                var kind = "";
-                foreach (var quoted0 in quoteds)
-                {
-                    var quoted = quoted0;
-                    if (quoted.IsParagraph)
-                    {
-                        var p = quoted as MarkdownParagraph.Paragraph;
-                        var spans = p.Item;
-                        if (spans.Any() && spans.First().IsStrong)
-                        {
-                            var strong = (spans.First() as MarkdownSpan.Strong).Item;
-                            if (strong.Any() && strong.First().IsLiteral)
-                            {
-                                var literal = mdunescape(strong.First() as MarkdownSpan.Literal);
-                                if (literal == "Note")
-                                {
-                                    kind = "AlertText";
-                                }
-                                else if (literal == "Annotation")
-                                {
-                                    kind = "Annotation";
-                                    yield return new Paragraph(Span2Elements(spans.Head)) { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = kind }) };
-                                    if (spans.Tail.Any() && spans.Tail.First().IsLiteral) quoted = MarkdownParagraph.NewParagraph(new Microsoft.FSharp.Collections.FSharpList<MarkdownSpan>(MarkdownSpan.NewLiteral(mdunescape(spans.Tail.First() as MarkdownSpan.Literal).TrimStart()), spans.Tail.Tail));
-                                    else quoted = MarkdownParagraph.NewParagraph(spans.Tail);
-                                }
-                            }
-                        }
-                        //
-                        foreach (var qp in Paragraph2Paragraphs(quoted))
-                        {
-                            var qpp = qp as Paragraph;
-                            if (qpp != null) { var props = new ParagraphProperties(new ParagraphStyleId() { Val = kind }); qpp.ParagraphProperties = props; }
-                            yield return qp;
-                        }
-                    }
-
-                    else if (quoted.IsCodeBlock)
-                    {
-                        var mdc = quoted as MarkdownParagraph.CodeBlock;
-                        var code = mdc.Item1;
-                        var lang = mdc.Item2;
-                        var ignoredAfterLang = mdc.Item3;
-                        var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-                        if (string.IsNullOrWhiteSpace(lines.Last())) lines.RemoveAt(lines.Count - 1);
-                        var run = new Run() { RunProperties = new RunProperties(new RunStyle { Val = "CodeEmbedded" }) };
-                        foreach (var line in lines)
-                        {
-                            if (run.ChildElements.Count() > 1) run.Append(new Break());
-                            run.Append(new Text("    " + line) { Space = SpaceProcessingModeValues.Preserve });
-                        }
-                        yield return new Paragraph(run) { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = kind }) };
-                    }
-
-                    else if (quoted.IsListBlock)
-                    {
-                        if (!(quoted as MarkdownParagraph.ListBlock).Item1.IsOrdered) throw new NotImplementedException("unordered list inside annotation");
-                        var count = 1;
-                        foreach (var qp in Paragraph2Paragraphs(quoted))
-                        {
-                            var qpp = qp as Paragraph;
-                            if (qpp == null) { yield return qp; continue; }
-                            qp.InsertAt(new Run(new Text($"{count}. ") { Space = SpaceProcessingModeValues.Preserve }), 0);
-                            count += 1;
-                            var props = new ParagraphProperties(new ParagraphStyleId() { Val = kind });
-                            qpp.ParagraphProperties = props;
-                            yield return qp;
-                        }
-                    }
-                }
+                throw new NotSupportedException("Quoted blocks not supported");
             }
 
             else if (md.IsTableBlock)
@@ -700,12 +663,12 @@ class MarkdownSpec
         }
 
 
-        IEnumerable<OpenXmlElement> Spans2Elements(IEnumerable<MarkdownSpan> mds)
+        IEnumerable<OpenXmlElement> Spans2Elements(IEnumerable<MarkdownSpan> mds, bool nestedSpan = false)
         {
-            foreach (var md in mds) foreach (var e in Span2Elements(md)) yield return e;
+            foreach (var md in mds) foreach (var e in Span2Elements(md, nestedSpan)) yield return e;
         }
 
-        IEnumerable<OpenXmlElement> Span2Elements(MarkdownSpan md)
+        IEnumerable<OpenXmlElement> Span2Elements(MarkdownSpan md, bool nestedSpan = false)
         {
             if (md.IsLiteral)
             {
@@ -720,26 +683,45 @@ class MarkdownSpec
 
                 // Workaround for https://github.com/tpetricek/FSharp.formatting/issues/389 - the markdown parser
                 // turns *this_is_it* into a nested Emphasis["this", Emphasis["is"], "it"] instead of Emphasis["this_is_it"]
-                // What we'll do is preprocess it into Emphasis["this", "_", "is" "_", "it"]
+                // What we'll do is preprocess it into Emphasis["this_is_it"]
                 if (md.IsEmphasis)
                 {
-                    var spans2 = new List<MarkdownSpan>();
-                    foreach (var s in spans)
+                    var spans2 = spans.Select(s =>
                     {
-                        if (!s.IsEmphasis) { spans2.Add(s); continue; }
-                        spans2.Add(MarkdownSpan.NewLiteral("_"));
-                        foreach (var ss in (s as MarkdownSpan.Emphasis).Item) spans2.Add(ss);
-                        spans2.Add(MarkdownSpan.NewLiteral("_"));
-                    }
-                    spans = spans2;
+                        var _ = "";
+                        if (s.IsEmphasis) { s = (s as MarkdownSpan.Emphasis).Item.Single(); _ = "_"; }
+                        if (s.IsLiteral) return _ + (s as MarkdownSpan.Literal).Item + _;
+                        throw new NotSupportedException("something odd inside emphasis");
+                    });
+                    spans = new List<MarkdownSpan>() { MarkdownSpan.NewLiteral(string.Join("", spans2)) };
                 }
 
-                foreach (var e in Spans2Elements(spans))
+                // Convention inside our specs is that emphasis only ever contains literals,
+                // either to emphasis some human-text or to refer to an ANTLR-production.
+                string literal = null;  ProductionRef prodref = null;
+                if (!nestedSpan && md.IsEmphasis && (spans.Count() != 1 || !spans.First().IsLiteral)) throw new NotSupportedException("something odd inside emphasis");
+                if (spans.Count() == 1 && spans.First().IsLiteral)
                 {
-                    var style = (md.IsStrong ? new Bold() as OpenXmlElement : new Italic());
-                    var run = e as Run;
-                    if (run != null) run.InsertAt(new RunProperties(style), 0);
-                    yield return e;
+                    literal = (spans.First() as MarkdownSpan.Literal).Item;
+                    prodref = productions.FirstOrDefault(pr => pr.ProductionNames.Contains(literal));
+                }
+
+                if (!nestedSpan && md.IsEmphasis && prodref != null)
+                {
+                    var props = new RunProperties(new Color { Val = "6A5ACD" }, new Underline { Val=UnderlineValues.Single });
+                    var run = new Run(new Text(literal) { Space = SpaceProcessingModeValues.Preserve }) { RunProperties = props };
+                    var link = new Hyperlink(run) { Anchor = prodref.BookmarkName };
+                    yield return link;
+                }
+                else
+                {
+                    foreach (var e in Spans2Elements(spans, true))
+                    {
+                        var style = (md.IsStrong ? new Bold() as OpenXmlElement : new Italic());
+                        var run = e as Run;
+                        if (run != null) run.InsertAt(new RunProperties(style), 0);
+                        yield return e;
+                    }
                 }
             }
 

@@ -3342,7 +3342,7 @@ The following rules govern the equality of invocation list entries:
 
 *  If two invocation list entries both refer to the same static method then the entries are equal.
 *  If two invocation list entries both refer to the same non-static method on the same target object (as defined by the reference equality operators) then the entries are equal.
-*  Invocation list entries produced from evaluation of semantically identical *anonymous_method_expression*s or *lambda-expression*s with the same (possibly empty) set of captured outer variable instances are permitted (but not required) to be equal.
+*  Invocation list entries produced from evaluation of semantically identical *anonymous_method_expression*s or *lambda_expression*s with the same (possibly empty) set of captured outer variable instances are permitted (but not required) to be equal.
 
 ### Equality operators and null
 
