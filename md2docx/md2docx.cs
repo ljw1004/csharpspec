@@ -18,6 +18,23 @@ class MarkdownSpec
     private IEnumerable<string> files;
     public Grammar Grammar = new Grammar();
     public List<SectionRef> Sections = new List<SectionRef>();
+    public List<ProductionRef> Productions = new List<ProductionRef>();
+
+    public class ProductionRef
+    {
+        public string Code;                  // the complete antlr code block in which it's found
+        public List<string> ProductionNames; // all production names in it
+        public string BookmarkName;          // _Grm00023
+        public static int count = 1;
+
+        public ProductionRef(string code, IEnumerable<Production> productions)
+        {
+            Code = code;
+            ProductionNames = new List<string>(from p in productions where p.ProductionName != null select p.ProductionName);
+            BookmarkName = $"_Grm{count:00000}"; count++;
+        }
+    }
+
 
     public class SectionRef
     {
@@ -99,6 +116,7 @@ class MarkdownSpec
                     string code = mdc.Item1, lang = mdc.Item2;
                     if (lang != "antlr") continue;
                     var g = Antlr.ReadString(code, "");
+                    Productions.Add(new ProductionRef(code, g.Productions));
                     foreach (var p in g.Productions)
                     {
                         p.Link = url; p.LinkName = title;
@@ -297,7 +315,7 @@ class MarkdownSpec
                 for (int i = 0; i < Sections.Count; i++)
                 {
                     var section = Sections[i];
-                    if (section.Level > 3) continue;
+                    if (section.Level > 2) continue;
                     var p = new Paragraph();
                     if (i == 0) p.AppendChild(tocRunFirst);
                     p.AppendChild(new Hyperlink(new Run(new Text(section.Number + " " + section.Title))) { Anchor = section.BookmarkName });
@@ -308,9 +326,7 @@ class MarkdownSpec
                 if (tocSec != null) body.InsertBefore(tocSec, afterToc);
             }
 
-            var sectionDictionary = Sections.ToDictionary(sr => sr.Url);
             var maxBookmarkId = new StrongBox<int>(1 + body.Descendants<BookmarkStart>().Max(bookmark => int.Parse(bookmark.Id)));
-            var italics = new HashSet<string>();
             foreach (var src in Sources())
             {
                 var converter = new MarkdownConverter
@@ -318,33 +334,16 @@ class MarkdownSpec
                     mddoc = Markdown.Parse(src.Item2),
                     filename = Path.GetFileName(src.Item1),
                     wdoc = resultDoc,
-                    sections = sectionDictionary,
+                    sections = Sections.ToDictionary(sr => sr.Url),
+                    productions = Productions,
                     maxBookmarkId = maxBookmarkId
                 };
                 foreach (var p in converter.Paragraphs())
                 {
                     body.AppendChild(p);
                 }
-                foreach (var s in converter.italics) italics.Add(s);
             }
 
-
-            var ProductionEmphasis = new List<string>();
-            var ProseEmphasis = new List<string>();
-            foreach (var s in italics)
-            {
-                if (!Grammar.Productions.Any(p => p.ProductionName == s)) continue;
-                Console.WriteLine($"PRODUCTION {s}");
-                ProductionEmphasis.Add(s);
-            }
-            foreach (var s in italics)
-            {
-                if (Grammar.Productions.Any(p => p.ProductionName == s)) continue;
-                Console.WriteLine($"PROSE {s}");
-                ProseEmphasis.Add(s);
-            }
-            var productionem = string.Join(",", ProductionEmphasis);
-            var proseem = string.Join(",", ProseEmphasis);
         }
     }
 
@@ -357,10 +356,10 @@ class MarkdownSpec
         public MarkdownDocument mddoc;
         public WordprocessingDocument wdoc;
         public Dictionary<string, SectionRef> sections;
+        public List<ProductionRef> productions;
         public StrongBox<int> maxBookmarkId;
         public string filename;
         public string currentSection;
-        public HashSet<string> italics = new HashSet<string>();
 
         public IEnumerable<OpenXmlCompositeElement> Paragraphs()
             => Paragraphs2Paragraphs(mddoc.Paragraphs);
@@ -522,8 +521,22 @@ class MarkdownSpec
                         runs.Add(run);
                     }
                 }
-                var style = new ParagraphStyleId { Val = (lang == "antlr" ? "Grammar" : "Code") };
-                yield return new Paragraph(runs) { ParagraphProperties = new ParagraphProperties(style) };
+                if (lang == "antlr")
+                {
+                    var p = new Paragraph() { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = "Grammar" }) };
+                    var prodref = productions.Single(prod => prod.Code == code);
+                    maxBookmarkId.Value += 1;
+                    p.AppendChild(new BookmarkStart { Name = prodref.BookmarkName, Id = maxBookmarkId.Value.ToString() });
+                    p.Append(runs);
+                    p.AppendChild(new BookmarkEnd { Id = maxBookmarkId.Value.ToString() });
+                    yield return p;
+                }
+                else
+                {
+                    var p = new Paragraph() { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = "Code" }) };
+                    p.Append(runs);
+                    yield return p;
+                }
             }
 
             else if (md.IsQuotedBlock)
@@ -675,8 +688,9 @@ class MarkdownSpec
                 {
                     var spans2 = spans.Select(s =>
                     {
-                        if (s.IsEmphasis) s = (s as MarkdownSpan.Emphasis).Item.Single();
-                        if (s.IsLiteral) return (s as MarkdownSpan.Literal).Item;
+                        var _ = "";
+                        if (s.IsEmphasis) { s = (s as MarkdownSpan.Emphasis).Item.Single(); _ = "_"; }
+                        if (s.IsLiteral) return _ + (s as MarkdownSpan.Literal).Item + _;
                         throw new NotSupportedException("something odd inside emphasis");
                     });
                     spans = new List<MarkdownSpan>() { MarkdownSpan.NewLiteral(string.Join("", spans2)) };
@@ -684,19 +698,30 @@ class MarkdownSpec
 
                 // Convention inside our specs is that emphasis only ever contains literals,
                 // either to emphasis some human-text or to refer to an ANTLR-production.
+                string literal = null;  ProductionRef prodref = null;
                 if (!nestedSpan && md.IsEmphasis && (spans.Count() != 1 || !spans.First().IsLiteral)) throw new NotSupportedException("something odd inside emphasis");
-                if (!nestedSpan && md.IsEmphasis)
+                if (spans.Count() == 1 && spans.First().IsLiteral)
                 {
-                    var literal = (spans.First() as MarkdownSpan.Literal).Item;
-                    italics.Add(literal);
+                    literal = (spans.First() as MarkdownSpan.Literal).Item;
+                    prodref = productions.FirstOrDefault(pr => pr.ProductionNames.Contains(literal));
                 }
 
-                foreach (var e in Spans2Elements(spans, true))
+                if (!nestedSpan && md.IsEmphasis && prodref != null)
                 {
-                    var style = (md.IsStrong ? new Bold() as OpenXmlElement : new Italic());
-                    var run = e as Run;
-                    if (run != null) run.InsertAt(new RunProperties(style), 0);
-                    yield return e;
+                    var props = new RunProperties(new Color { Val = "6A5ACD" }, new Underline { Val=UnderlineValues.Single });
+                    var run = new Run(new Text(literal) { Space = SpaceProcessingModeValues.Preserve }) { RunProperties = props };
+                    var link = new Hyperlink(run) { Anchor = prodref.BookmarkName };
+                    yield return link;
+                }
+                else
+                {
+                    foreach (var e in Spans2Elements(spans, true))
+                    {
+                        var style = (md.IsStrong ? new Bold() as OpenXmlElement : new Italic());
+                        var run = e as Run;
+                        if (run != null) run.InsertAt(new RunProperties(style), 0);
+                        yield return e;
+                    }
                 }
             }
 
