@@ -572,7 +572,7 @@ For each of the method arguments `Ei`:
 
 The second phase proceeds as follows:
 
-*   All *unfixed* type variables `Xi` which do not *depend on* ([Dependence](expressions.md#dependence)) any `Xj` are fixed ([Upper-bound inferences](expressions.md#upper-bound-inferences)).
+*   All *unfixed* type variables `Xi` which do not *depend on* ([Dependence](expressions.md#dependence)) any `Xj` are fixed ([Fixing](expressions.md#fixing)).
 *   If no such type variables exist, all *unfixed* type variables `Xi` are *fixed* for which all of the following hold:
     *   There is at least one type variable `Xj` that depends on `Xi`
     *   `Xi` has a non-empty set of bounds
@@ -636,9 +636,9 @@ A *lower-bound inference* *from* a type `U` *to* a type `V` is made as follows:
    *  `V` is one of `IEnumerable<V1>`, `ICollection<V1>` or `IList<V1>` and `U` is a one-dimensional array type `U1[]`(or a type parameter whose effective base type is `U1[]`)
    *  `V` is a constructed class, struct, interface or delegate type `C<V1...Vk>` and there is a unique type `C<U1...Uk>` such that `U` (or, if `U` is a type parameter, its effective base class or any member of its effective interface set) is identical to, inherits from (directly or indirectly), or implements (directly or indirectly) `C<U1...Uk>`.
 
-      (The "uniqueness" restriction means that in the case interface C<T>{} class U: C<X>, C<Y>{}, then no inference is made when inferring from `U` to C<T> because `U1` could be X or Y.)
+      (The "uniqueness" restriction means that in the case interface `C<T> {} class U: C<X>, C<Y> {}`, then no inference is made when inferring from `U` to `C<T>` because `U1` could be `X` or `Y`.)
 
-   If any of these cases apply then an inference is made *from* each `Ui`*to* the corresponding `Vi` as follows:
+   If any of these cases apply then an inference is made *from* each `Ui` *to* the corresponding `Vi` as follows:
 
    *  If `Ui` is not known to be a reference type then an *exact inference* is made
    *  Otherwise, if `U` is an array type then a *lower-bound inference* is made
@@ -1584,7 +1584,7 @@ The binding-time processing of an *object_creation_expression* of the form `new 
     * If no value type constraint or constructor constraint ([Type parameter constraints](classes.md#type-parameter-constraints)) has been specified for `T`, a binding-time error occurs.
     * The result of the *object_creation_expression* is a value of the run-time type that the type parameter has been bound to, namely the result of invoking the default constructor of that type. The run-time type may be a reference type or a value type.
 *   Otherwise, if `T` is a *class_type* or a *struct_type*:
-    * If `T` is an `abstract`*class_type*, a compile-time error occurs.
+    * If `T` is an `abstract` *class_type*, a compile-time error occurs.
     * The instance constructor to invoke is determined using the overload resolution rules of [Overload resolution](expressions.md#overload-resolution). The set of candidate instance constructors consists of all accessible instance constructors declared in `T` which are applicable with respect to `A` ([Applicable function member](expressions.md#applicable-function-member)). If the set of candidate instance constructors is empty, or if a single best instance constructor cannot be identified, a binding-time error occurs.
     * The result of the *object_creation_expression* is a value of type `T`, namely the value produced by invoking the instance constructor determined in the step above.
 *  Otherwise, the *object_creation_expression* is invalid, and a binding-time error occurs.
@@ -2901,7 +2901,7 @@ The `==`, `!=`, `<`, `>`, `<=` and `>=` operators are ***comparison operators***
 
 If an operand of a comparison operator has the compile-time type `dynamic`, then the expression is dynamically bound ([Dynamic binding](expressions.md#dynamic-binding)). In this case the compile-time type of the expression is `dynamic`, and the resolution described below will take place at run-time using the run-time type of those operands that have the compile-time type `dynamic`.
 
-For an operation of the form `x`*op*`y`, where *op* is a comparison operator, overload resolution ([Binary operator overload resolution](expressions.md#binary-operator-overload-resolution)) is applied to select a specific operator implementation. The operands are converted to the parameter types of the selected operator, and the type of the result is the return type of the operator.
+For an operation of the form `x` *op* `y`, where *op* is a comparison operator, overload resolution ([Binary operator overload resolution](expressions.md#binary-operator-overload-resolution)) is applied to select a specific operator implementation. The operands are converted to the parameter types of the selected operator, and the type of the result is the return type of the operator.
 
 The predefined comparison operators are described in the following sections. All predefined comparison operators return a result of type `bool`, as described in the following table.
 
