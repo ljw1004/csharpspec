@@ -1012,7 +1012,7 @@ A `return` statement is executed as follows:
 *  If the `return` statement specifies an expression, the expression is evaluated and the resulting value is converted to the return type of the containing function by an implicit conversion. The result of the conversion becomes the result value produced by the function.
 *  If the `return` statement is enclosed by one or more `try` or `catch` blocks with associated `finally` blocks, control is initially transferred to the `finally` block of the innermost `try` statement. When and if control reaches the end point of a `finally` block, control is transferred to the `finally` block of the next enclosing `try` statement. This process is repeated until the `finally` blocks of all enclosing `try` statements have been executed.
 *  If the containing function is not an async function, control is returned to the caller of the containing function along with the result value, if any.
-*  If the containing function is an async function, control is returned to the current caller, and the result value, if any, is recorded in the return task as described in ([Enumerator interfaces](classes.md#enumerator-interfaces)).
+*  If the containing function is an async function, control is returned to the current caller, and the result value, if any, is recorded in the return tasklike as described in ([Evaluation of a task-returning async function](classes.md#evaluation-of-a-task-returning-async-function)).
 
 Because a `return` statement unconditionally transfers control elsewhere, the end point of a `return` statement is never reachable.
 
@@ -1044,7 +1044,7 @@ When an exception is thrown, control is transferred to the first `catch` clause 
 
    * If the current function is non-async, the steps above are repeated for the caller of the function with a throw point corresponding to the statement from which the function member was invoked.
 
-   * If the current function is async and task-returning, the exception is recorded in the return task, which is put into a faulted or cancelled state as described in [Enumerator interfaces](classes.md#enumerator-interfaces).
+   * If the current function is async and tasklike-returning, the exception is recorded in the return tasklike, which is put into a faulted or cancelled state as described in [Evaluation of a task-returning async function](classes.md#evaluation-of-a-task-returning-async-function).
 
    * If the current function is async and void-returning, the synchronization context of the current thread is notified as described in [Enumerable interfaces](classes.md#enumerable-interfaces).
 

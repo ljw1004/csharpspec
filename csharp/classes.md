@@ -2509,7 +2509,7 @@ static class Program
 
 The *method_body* of a method declaration consists of either a block body, an expression body or a semicolon.
 
-The ***result type*** of a method is `void` if the return type is `void`, or if the method is async and the return type is `System.Threading.Tasks.Task`. Otherwise, the result type of a non-async method is its return type, and the result type of an async method with return type `System.Threading.Tasks.Task<T>` is `T`.
+The ***result type*** of a method is `void` if the return type is `void`, or if the method is async and the return type is `System.Threading.Tasks.Task` or other non-generic tasklike ([Tasklike pattern](classes.md#tasklike-pattern)). Otherwise, the result type of a non-async method is its return type, and the result type of an async method with return type `System.Threading.Tasks.Task<T>` or other generic tasklike with type paramter `<T>` is `T`.
 
 When a method has a `void` result type and a block body, `return` statements ([The return statement](statements.md#the-return-statement)) in the block are not permitted to specify an expression. If execution of the block of a void method completes normally (that is, control flows off the end of the method body), that method simply returns to its current caller.
     
@@ -4714,22 +4714,63 @@ A method ([Methods](classes.md#methods)) or anonymous function ([Anonymous funct
 
 It is a compile-time error for the formal parameter list of an async function to specify any `ref` or `out` parameters.
 
-The *return_type* of an async method must be either `void` or a ***task type***. The task types are `System.Threading.Tasks.Task` and types constructed from `System.Threading.Tasks.Task<T>`. For the sake of brevity, in this chapter these types are referenced as `Task` and `Task<T>`, respectively. An async method returning a task type is said to be task-returning.
+The *return_type* of an async method must be either `void` or a ***tasklike type***. The tasklike types are `System.Threading.Tasks.Task`, types constructed from `System.Threading.Tasks.Task<T>`, and any type that satisfies the *tasklike pattern* [Tasklike pattern](classesmd#tasklike-pattern). For the sake of brevity, in this chapter these types are referenced by the pseudo-types `Tasklike` and `Tasklike<T>`. An async method returning a tasklike type is said to be tasklike-returning.
 
-The exact definition of the task types is implementation defined, but from the language's point of view a task type is in one of the states incomplete, succeeded or faulted. A faulted task records a pertinent exception. A succeeded `Task<T>` records a result of type `T`. Task types are awaitable, and can therefore be the operands of await expressions ([Await expressions](expressions.md#await-expressions)).
+The exact definition of the tasklike types is implementation defined, but from the language's point of view a tasklike type is in one of the states incomplete, succeeded or faulted. A faulted task records a pertinent exception. A succeeded `Tasklike<T>` records a result of type `T`. Tasklike types are typically awaitable, and can therefore be the operands of await expressions ([Await expressions](expressions.md#await-expressions)).
 
 An async function invocation has the ability to suspend evaluation by means of await expressions ([Await expressions](expressions.md#await-expressions)) in its body. Evaluation may later be resumed at the point of the suspending await expression by means of a ***resumption delegate***. The resumption delegate is of type `System.Action`, and when it is invoked, evaluation of the async function invocation will resume from the await expression where it left off. The ***current caller*** of an async function invocation is the original caller if the function invocation has never been suspended, or the most recent caller of the resumption delegate otherwise.
 
+### Tasklike pattern
+
+A type is considered a *non-generic tasklike* if it is `System.Threading.Tasks.Task` or if it has an attribute `[System.Runtime.CompilerServices.Tasklike(typeof(builderType))]` for some `builderType`.
+
+A type is considered a *generic tasklike* if it is constructed from `System.Threading.Tasks.Task<T>` or if it is constructed from another type which has exactly one generic type parameter and which has an attribute `[System.Runtime.CompilerServices.Tasklike(typeof(builderType))]` for some type `builderType`.
+
+The *builder type* of a non-generic tasklike is `System.Runtime.CompilerServices.AsyncTaskMethodBuilder` (if the tasklike is `System.Threading.Tasks.Task`) or, otherwise, it is the `builderType` specified by its `Tasklike` attribute. The builder type of a generic tasklike is `System.Runtime.CompilerServices.AsyncTaskMethodBuilder<T>` (if the tasklike is `System.Threading.Tasks.Task<T>`) or, otherwise, it is the `builderType`.
+
+If an async method returns a non-generic tasklike, then the builder type must be public and must have the following members; it is a compile-time error otherwise:
+```cs
+public class NongenericTasklikeBuilder
+{
+    public Tasklike Task { get; }
+    public static NongenericTasklikeBuilder Create();
+    public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine;
+    public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine;
+    public void SetException(System.Exception exception);
+    public void SetResult();
+    public void SetStateMachine(IAsyncStateMachine stateMachine);
+    public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine;
+}
+```
+
+If an async method returns a generic tasklike, then the builder type must be public, must have exactly one generic type parameter, and must have the following members; it is a compile-time error otherwise:
+```cs
+public class GenericTasklikeBuilder<T>
+{
+    public Tasklike<T> Task { get; }
+    public static GenericTasklikeBuilder<T> Create();
+    public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine;
+    public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine;
+    public void SetException(System.Exception exception);
+    public void SetResult(T result);
+    public void SetStateMachine(IAsyncStateMachine stateMachine);
+    public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine;
+}
+```
+
+The following section details when these builder members get invoked.
+
+
 ### Evaluation of a task-returning async function
 
-Invocation of a task-returning async function causes an instance of the returned task type to be generated. This is called the ***return task*** of the async function. The task is initially in an incomplete state.
+Invocation of a tasklike-returning async function causes an instance of the returned tasklike type to be generated. This is called the ***return tasklike*** of the async function. The tasklike is initially in an incomplete state. The returned tasklike is generated this by first calling the builder's `Create` method to create an instance of the builder, then its `Start` method, and eventually retrieving its `Task` property to obtain the tasklike itself.
 
-The async function body is then evaluated until it is either suspended (by reaching an await expression) or terminates, at which point control is returned to the caller, along with the return task.
+The async function body is then evaluated until it is either suspended (by reaching an await expression) or terminates, at which point control is returned to the caller, along with the return tasklike. The returned tasklike is obtained from the builder's `Task` property.
 
 When the body of the async function terminates, the return task is moved out of the incomplete state:
 
-*  If the function body terminates as the result of reaching a return statement or the end of the body, any result value is recorded in the return task, which is put into a succeeded state.
-*  If the function body terminates as the result of an uncaught exception ([The throw statement](statements.md#the-throw-statement)) the exception is recorded in the return task which is put into a faulted state.
+*  If the function body terminates as the result of reaching a return statement or the end of the body, any result value is recorded in the return task, which is put into a succeeded state. This is achieved by calling the `SetResult` method on the builder.
+*  If the function body terminates as the result of an uncaught exception ([The throw statement](statements.md#the-throw-statement)) the exception is recorded in the return task which is put into a faulted state. This is achieved by calling the `SetException` method on the builder.
 
 ### Evaluation of a void-returning async function
 

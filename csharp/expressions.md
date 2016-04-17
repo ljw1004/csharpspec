@@ -543,7 +543,7 @@ string s = Chooser.Choose("foo", "bar");        // Calls Choose<string>
 
 Through type inference, the type arguments `int` and `string` are determined from the arguments to the method.
 
-Type inference occurs as part of the binding-time processing of a method invocation ([Method invocations](expressions.md#method-invocations)) and takes place before the overload resolution step of the invocation. When a particular method group is specified in a method invocation, and no type arguments are specified as part of the method invocation, type inference is applied to each generic method in the method group. If type inference succeeds, then the inferred type arguments are used to determine the types of arguments for subsequent overload resolution. If overload resolution chooses a generic method as the one to invoke, then the inferred type arguments are used as the actual type arguments for the invocation. If type inference for a particular method fails, that method does not participate in overload resolution. The failure of type inference, in and of itself, does not cause a binding-time error. However, it often leads to a binding-time error when overload resolution then fails to find any applicable methods.
+Type inference occurs as part of the binding-time processing of a method invocation ([Method invocations](expressions.md#method-invocations)) and takes place before the overload resolution step of the invocation. When a particular method group is specified in a method invocation, and no type arguments are specified as part of the method invocation, type inference is applied to each generic method in the method group. If type inference succeeds, then the inferred type arguments are used to determine the types of arguments for subsequent overload resolution. If overload resolution chooses a generic method as the one to invoke, then the inferred type arguments are used as the actual type arguments for the invocation TASKLIKE!!! *quantum-collapsing InferredTask happens after overload resolution prior to invocation*. If type inference for a particular method fails, that method does not participate in overload resolution. The failure of type inference, in and of itself, does not cause a binding-time error. However, it often leads to a binding-time error when overload resolution then fails to find any applicable methods.
 
 If the supplied number of arguments is different than the number of parameters in the method, then inference immediately fails. Otherwise, assume that the generic method has the following signature:
 ```csharp
@@ -557,6 +557,8 @@ During the process of inference each type parameter `Xi` is either *fixed* to a 
 Type inference takes place in phases. Each phase will try to infer type arguments for more type variables based on the findings of the previous phase. The first phase makes some initial inferences of bounds, whereas the second phase fixes type variables to specific types and infers further bounds. The second phase may have to be repeated a number of times.
 
 *Note:* Type inference takes place not only when a generic method is called. Type inference for conversion of method groups is described in [Type inference for conversion of method groups](expressions.md#type-inference-for-conversion-of-method-groups) and finding the best common type of a set of expressions is described in [Finding the best common type of a set of expressions](expressions.md#finding-the-best-common-type-of-a-set-of-expressions).
+
+TASKLIKE!!! Do I have to mention what happens to InferredTask in those two additional situations?
 
 #### The first phase
 
@@ -572,7 +574,7 @@ For each of the method arguments `Ei`:
 
 The second phase proceeds as follows:
 
-*   All *unfixed* type variables `Xi` which do not *depend on* ([Dependence](expressions.md#dependence)) any `Xj` are fixed ([Upper-bound inferences](expressions.md#upper-bound-inferences)).
+*   All *unfixed* type variables `Xi` which do not *depend on* ([Dependence](expressions.md#dependence)) any `Xj` are fixed ([Fixing](expressions.md#fixing)).
 *   If no such type variables exist, all *unfixed* type variables `Xi` are *fixed* for which all of the following hold:
     *   There is at least one type variable `Xj` that depends on `Xi`
     *   `Xi` has a non-empty set of bounds
@@ -636,9 +638,9 @@ A *lower-bound inference* *from* a type `U` *to* a type `V` is made as follows:
    *  `V` is one of `IEnumerable<V1>`, `ICollection<V1>` or `IList<V1>` and `U` is a one-dimensional array type `U1[]`(or a type parameter whose effective base type is `U1[]`)
    *  `V` is a constructed class, struct, interface or delegate type `C<V1...Vk>` and there is a unique type `C<U1...Uk>` such that `U` (or, if `U` is a type parameter, its effective base class or any member of its effective interface set) is identical to, inherits from (directly or indirectly), or implements (directly or indirectly) `C<U1...Uk>`.
 
-      (The "uniqueness" restriction means that in the case interface C<T>{} class U: C<X>, C<Y>{}, then no inference is made when inferring from `U` to C<T> because `U1` could be X or Y.)
+      (The "uniqueness" restriction means that in the case `interface C<T> {} class U: C<X>, C<Y>{}`, then no inference is made when inferring from `U` to `C<T>` because `U1` could be `X` or `Y`.)
 
-   If any of these cases apply then an inference is made *from* each `Ui`*to* the corresponding `Vi` as follows:
+   If any of these cases apply then an inference is made *from* each `Ui` *to* the corresponding `Vi` as follows:
 
    *  If `Ui` is not known to be a reference type then an *exact inference* is made
    *  Otherwise, if `U` is an array type then a *lower-bound inference* is made
@@ -674,7 +676,8 @@ An *upper-bound inference* *from* a type `U` *to* a type `V` is made as follows:
 
 An *unfixed* type variable `Xi` with a set of bounds is *fixed* as follows:
 
-*  The set of *candidate types* `Uj` starts out as the set of all types in the set of bounds for `Xi`.
+*  If every bound (upper, lower, exact) is to `InferredTask` then `Xi` is fixed to `InferredTask`. Otherwise, if every bound is to `InferredTask<T>` for the same `T` then `Xi` is fixed to `InferredTask<T>`.
+*  Otherwise, the set of *candidate types* `Uj` starts out as the set of all types in the set of bounds for `Xi`.
 *  We then examine each bound for `Xi` in turn: For each exact bound `U` of `Xi` all types `Uj` which are not identical to `U` are removed from the candidate set. For each lower bound `U` of `Xi` all types `Uj` to which there is *not* an implicit conversion from `U` are removed from the candidate set. For each upper bound `U` of `Xi` all types `Uj` from which there is *not* an implicit conversion to `U` are removed from the candidate set.
 *  If among the remaining candidate types `Uj` there is a unique type `V` from which there is an implicit conversion to all the other candidate types, then `Xi` is fixed to `V`.
 *  Otherwise, type inference fails.
@@ -682,6 +685,8 @@ An *unfixed* type variable `Xi` with a set of bounds is *fixed* as follows:
 #### Inferred return type
 
 The inferred return type of an anonymous function `F` is used during type inference and overload resolution. The inferred return type can only be determined for an anonymous function where all parameter types are known, either because they are explicitly given, provided through an anonymous function conversion or inferred during type inference on an enclosing generic method invocation.
+
+The inferred return type will in some cases infer a type that involves the pseudo-types `InferredTask` or `InferredTask<T>`. These are not real types, and do not appear in real code; they stand for a result of type inference that can match with any tasklike ([Tasklike pattern](classes.md#tasklike-pattern)). At binding-time, during overload resolution ([Overload resolution](expressions.md#overload-resolution)), that is when the pseudo-types are converted into the concrete types `System.Threading.Tasks.Task` and `System.Threading.Tasks.Task<T>`.
 
 The ***inferred result type*** is determined as follows:
 
@@ -691,8 +696,8 @@ The ***inferred result type*** is determined as follows:
 
 The ***inferred return type*** is determined as follows:
 
-*  If `F` is async and the body of `F` is either an expression classified as nothing ([Expression classifications](expressions.md#expression-classifications)), or a statement block where no return statements have expressions, the inferred return type is `System.Threading.Tasks.Task`
-*  If `F` is async and has an inferred result type `T`, the inferred return type is `System.Threading.Tasks.Task<T>`.
+*  If `F` is async and the body of `F` is either an expression classified as nothing ([Expression classifications](expressions.md#expression-classifications)), or a statement block where no return statements have expressions, the inferred return type is the pseudo-type `InferredTask`
+*  If `F` is async and has an inferred result type `T`, the inferred return type is the pseudo-type `InferredTask<T>`.
 *  If `F` is non-async and has an inferred result type `T`, the inferred return type is `T`.
 *  Otherwise a return type cannot be inferred for `F`.
 
@@ -1594,7 +1599,7 @@ The binding-time processing of an *object_creation_expression* of the form `new 
     * If no value type constraint or constructor constraint ([Type parameter constraints](classes.md#type-parameter-constraints)) has been specified for `T`, a binding-time error occurs.
     * The result of the *object_creation_expression* is a value of the run-time type that the type parameter has been bound to, namely the result of invoking the default constructor of that type. The run-time type may be a reference type or a value type.
 *   Otherwise, if `T` is a *class_type* or a *struct_type*:
-    * If `T` is an `abstract`*class_type*, a compile-time error occurs.
+    * If `T` is an `abstract` *class_type*, a compile-time error occurs.
     * The instance constructor to invoke is determined using the overload resolution rules of [Overload resolution](expressions.md#overload-resolution). The set of candidate instance constructors consists of all accessible instance constructors declared in `T` which are applicable with respect to `A` ([Applicable function member](expressions.md#applicable-function-member)). If the set of candidate instance constructors is empty, or if a single best instance constructor cannot be identified, a binding-time error occurs.
     * The result of the *object_creation_expression* is a value of type `T`, namely the value produced by invoking the instance constructor determined in the step above.
 *  Otherwise, the *object_creation_expression* is invalid, and a binding-time error occurs.
