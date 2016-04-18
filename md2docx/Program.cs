@@ -54,7 +54,6 @@ static class Program
         // correct references to within the spec. We'll check that it has the same productions as
         // in the corresponding ANTLR file
         var antlrfn = Directory.GetFiles(".", "*.g4").FirstOrDefault();
-        antlrfn = null;
         if (antlrfn != null)
         {
             var htmlfn = Path.ChangeExtension(antlrfn, ".html");

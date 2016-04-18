@@ -35,6 +35,18 @@ class MarkdownSpec
         }
     }
 
+    public class TermRef
+    {
+        public string Term;
+        public string BookmarkName;
+        public static int count = 1;
+
+        public TermRef(string term)
+        {
+            Term = term;
+            BookmarkName = $"_Trm{count:00000}"; count++;
+        }
+    }
 
     public class SectionRef
     {
@@ -287,6 +299,16 @@ class MarkdownSpec
     }
 
 
+    public class StringLengthComparer : IComparer<string>
+    {
+        public int Compare(string x, string y)
+        {
+            if (x.Length > y.Length) return -1;
+            if (x.Length < y.Length) return 1;
+            return string.Compare(x, y);
+        }
+    }
+
     public void WriteFile(string basedOn, string fn)
     {
         using (var templateDoc = WordprocessingDocument.Open(basedOn, false))
@@ -327,16 +349,20 @@ class MarkdownSpec
             }
 
             var maxBookmarkId = new StrongBox<int>(1 + body.Descendants<BookmarkStart>().Max(bookmark => int.Parse(bookmark.Id)));
+            var terms = new SortedList<string, TermRef>();
+            var italics = new List<Tuple<string, string>>();
             foreach (var src in Sources())
             {
                 var converter = new MarkdownConverter
                 {
-                    mddoc = Markdown.Parse(src.Item2),
-                    filename = Path.GetFileName(src.Item1),
-                    wdoc = resultDoc,
-                    sections = Sections.ToDictionary(sr => sr.Url),
-                    productions = Productions,
-                    maxBookmarkId = maxBookmarkId
+                    Mddoc = Markdown.Parse(src.Item2),
+                    Filename = Path.GetFileName(src.Item1),
+                    Wdoc = resultDoc,
+                    Sections = Sections.ToDictionary(sr => sr.Url),
+                    Productions = Productions,
+                    Terms = terms,
+                    Italics = italics,
+                    MaxBookmarkId = maxBookmarkId
                 };
                 foreach (var p in converter.Paragraphs())
                 {
@@ -344,6 +370,31 @@ class MarkdownSpec
                 }
             }
 
+            // I wonder if there were any oddities? ...
+            // Terms that were referenced before their definition?
+            var termset = new HashSet<string>(terms.Keys);
+            var italicset = new HashSet<string>(italics.Where(i => i.Item2 == "italic").Select(i => i.Item1));
+            italicset.IntersectWith(termset);
+            if (italicset.Any())
+            {
+                Console.WriteLine("ERROR - these terms were used before their definition: " + string.Join(",", italicset));
+            }
+
+            // Terms that are also production names?
+            var productionset = new HashSet<string>(Grammar.Productions.Where(p => p.ProductionName != null).Select(p => p.ProductionName));
+            productionset.IntersectWith(termset);
+            if (productionset.Any())
+            {
+                Console.WriteLine("ERROR - these terms are also production names: " + string.Join(",", productionset));
+            }
+
+            // Terms that were defined but never used?
+            var termrefset = new HashSet<string>(italics.Where(i => i.Item2 == "term").Select(i => i.Item1));
+            termset.RemoveWhere(t => termrefset.Contains(t));
+            if (termset.Any())
+            {
+                Console.WriteLine("ERROR - these terms are defined but never used: " + string.Join(",", termset));
+            }
         }
     }
 
@@ -353,16 +404,18 @@ class MarkdownSpec
 
     private class MarkdownConverter
     {
-        public MarkdownDocument mddoc;
-        public WordprocessingDocument wdoc;
-        public Dictionary<string, SectionRef> sections;
-        public List<ProductionRef> productions;
-        public StrongBox<int> maxBookmarkId;
-        public string filename;
-        public string currentSection;
+        public MarkdownDocument Mddoc;
+        public WordprocessingDocument Wdoc;
+        public Dictionary<string, SectionRef> Sections;
+        public List<ProductionRef> Productions;
+        public SortedList<string,TermRef> Terms;
+        public List<Tuple<string, string>> Italics;
+        public StrongBox<int> MaxBookmarkId;
+        public string Filename;
+        public string CurrentSection;
 
         public IEnumerable<OpenXmlCompositeElement> Paragraphs()
-            => Paragraphs2Paragraphs(mddoc.Paragraphs);
+            => Paragraphs2Paragraphs(Mddoc.Paragraphs);
 
         IEnumerable<OpenXmlCompositeElement> Paragraphs2Paragraphs(IEnumerable<MarkdownParagraph> pars)
         {
@@ -377,18 +430,18 @@ class MarkdownSpec
                 var mdh = md as MarkdownParagraph.Heading;
                 var level = mdh.Item1;
                 var spans = mdh.Item2;
-                var sr = sections[new SectionRef(mdh, filename).Url];
+                var sr = Sections[new SectionRef(mdh, Filename).Url];
                 var props = new ParagraphProperties(new ParagraphStyleId() { Val = $"Heading{level}" });
                 var p = new Paragraph { ParagraphProperties = props };
-                maxBookmarkId.Value += 1;
-                p.AppendChild(new BookmarkStart { Name = sr.BookmarkName, Id = maxBookmarkId.Value.ToString() });
+                MaxBookmarkId.Value += 1;
+                p.AppendChild(new BookmarkStart { Name = sr.BookmarkName, Id = MaxBookmarkId.Value.ToString() });
                 p.Append(Spans2Elements(spans));
-                p.AppendChild(new BookmarkEnd { Id = maxBookmarkId.Value.ToString() });
+                p.AppendChild(new BookmarkEnd { Id = MaxBookmarkId.Value.ToString() });
                 yield return p;
                 //
                 var i = sr.Url.IndexOf("#");
-                currentSection = $"{sr.Url.Substring(0, i)} {new string('#', level)} {sr.Title} [{sr.Number}]";
-                Console.WriteLine(currentSection); // new string(' ', level * 4 - 4) + sr.Number + " " + sr.Title);
+                CurrentSection = $"{sr.Url.Substring(0, i)} {new string('#', level)} {sr.Title} [{sr.Number}]";
+                //Console.WriteLine(CurrentSection); // new string(' ', level * 4 - 4) + sr.Number + " " + sr.Title);
                 yield break;
             }
 
@@ -410,7 +463,7 @@ class MarkdownSpec
                 foreach (var item in flat) format0[item.Level] = (item.IsBulletOrdered ? "1" : "o");
                 var format = string.Join("", format0);
 
-                var numberingPart = wdoc.MainDocumentPart.NumberingDefinitionsPart ?? wdoc.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>("NumberingDefinitionsPart001");
+                var numberingPart = Wdoc.MainDocumentPart.NumberingDefinitionsPart ?? Wdoc.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>("NumberingDefinitionsPart001");
                 if (numberingPart.Numbering == null) numberingPart.Numbering = new Numbering();
 
                 Func<int, bool, Level> createLevel;
@@ -524,11 +577,11 @@ class MarkdownSpec
                 if (lang == "antlr")
                 {
                     var p = new Paragraph() { ParagraphProperties = new ParagraphProperties(new ParagraphStyleId { Val = "Grammar" }) };
-                    var prodref = productions.Single(prod => prod.Code == code);
-                    maxBookmarkId.Value += 1;
-                    p.AppendChild(new BookmarkStart { Name = prodref.BookmarkName, Id = maxBookmarkId.Value.ToString() });
+                    var prodref = Productions.Single(prod => prod.Code == code);
+                    MaxBookmarkId.Value += 1;
+                    p.AppendChild(new BookmarkStart { Name = prodref.BookmarkName, Id = MaxBookmarkId.Value.ToString() });
                     p.Append(runs);
-                    p.AppendChild(new BookmarkEnd { Id = maxBookmarkId.Value.ToString() });
+                    p.AppendChild(new BookmarkEnd { Id = MaxBookmarkId.Value.ToString() });
                     yield return p;
                 }
                 else
@@ -674,7 +727,7 @@ class MarkdownSpec
             {
                 var mdl = md as MarkdownSpan.Literal;
                 var s = mdunescape(mdl);
-                yield return new Run(new Text(s) { Space = SpaceProcessingModeValues.Preserve });
+                foreach (var r in Literal2Elements(s, nestedSpan)) yield return r;
             }
 
             else if (md.IsStrong || md.IsEmphasis)
@@ -696,22 +749,47 @@ class MarkdownSpec
                     spans = new List<MarkdownSpan>() { MarkdownSpan.NewLiteral(string.Join("", spans2)) };
                 }
 
-                // Convention inside our specs is that emphasis only ever contains literals,
-                // either to emphasis some human-text or to refer to an ANTLR-production.
-                string literal = null;  ProductionRef prodref = null;
-                if (!nestedSpan && md.IsEmphasis && (spans.Count() != 1 || !spans.First().IsLiteral)) throw new NotSupportedException("something odd inside emphasis");
-                if (spans.Count() == 1 && spans.First().IsLiteral)
+                // Convention is that ***term*** is used to define a term.
+                // That's parsed as Strong, which contains Emphasis, which contains one Literal
+                string literal = null;
+                TermRef termdef = null;
+                if (!nestedSpan && md.IsStrong && spans.Count() == 1 && spans.First().IsEmphasis)
                 {
-                    literal = (spans.First() as MarkdownSpan.Literal).Item;
-                    prodref = productions.FirstOrDefault(pr => pr.ProductionNames.Contains(literal));
+                    var spans2 = (spans.First() as MarkdownSpan.Emphasis).Item;
+                    if (spans2.Count() == 1 && spans2.First().IsLiteral)
+                    {
+                        literal = (spans2.First() as MarkdownSpan.Literal).Item;
+                        termdef = new TermRef(literal);
+                        if (Terms.ContainsKey(literal)) Console.WriteLine($"ERROR - term multiple definition - '{literal}'");
+                        else Terms.Add(literal,termdef);
+                    }
                 }
 
-                if (!nestedSpan && md.IsEmphasis && prodref != null)
+                // Convention inside our specs is that emphasis only ever contains literals,
+                // either to emphasis some human-text or to refer to an ANTLR-production
+                ProductionRef prodref = null;
+                if (!nestedSpan && md.IsEmphasis && (spans.Count() != 1 || !spans.First().IsLiteral)) throw new NotSupportedException("something odd inside emphasis");
+                if (!nestedSpan && md.IsEmphasis && spans.Count() == 1 && spans.First().IsLiteral)
+                {
+                    literal = (spans.First() as MarkdownSpan.Literal).Item;
+                    prodref = Productions.FirstOrDefault(pr => pr.ProductionNames.Contains(literal));
+                    Italics.Add(Tuple.Create(literal, prodref != null ? "production" : "italic"));
+                }
+
+                if (prodref != null)
                 {
                     var props = new RunProperties(new Color { Val = "6A5ACD" }, new Underline { Val=UnderlineValues.Single });
                     var run = new Run(new Text(literal) { Space = SpaceProcessingModeValues.Preserve }) { RunProperties = props };
                     var link = new Hyperlink(run) { Anchor = prodref.BookmarkName };
                     yield return link;
+                }
+                else if (termdef != null)
+                {
+                    MaxBookmarkId.Value += 1;
+                    yield return new BookmarkStart { Name = termdef.BookmarkName, Id = MaxBookmarkId.Value.ToString() };
+                    var props = new RunProperties(new Italic(), new Bold());
+                    yield return new Run(new Text(literal) { Space = SpaceProcessingModeValues.Preserve }) { RunProperties = props };
+                    yield return new BookmarkEnd { Id = MaxBookmarkId.Value.ToString() };
                 }
                 else
                 {
@@ -753,10 +831,10 @@ class MarkdownSpec
                     var original = mdil.Item2;
                     var id = mdil.Item3;
                     spans = mdil.Item1;
-                    if (mddoc.DefinedLinks.ContainsKey(id))
+                    if (Mddoc.DefinedLinks.ContainsKey(id))
                     {
-                        url = mddoc.DefinedLinks[id].Item1;
-                        alt = mddoc.DefinedLinks[id].Item2.Option();
+                        url = Mddoc.DefinedLinks[id].Item1;
+                        alt = Mddoc.DefinedLinks[id].Item2.Option();
                     }
                 }
 
@@ -765,9 +843,9 @@ class MarkdownSpec
                 else if (spans.Count() == 1 && spans.First().IsInlineCode) anchor = (spans.First() as MarkdownSpan.InlineCode).Item;
                 else throw new NotImplementedException("Link anchor must be Literal or InlineCode, not " + md.ToString());
 
-                if (sections.ContainsKey(url))
+                if (Sections.ContainsKey(url))
                 {
-                    var section = sections[url];
+                    var section = Sections[url];
                     if (anchor != section.Title) throw new Exception($"Mismatch: link anchor is '{anchor}', should be '{section.Title}'");
                     var txt = new Text("§" + section.Number) { Space = SpaceProcessingModeValues.Preserve };
                     var run = new Hyperlink(new Run(txt)) { Anchor = section.BookmarkName };
@@ -800,6 +878,34 @@ class MarkdownSpec
             {
                 yield return new Run(new Text($"[{md.GetType().Name}]"));
             }
+        }
+
+
+        IEnumerable<OpenXmlElement> Literal2Elements(string literal, bool isNested)
+        {
+            foreach (var kv in Terms)
+            {
+                if (isNested) break;
+                var i = literal.IndexOf(kv.Key);
+                if (i == -1) continue;
+                var left = literal.Substring(0, i);
+                var right = literal.Substring(i + kv.Key.Length);
+                var termref = kv.Value;
+                Italics.Add(Tuple.Create(kv.Key, "term"));
+
+                foreach (var r in Literal2Elements(left, isNested)) yield return r;
+                //
+                var props = new RunProperties(new Underline { Val = UnderlineValues.Dotted, Color = "4BACC6" });
+                var run = new Run(new Text(kv.Key) { Space = SpaceProcessingModeValues.Preserve }) { RunProperties = props };
+                var link = new Hyperlink(run) { Anchor = termref.BookmarkName };
+                yield return link;
+                //
+                foreach (var r in Literal2Elements(right, isNested)) yield return r;
+                yield break;
+            }
+
+            yield return new Run(new Text(literal) { Space = SpaceProcessingModeValues.Preserve });
+
         }
 
 
