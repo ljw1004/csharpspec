@@ -638,7 +638,7 @@ A *lower-bound inference* *from* a type `U` *to* a type `V` is made as follows:
    *  `V` is one of `IEnumerable<V1>`, `ICollection<V1>` or `IList<V1>` and `U` is a one-dimensional array type `U1[]`(or a type parameter whose effective base type is `U1[]`)
    *  `V` is a constructed class, struct, interface or delegate type `C<V1...Vk>` and there is a unique type `C<U1...Uk>` such that `U` (or, if `U` is a type parameter, its effective base class or any member of its effective interface set) is identical to, inherits from (directly or indirectly), or implements (directly or indirectly) `C<U1...Uk>`.
 
-      (The "uniqueness" restriction means that in the case interface C<T>{} class U: C<X>, C<Y>{}, then no inference is made when inferring from `U` to C<T> because `U1` could be X or Y.)
+      (The "uniqueness" restriction means that in the case `interface C<T> {} class U: C<X>, C<Y>{}`, then no inference is made when inferring from `U` to `C<T>` because `U1` could be `X` or `Y`.)
 
    If any of these cases apply then an inference is made *from* each `Ui` *to* the corresponding `Vi` as follows:
 
