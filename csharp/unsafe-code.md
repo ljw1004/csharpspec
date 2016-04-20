@@ -367,12 +367,11 @@ where the type of `x` is an array type of the form `T[,,...,]`, `N` is the numbe
 ```csharp
 {
     T[,,...,] a = x;
-    V v;
     for (int i0 = a.GetLowerBound(0); i0 <= a.GetUpperBound(0); i0++)
     for (int i1 = a.GetLowerBound(1); i1 <= a.GetUpperBound(1); i1++)
     ...
     for (int iN = a.GetLowerBound(N); iN <= a.GetUpperBound(N); iN++) {
-        v** = (V)a.GetValue(i0,i1,...,iN);
+        V v = (V)a.GetValue(i0,i1,...,iN);
         embedded_statement
     }
 }

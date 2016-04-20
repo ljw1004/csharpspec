@@ -1,6 +1,6 @@
 C# Language Specification
 ===========================
-__Version 5__
+__Version 6__
 
 (This document is also available for download: [csharp.pdf](CSharp%20Language%20Specification.pdf?raw=true) and [csharp.docx](CSharp%20Language%20Specification.docx?raw=true))
 
@@ -163,4 +163,4 @@ __Version 5__
     * [Recommended tags](documentation-comments.md#recommended-tags)
     * [Processing the documentation file](documentation-comments.md#processing-the-documentation-file)
     * [An example](documentation-comments.md#an-example)
-* [Grammar](http://ljw1004.github.io/csharpspec/csharp/csharp.html) (also available to download in ANTLR format: [csharp.g4](http://ljw1004.github.io/csharpspec/csharp/csharp.g4))
+* Grammar: right-click and save [csharp.html](csharp.html?raw=true) then view it on your desktop. Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). Note: the web browsable version of [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html) is still on C#5.
