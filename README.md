@@ -163,4 +163,4 @@ __Version 6__
     * [Recommended tags](documentation-comments.md#recommended-tags)
     * [Processing the documentation file](documentation-comments.md#processing-the-documentation-file)
     * [An example](documentation-comments.md#an-example)
-* Grammar: right-click and save [csharp.html](csharp.html?raw=true) then view it on your desktop. Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). Note: the web browsable version of [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html) is still on C#5.
+* Grammar: [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html). Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). 
