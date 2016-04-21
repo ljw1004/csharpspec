@@ -163,4 +163,4 @@ __Version 6__
     * [Recommended tags](documentation-comments.md#recommended-tags)
     * [Processing the documentation file](documentation-comments.md#processing-the-documentation-file)
     * [An example](documentation-comments.md#an-example)
-* Grammar: [csharp.html](http://ljw1004.github.io/csharpspec/csharp/csharp.html). Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). 
+* Grammar: [csharp.html](http://ljw1004.github.io/csharpspec/csharp.html). Or download in ANTLR format: [csharp.g4](csharp.g4?raw=true). 
