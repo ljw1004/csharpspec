@@ -2,6 +2,8 @@ C# Language Specification
 ===========================
 __Version 6__
 
+*Microsoft has not yet released an official copy of the C#6 spec. This is an unofficial draft.*
+
 (This document is also available for download: [csharp.pdf](CSharp%20Language%20Specification.pdf?raw=true) and [csharp.docx](CSharp%20Language%20Specification.docx?raw=true))
 
 
