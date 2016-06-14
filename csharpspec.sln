@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1EEA00D2-4667-40C2-8C3A-3537BBB96B09}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "csharp", "csharp", "{F5A7DDC3-9DD4-4921-9556-AE3629AE5EFA}"
+	ProjectSection(SolutionItems) = preProject
+		csharp\arrays.md = csharp\arrays.md
+		csharp\attributes.md = csharp\attributes.md
+		csharp\basic-concepts.md = csharp\basic-concepts.md
+		csharp\classes.md = csharp\classes.md
+		csharp\conversions.md = csharp\conversions.md
+		csharp\csharp.g4 = csharp\csharp.g4
+		csharp\delegates.md = csharp\delegates.md
+		csharp\documentation-comments.md = csharp\documentation-comments.md
+		csharp\enums.md = csharp\enums.md
+		csharp\exceptions.md = csharp\exceptions.md
+		csharp\expressions.md = csharp\expressions.md
+		csharp\interfaces.md = csharp\interfaces.md
+		csharp\introduction.md = csharp\introduction.md
+		csharp\lexical-structure.md = csharp\lexical-structure.md
+		csharp\namespaces.md = csharp\namespaces.md
+		csharp\readme.md = csharp\readme.md
+		csharp\statements.md = csharp\statements.md
+		csharp\structs.md = csharp\structs.md
+		csharp\template.docx = csharp\template.docx
+		csharp\types.md = csharp\types.md
+		csharp\unsafe-code.md = csharp\unsafe-code.md
+		csharp\variables.md = csharp\variables.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
