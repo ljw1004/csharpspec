@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E860237-6F7E-4380-81FA-EEFEC13262B1}"
+	ProjectSection(SolutionItems) = preProject
+		CSharp Language Specification.docx = CSharp Language Specification.docx
+		CSharp Language Specification.pdf = CSharp Language Specification.pdf
+		csharp.html = csharp.html
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spec", "spec", "{37F5BA35-8755-42BB-BB8D-20D563A49521}"
+	ProjectSection(SolutionItems) = preProject
+		arrays.md = arrays.md
+		attributes.md = attributes.md
+		basic-concepts.md = basic-concepts.md
+		classes.md = classes.md
+		conversions.md = conversions.md
+		delegates.md = delegates.md
+		documentation-comments.md = documentation-comments.md
+		enums.md = enums.md
+		exceptions.md = exceptions.md
+		expressions.md = expressions.md
+		interfaces.md = interfaces.md
+		introduction.md = introduction.md
+		lexical-structure.md = lexical-structure.md
+		namespaces.md = namespaces.md
+		README.md = README.md
+		statements.md = statements.md
+		structs.md = structs.md
+		types.md = types.md
+		unsafe-code.md = unsafe-code.md
+		variables.md = variables.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
