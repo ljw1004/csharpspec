@@ -462,7 +462,7 @@ An unboxing conversion permits a *reference_type* to be explicitly converted to 
 *  From any *interface_type* to any *nullable_type* whose underlying type implements the *interface_type*.
 *  From the type `System.Enum` to any *enum_type*.
 *  From the type `System.Enum` to any *nullable_type* with an underlying *enum_type*.
-*  Note that an explicit conversion to a type parameter will be executed as an unboxing conversion if at run-time it ends up converting from a reference type to a value type ([Explicit dynamic conversions](conversions.md#explicit-dynamic-conversions)).
+*  Note that an explicit conversion to a type parameter will be executed as an unboxing conversion if at run-time it ends up converting from a reference type to a value type ([Explicit conversions involving type parameters](conversions.md#explicit-conversions-involving-type-parameters)).
 
 An unboxing operation to a *non_nullable_value_type* consists of first checking that the object instance is a boxed value of the given *non_nullable_value_type*, and then copying the value out of the instance.
 
