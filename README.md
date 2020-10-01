@@ -1,4 +1,4 @@
-C# Language Specification
+Specification for C# Language
 ===========================
 __Version 6__
 
@@ -161,6 +161,7 @@ __Version 6__
     * [Stack allocation](unsafe-code.md#stack-allocation)
     * [Dynamic memory allocation](unsafe-code.md#dynamic-memory-allocation)
 * [Documentation comments](documentation-comments.md)
+
     * [Introduction](documentation-comments.md#introduction)
     * [Recommended tags](documentation-comments.md#recommended-tags)
     * [Processing the documentation file](documentation-comments.md#processing-the-documentation-file)
